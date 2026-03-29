@@ -109,7 +109,7 @@ export default function About() {
             className="rounded-2xl  p-10 bg-blue"
           >
             <p className="font-display text-2xl text-white font-semibold leading-snug">
-              "We don't just build websites. We build the digital face of your business."
+              "Your brand does not exist until someone can find it, feel it, and trust it — that is what we build."
             </p>
             <div className="mt-6 w-10 h-0.5 bg-blue" />
             <p className="mt-4 font-body text-xs text-white/80 tracking-widest uppercase">

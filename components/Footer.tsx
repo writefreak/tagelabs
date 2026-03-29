@@ -10,7 +10,7 @@ export default function Footer() {
           
           <div className="h-10 w-32">
 
-          <img src="/tagelabslogo.png" alt="" className="h-full w-full" />
+          <img src="/tagelabswhite.png" alt="" className="h-full w-full" />
           </div>
           
         </a>
