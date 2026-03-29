@@ -9,20 +9,17 @@ export default function Navbar() {
   const handleClick = () => {
     const phone = "2349169615448";
     const message =
-      "Hi Tagelabs, there's a project I would like to bring it to life with your help.";
+      "Hi Tagelabs, I have a project in mind and I would like to bring it to life with your help.";
     const encoded = encodeURIComponent(message);
     const whatsappLink = `https://wa.me/${phone}?text=${encoded}`;
     window.open(whatsappLink, "_blank");
     setIsClicked(!isClicked);
   };
 
- const scrollTo = (id: string) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({ top, behavior: "smooth" });
-  setMenuOpen(false);
-};
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -40,11 +37,11 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="font-display font-700 text-xl text-navy tracking-tight">
+        <button onClick={() => scrollTo("hero")} className="font-display font-700 text-xl text-navy tracking-tight">
           <div className="h-10 w-32">
             <img src="/tagelabslogo.png" alt="" className="h-full w-full" />
           </div>
-        </a>
+        </button>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
