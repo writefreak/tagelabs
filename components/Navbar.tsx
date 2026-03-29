@@ -37,11 +37,11 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <button onClick={() => scrollTo("hero")} className="font-display font-700 text-xl text-navy tracking-tight">
+        <a href="/" className="font-display font-700 text-xl text-navy tracking-tight">
           <div className="h-10 w-32">
             <img src="/tagelabslogo.png" alt="" className="h-full w-full" />
           </div>
-        </button>
+        </a>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">

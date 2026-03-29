@@ -1,15 +1,23 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const blobRightRef = useRef<HTMLDivElement>(null);
   const blobLeftRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const link = "contact"
 
   const handleDownload = async () => {
     saveAs("/TageLabs BrandStory.pdf", "TageLabs-Brand-Story.pdf");
   };
+
+   const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+  };
+
 
   useEffect(() => {
     const els = ref.current?.querySelectorAll(".anim");
@@ -102,12 +110,12 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="anim opacity-0 flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="#contact"
+          <button
+             onClick={() => scrollTo(link.toLowerCase())}
             className="inline-flex items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-full hover:bg-blue transition-colors duration-200 text-sm"
           >
             Start a project
-          </a>
+          </button>
           <button
             onClick={handleDownload}
             className="inline-flex items-center justify-center border border-navy/20 text-navy font-medium px-8 py-4 rounded-full hover:border-blue hover:text-blue transition-colors duration-200 text-sm"

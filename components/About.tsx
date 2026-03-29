@@ -121,7 +121,7 @@ export default function About() {
             {[
               { value: "100%", label: "Client satisfaction" },
               { value: "Fast", label: "Turnaround times" },
-              { value: "4+", label: "Services offered" },
+              { value: "Premium", label: "Services offered" },
               { value: "Global", label: "Clientele" },
             ].map((stat, i) => (
               <motion.div
@@ -133,7 +133,7 @@ export default function About() {
                 viewport={viewport}
                 className="rounded-2xl border border-navy/10 p-6 flex flex-col gap-1 hover:border-blue transition-colors duration-200"
               >
-                <p className="font-display text-3xl font-semibold text-navy">{stat.value}</p>
+                <p className="font-display text-xl font-semibold text-navy">{stat.value}</p>
                 <p className="font-body text-xs text-navy/50">{stat.label}</p>
               </motion.div>
             ))}

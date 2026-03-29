@@ -47,10 +47,10 @@ export default function Contact() {
 
           <div className="flex flex-col gap-4">
             <a
-              href="mailto:heritagendwell2020@gmail.com"
+              href="mailto:tagelabstudios@gmail.com"
               className="font-body text-sm text-white/70 hover:text-blue transition-colors"
             >
-              heritagendwell2020@gmail.com
+              tagelabstudios@gmail.com
             </a>
             <a
               href="tel:+2349169615448"
