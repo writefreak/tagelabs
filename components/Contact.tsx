@@ -4,6 +4,7 @@ import { useState } from "react";
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const services = [
     "Landing Page Design",
@@ -15,9 +16,14 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Replace with your preferred form handler (Formspree, Resend, etc.)
-    // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(form) })
-    setSent(true);
+    setSending(true);
+    const res = await fetch("https://formspree.io/f/mjgpyyad", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    setSending(false);
+    if (res.ok) setSent(true);
   };
 
   return (
@@ -124,9 +130,10 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="w-full bg-blue text-white font-medium py-4 rounded-full text-sm hover:bg-white hover:text-navy transition-colors duration-200 mt-2"
+                disabled={sending}
+                className="w-full bg-blue text-white font-medium py-4 rounded-full text-sm hover:bg-white hover:text-navy transition-colors duration-200 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Send message →
+                {sending ? "Sending..." : "Send message →"}
               </button>
             </form>
           )}

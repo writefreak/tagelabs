@@ -4,6 +4,19 @@ import { useState, useEffect } from "react";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+ 
+    const [isClicked, setIsClicked] = useState(false);
+
+    const handleClick = () => {
+      const phone = "2349169615448";
+      const message =
+        "Hi Tagelabs, I have a project in mind and I would like to bring it to life with your help.";
+      const encoded = encodeURIComponent(message);
+      const whatsappLink = `https://wa.me/${phone}?text=${encoded}`;
+      window.open(whatsappLink, "_blank");
+      setIsClicked(!isClicked); // Toggle the state
+    }
+  
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -22,7 +35,13 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="font-display font-700 text-xl text-navy tracking-tight">
-          Tage<span className="text-blue">Labs</span>
+          {/* Tage<span className="text-blue">Labs</span> */}
+          
+          <div className="h-10 w-32">
+
+          <img src="/tagelabslogo.png" alt="" className="h-full w-full" />
+          </div>
+          
         </a>
 
         {/* Desktop links */}
@@ -36,12 +55,12 @@ export default function Navbar() {
               {link}
             </a>
           ))}
-          <a
-            href="#contact"
+          <button
+         onClick={handleClick}
             className="text-sm font-medium bg-navy text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
           >
             Get Started
-          </a>
+          </button>
         </div>
 
         {/* Mobile hamburger */}
@@ -58,7 +77,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-6 flex flex-col gap-4">
+        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-6 flex flex-col gap-6">
           {links.map((link) => (
             <a
               key={link}
