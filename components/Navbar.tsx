@@ -9,7 +9,7 @@ export default function Navbar() {
   const handleClick = () => {
     const phone = "2349169615448";
     const message =
-      "Hi Tagelabs, I have a project in mind and I would like to bring it to life with your help.";
+      "Hi Tagelabs, there's a project I would like to bring it to life with your help.";
     const encoded = encodeURIComponent(message);
     const whatsappLink = `https://wa.me/${phone}?text=${encoded}`;
     window.open(whatsappLink, "_blank");
