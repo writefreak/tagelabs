@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { supabase } from "../lib/supabase";
 
 const navItems = [
   {
@@ -32,26 +33,55 @@ const navItems = [
       </svg>
     ),
   },
+  {
+    label: "Users",
+    href: "/admin/users",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentPage = navItems.find((n) => n.href === pathname)?.label ?? "Admin";
 
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
+
   const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
     <>
-      {/* Logo */}
       <div className="px-5 pt-7 pb-5 border-b border-white/[0.08]">
-        
-        {!collapsed && (
-          <p className="text-white/80 text-[11px] mt-1.5 uppercase tracking-widest"> Tage Labs Admin Panel</p>
-        )}
+        <div className="flex items-center gap-2.5">
+          {/* <div className="w-[34px] h-[34px] rounded-[10px] bg-blue flex items-center justify-center shrink-0">
+            <span className="text-white font-display font-bold text-base">T</span>
+          </div>
+          {!collapsed && (
+            <span className="text-white font-display font-semibold text-[17px] whitespace-nowrap">
+              Tage<span className="text-blue">Labs</span>
+            </span>
+          )} */}
+
+           <div className={`h-10 w-32 ${collapsed ? "hidden" : ""}`}>
+  <img src="/tagelabswhite.png" alt="" className="h-full w-full" />
+</div>
+          
+        </div>
+        {/* {!collapsed && (
+          <p className="text-white/35 text-[11px] mt-1.5 uppercase tracking-widest">Admin Panel</p>
+        )} */}
       </div>
 
-      {/* Nav links */}
       <nav className="flex-1 p-3 flex flex-col gap-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -63,9 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               className={`flex items-center gap-3 rounded-[10px] transition-all duration-200 ${
                 collapsed ? "justify-center px-3 py-2.5" : "px-3.5 py-2.5"
               } ${
-                isActive
-                  ? "bg-blue/[0.12] text-blue"
-                  : "text-white/55 hover:bg-blue/[0.08] hover:text-blue"
+                isActive ? "bg-blue/[0.12] text-blue" : "text-white/55 hover:bg-blue/[0.08] hover:text-blue"
               }`}
             >
               <span className="shrink-0">{item.icon}</span>
@@ -75,7 +103,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         })}
       </nav>
 
-      {/* Bottom actions */}
       <div className="p-3 border-t border-white/[0.08] flex flex-col gap-2">
         {!collapsed && (
           <Link
@@ -89,7 +116,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             Back to site
           </Link>
         )}
-        {/* Collapse button — desktop only */}
+        <button
+          onClick={handleLogout}
+          className={`flex items-center gap-2.5 rounded-[10px] px-3.5 py-2.5 text-white/40 hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 w-full ${
+            collapsed ? "justify-center" : ""
+          }`}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          {!collapsed && <span className="text-[13px]">Sign out</span>}
+        </button>
         <button
           onClick={() => setCollapsed(!collapsed)}
           className={`hidden md:flex items-center gap-2.5 rounded-[10px] px-3.5 py-2.5 text-white/40 hover:bg-blue/[0.08] hover:text-blue transition-all duration-200 w-full ${
@@ -111,62 +148,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen flex bg-offwhite font-body">
-
-      {/* ── Desktop sidebar ── */}
-      <aside
-        className={`hidden md:flex flex-col bg-navy min-h-screen sticky top-0 shrink-0 overflow-hidden transition-all duration-300 ${
-          collapsed ? "w-[72px]" : "w-60"
-        }`}
-      >
+      <aside className={`hidden md:flex flex-col bg-navy min-h-screen sticky top-0 shrink-0 overflow-hidden transition-all duration-300 ${collapsed ? "w-[72px]" : "w-60"}`}>
         <SidebarContent />
       </aside>
 
-      {/* ── Mobile: backdrop ── */}
       {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
-      {/* ── Mobile: slide-in drawer ── */}
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-navy z-50 flex flex-col transition-transform duration-300 md:hidden ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
+      <aside className={`fixed top-0 left-0 h-full w-64 bg-navy z-50 flex flex-col transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <SidebarContent onLinkClick={() => setMobileOpen(false)} />
       </aside>
 
-      {/* ── Main content ── */}
       <main className="flex-1 min-h-screen overflow-auto">
-
-        {/* Topbar */}
         <header className="px-5 md:px-9 py-4 md:py-5 bg-white border-b border-navy/[0.08] flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-3">
-            {/* Hamburger — mobile only */}
             <button
               onClick={() => setMobileOpen(true)}
               className="md:hidden flex flex-col justify-center items-center gap-[5px] w-9 h-9 rounded-xl hover:bg-navy/[0.06] transition-colors"
-              aria-label="Open menu"
             >
               <span className="w-5 h-0.5 bg-navy rounded-full" />
               <span className="w-5 h-0.5 bg-navy rounded-full" />
               <span className="w-3.5 h-0.5 bg-navy rounded-full self-start ml-[5px]" />
             </button>
-
             <div>
-              <h1 className="font-display font-bold text-lg md:text-xl text-navy leading-tight">
-                {currentPage}
-              </h1>
+              <h1 className="font-display font-bold text-lg md:text-xl text-navy leading-tight">{currentPage}</h1>
               <p className="text-navy/40 text-[12px] md:text-[13px] mt-0.5 hidden sm:block">
-                {new Date().toLocaleDateString("en-US", {
-                  weekday: "long", year: "numeric", month: "long", day: "numeric",
-                })}
+                {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
               </p>
             </div>
           </div>
-
           <div className="w-9 h-9 rounded-full bg-navy flex items-center justify-center cursor-pointer shrink-0">
             <span className="text-white text-[13px] font-semibold">H</span>
           </div>
