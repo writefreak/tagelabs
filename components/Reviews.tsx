@@ -45,7 +45,7 @@ export default function Reviews() {
         .select("id, name, role, review")
         .eq("approved", true)
         .order("created_at", { ascending: false });
-      setReviews(data && data.length >= 0 ? data : fallback);
+      setReviews(data && data.length >= 3 ? data : fallback);
     }
     fetchReviews();
   }, []);
@@ -94,7 +94,7 @@ export default function Reviews() {
         </motion.div>
 
         {/* Reviews grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-20">
           {displayed.map((r, i) => (
             <motion.div
               key={r.id}
