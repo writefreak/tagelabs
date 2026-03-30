@@ -48,7 +48,7 @@ export default function Work() {
   }, []);
 
   return (
-    <section id="work" className="py-28 px-6" style={{ background: "#f8f9fc" }}>
+    <section id="work" className="py-10 md:py-17 px-6" style={{ background: "#f8f9fc" }}>
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="mb-20"
