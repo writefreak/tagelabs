@@ -96,7 +96,7 @@ export default function Hero() {
       <div className="relative max-w-6xl mx-auto w-full">
         {/* Headline */}
         <div className="flex flex-col justify-center items-center">
-          <h1 className="anim opacity-0 text-center font-display text-[39px] md:text-5xl lg:text-7xl font-semibold text-navy leading-tight mb-8 max-w-4xl">
+          <h1 className="anim opacity-0 text-center font-display text-[46px] md:text-5xl lg:text-7xl font-semibold text-navy leading-tight mb-8 max-w-4xl">
             Transforming businesses with{" "}
             <span className="text-blue italic">scalable</span> digital solutions.
           </h1>

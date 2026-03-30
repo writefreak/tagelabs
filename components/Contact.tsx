@@ -1,10 +1,12 @@
 "use client";
+import { supabase } from "@/app/lib/supabase";
 import { useState } from "react";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const services = [
     "Landing Page Design",
@@ -17,13 +19,23 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    const res = await fetch("https://formspree.io/f/mjgpyyad", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+    setError(null);
+
+    const { error } = await supabase.from("contacts").insert({
+      name: form.name,
+      email: form.email,
+      subject: form.service,
+      message: form.message,
+      read: false,
     });
+
     setSending(false);
-    if (res.ok) setSent(true);
+
+    if (error) {
+      setError("Something went wrong. Please try again.");
+    } else {
+      setSent(true);
+    }
   };
 
   return (
@@ -127,6 +139,10 @@ export default function Contact() {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-body placeholder:text-white/20 focus:outline-none focus:border-blue transition-colors resize-none"
                 />
               </div>
+
+              {error && (
+                <p className="text-red-400 text-sm font-body">{error}</p>
+              )}
 
               <button
                 type="submit"

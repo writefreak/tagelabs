@@ -56,7 +56,7 @@ export default function Navbar() {
           ))}
           <button
             onClick={handleClick}
-            className="text-sm font-medium bg-navy text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
+            className="text-sm font-medium bg-blue text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
           >
             Get Started
           </button>
@@ -80,7 +80,7 @@ export default function Navbar() {
           {links.map((link) => (
             <button
               key={link}
-              onClick={() => scrollTo(link.toLowerCase())}
+              onClick={handleClick}
               className="text-sm font-medium text-navy/70 hover:text-blue transition-colors text-left"
             >
               {link}
@@ -88,7 +88,7 @@ export default function Navbar() {
           ))}
           <button
             onClick={() => scrollTo("contact")}
-            className="text-sm font-medium bg-navy text-white px-5 py-2.5 rounded-full text-center hover:bg-blue transition-colors"
+            className="text-sm font-medium bg-blue text-white px-5 py-2.5 rounded-full text-center hover:bg-blue transition-colors"
           >
             Get Started
           </button>
