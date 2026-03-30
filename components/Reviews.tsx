@@ -69,7 +69,7 @@ export default function Reviews() {
   const displayed = reviews.length > 0 ? reviews : fallback;
 
   return (
-    <section id="reviews" className="py-24 md:py-32 px-6 bg-offwhite">
+    <section id="reviews" className="py-10 md:py-17 px-6 bg-offwhite">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
