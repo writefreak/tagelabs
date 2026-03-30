@@ -27,7 +27,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = ["Services", "Work", "About", "Contact"];
+  const links = ["Services", "Work","Reviews", "About", "Contact"];
 
   return (
     <nav

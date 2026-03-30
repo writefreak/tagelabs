@@ -6,6 +6,7 @@ import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ui/scroll-top";
+import Reviews from "@/components/Reviews";
 
 export default function Home() {
   return (
@@ -13,9 +14,10 @@ export default function Home() {
       <Navbar />
       <ScrollToTop/>
       <Hero />
+      <About />
       <Services />
       <Work />
-      <About />
+      <Reviews/>
       <Contact />
       <Footer />
     </main>
