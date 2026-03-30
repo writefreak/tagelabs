@@ -210,43 +210,88 @@ export default function ProjectsPage() {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
-        <div className="grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
-          {["Project", "Category", "Date", "Status", "Actions"].map((h) => (
-            <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
-          ))}
+     <div className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
+  {/* Desktop header — hidden on mobile */}
+  <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
+    {["Project", "Category", "Date", "Status", "Actions"].map((h) => (
+      <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
+    ))}
+  </div>
+
+  {loading ? (
+    <div className="flex items-center justify-center py-16 gap-2 text-navy/40 text-sm">
+      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
+      Loading projects...
+    </div>
+  ) : filtered.length === 0 ? (
+    <p className="text-center py-12 text-navy/35 text-sm">No projects found.</p>
+  ) : (
+    filtered.map((p, i) => (
+      <div
+        key={p.id}
+        className={`${i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""}`}
+      >
+        {/* Desktop row */}
+        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-4 items-center hover:bg-navy/[0.02] transition-colors">
+          <div>
+            <p className="text-sm font-semibold text-navy">{p.title}</p>
+            <div className="flex gap-1.5 mt-1.5 flex-wrap">
+              {p.tags.slice(0, 3).map((tag) => (
+                <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
+              ))}
+            </div>
+          </div>
+          <p className="text-[13px] text-navy/55">{p.category}</p>
+          <p className="text-[13px] text-navy/40">
+            {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+          </p>
+          <span className={`inline-flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full w-fit ${
+            p.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Published" ? "bg-green-500" : "bg-red-400"}`} />
+            {p.status}
+          </span>
+          <div className="flex gap-2">
+            <button onClick={() => handleEdit(p)} className="w-8 h-8 rounded-lg bg-blue/[0.08] hover:bg-blue/[0.18] text-blue flex items-center justify-center transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </button>
+            {deleteConfirm === p.id ? (
+              <button onClick={() => handleDelete(p.id)} className="h-8 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold">Confirm</button>
+            ) : (
+              <button onClick={() => setDeleteConfirm(p.id)} className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-16 gap-2 text-navy/40 text-sm">
-            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-            Loading projects...
-          </div>
-        ) : filtered.length === 0 ? (
-          <p className="text-center py-12 text-navy/35 text-sm">No projects found.</p>
-        ) : (
-          filtered.map((p, i) => (
-            <div
-              key={p.id}
-              className={`grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-4 items-center hover:bg-navy/[0.02] transition-colors ${
-                i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""
-              }`}
-            >
-              <div>
-                <p className="text-sm font-semibold text-navy">{p.title}</p>
-                <div className="flex gap-1.5 mt-1.5 flex-wrap">
-                  {p.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
-                  ))}
-                </div>
+        {/* Mobile card */}
+        <div className="md:hidden px-5 py-4 hover:bg-navy/[0.02] transition-colors">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-navy truncate">{p.title}</p>
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <p className="text-[12px] text-navy/50">{p.category}</p>
+                <span className="text-navy/20">·</span>
+                <p className="text-[12px] text-navy/40">
+                  {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                </p>
               </div>
-              <p className="text-[13px] text-navy/55">{p.category}</p>
-              <p className="text-[13px] text-navy/40">
-                {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-              </p>
-              <span className={`inline-flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full w-fit ${
+              <div className="flex gap-1.5 mt-2 flex-wrap">
+                {p.tags.slice(0, 3).map((tag) => (
+                  <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-2.5 shrink-0">
+              <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
                 p.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Published" ? "bg-green-500" : "bg-red-400"}`} />
@@ -270,9 +315,12 @@ export default function ProjectsPage() {
                 )}
               </div>
             </div>
-          ))
-        )}
+          </div>
+        </div>
       </div>
+    ))
+  )}
+</div>
     </div>
   );
 }
