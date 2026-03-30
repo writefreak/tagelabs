@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
@@ -50,6 +50,76 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userInitial, setUserInitial] = useState("?");
+
+  // Touch drag state
+  const touchStartX = useRef<number | null>(null);
+  const touchCurrentX = useRef<number | null>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const isDragging = useRef(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const user = data?.user;
+      const name =
+        user?.user_metadata?.full_name ||
+        user?.user_metadata?.name ||
+        user?.email ||
+        "";
+      setUserInitial(name.charAt(0).toUpperCase() || "?");
+    });
+  }, []);
+
+  // Touch handlers for swipe-to-open from left edge
+  function handleTouchStart(e: React.TouchEvent) {
+    const x = e.touches[0].clientX;
+    touchStartX.current = x;
+    touchCurrentX.current = x;
+    // Only initiate drag if starting from left edge (within 24px) or sidebar is open
+    isDragging.current = x < 24 || mobileOpen;
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!isDragging.current) return;
+    touchCurrentX.current = e.touches[0].clientX;
+    const delta = (touchCurrentX.current ?? 0) - (touchStartX.current ?? 0);
+
+    if (sidebarRef.current) {
+      if (mobileOpen) {
+        // Dragging closed — clamp between -256 and 0
+        const offset = Math.min(0, delta);
+        sidebarRef.current.style.transform = `translateX(${offset}px)`;
+        sidebarRef.current.style.transition = "none";
+      } else {
+        // Dragging open — clamp between -256 and 0
+        const offset = Math.max(-256, Math.min(0, delta - 256));
+        sidebarRef.current.style.transform = `translateX(${offset}px)`;
+        sidebarRef.current.style.transition = "none";
+      }
+    }
+  }
+
+  function handleTouchEnd() {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+
+    const delta = (touchCurrentX.current ?? 0) - (touchStartX.current ?? 0);
+
+    if (sidebarRef.current) {
+      sidebarRef.current.style.transition = "";
+      sidebarRef.current.style.transform = "";
+    }
+
+    // Threshold: 80px drag to trigger open/close
+    if (!mobileOpen && delta > 80) {
+      setMobileOpen(true);
+    } else if (mobileOpen && delta < -80) {
+      setMobileOpen(false);
+    }
+
+    touchStartX.current = null;
+    touchCurrentX.current = null;
+  }
 
   const currentPage = navItems.find((n) => n.href === pathname)?.label ?? "Admin";
 
@@ -63,23 +133,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <>
       <div className="px-5 pt-7 pb-5 border-b border-white/[0.08]">
         <div className="flex items-center gap-2.5">
-          {/* <div className="w-[34px] h-[34px] rounded-[10px] bg-blue flex items-center justify-center shrink-0">
-            <span className="text-white font-display font-bold text-base">T</span>
+          <div className={`h-10 w-32 ${collapsed ? "hidden" : ""}`}>
+            <img src="/tagelabswhite.png" alt="" className="h-full w-full" />
           </div>
-          {!collapsed && (
-            <span className="text-white font-display font-semibold text-[17px] whitespace-nowrap">
-              Tage<span className="text-blue">Labs</span>
-            </span>
-          )} */}
-
-           <div className={`h-10 w-32 ${collapsed ? "hidden" : ""}`}>
-  <img src="/tagelabswhite.png" alt="" className="h-full w-full" />
-</div>
-          
         </div>
-        {/* {!collapsed && (
-          <p className="text-white/35 text-[11px] mt-1.5 uppercase tracking-widest">Admin Panel</p>
-        )} */}
       </div>
 
       <nav className="flex-1 p-3 flex flex-col gap-1">
@@ -147,7 +204,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="min-h-screen flex bg-offwhite font-body">
+    <div
+      className="min-h-screen flex bg-offwhite font-body"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <aside className={`hidden md:flex flex-col bg-navy min-h-screen sticky top-0 shrink-0 overflow-hidden transition-all duration-300 ${collapsed ? "w-[72px]" : "w-60"}`}>
         <SidebarContent />
       </aside>
@@ -156,7 +218,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
-      <aside className={`fixed top-0 left-0 h-full w-64 bg-navy z-50 flex flex-col transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside
+        ref={sidebarRef}
+        className={`fixed top-0 left-0 h-full w-64 bg-navy z-50 flex flex-col transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
         <SidebarContent onLinkClick={() => setMobileOpen(false)} />
       </aside>
 
@@ -178,8 +243,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </p>
             </div>
           </div>
+          {/* Avatar with dynamic initial */}
           <div className="w-9 h-9 rounded-full bg-navy flex items-center justify-center cursor-pointer shrink-0">
-            <span className="text-white text-[13px] font-semibold">H</span>
+            <span className="text-white text-[13px] font-semibold">{userInitial}</span>
           </div>
         </header>
 

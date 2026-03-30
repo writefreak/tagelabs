@@ -74,7 +74,12 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 className="w-full px-3.5 py-2.5 rounded-[10px] border border-navy/15 bg-offwhite text-sm text-navy outline-none focus:border-blue transition-colors"
               />
-            </div>
+                      </div>
+                      <div className="flex justify-end -mt-2">
+  <Link href="/forgotten-password" className="text-[12px] text-blue hover:underline">
+    Forgot password?
+  </Link>
+</div>
             <button
               onClick={handleLogin}
               disabled={loading}
