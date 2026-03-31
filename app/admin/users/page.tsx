@@ -17,14 +17,33 @@ export default function UsersPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
+
   useEffect(() => {
-    async function init() {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id ?? null);
-      fetchUsers();
-    }
-    init();
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    setCurrentUserId(user.id);
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    setIsSuperAdmin(data?.role === "super_admin");
+
+    fetchUsers();
+  }
+  init();
   }, []);
+  
+  // useEffect(() => {
+  //   async function init() {
+  //     const { data: { user } } = await supabase.auth.getUser();
+  //     setCurrentUserId(user?.id ?? null);
+  //     fetchUsers();
+  //   }
+  //   init();
+  // }, []);
 
   async function fetchUsers() {
     setLoading(true);
@@ -37,18 +56,59 @@ export default function UsersPage() {
     setLoading(false);
   }
 
+  // async function handleDelete(id: string) {
+  //   setDeleting(id);
+  //   // Delete from profiles table (auth.users cascade will handle the rest)
+  //   const { error } = await supabase.from("profiles").delete().eq("id", id);
+  //   if (error) {
+  //     setError(error.message);
+  //   } else {
+  //     setUsers((prev) => prev.filter((u) => u.id !== id));
+  //   }
+  //   setDeleting(null);
+  //   setDeleteConfirm(null);
+  // }
+
+//   async function handleDelete(targetId: string) {
+//   const { data: { user } } = await supabase.auth.getUser();
+//   if (targetId === user?.id) return; // can't delete yourself
+//   await supabase.from("profiles").delete().eq("id", targetId);
+  // }
+  
   async function handleDelete(id: string) {
-    setDeleting(id);
-    // Delete from profiles table (auth.users cascade will handle the rest)
-    const { error } = await supabase.from("profiles").delete().eq("id", id);
-    if (error) {
-      setError(error.message);
-    } else {
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-    }
-    setDeleting(null);
-    setDeleteConfirm(null);
+  setDeleting(id);
+  const res = await fetch("/api/delete-user", {
+    method: "DELETE",
+    body: JSON.stringify({ id }),
+  });
+  const result = await res.json();
+  if (result.error) {
+    setError(result.error);
+  } else {
+    setUsers((prev) => prev.filter((u) => u.id !== id));
   }
+  setDeleting(null);
+  setDeleteConfirm(null);
+}
+
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+// useEffect(() => {
+//   async function checkRole() {
+//     const { data: { user } } = await supabase.auth.getUser();
+//     if (!user) return;
+//     const { data } = await supabase
+//       .from("profiles")
+//       .select("role")
+//       .eq("id", user.id)
+//       .single();
+//     setIsSuperAdmin(data?.role === "super_admin");
+//   }
+//   checkRole();
+// }, []);
+
+// Then in your JSX, only render the delete button if super admin:
+
 
   return (
     <div className="font-body max-w-[1100px]">
@@ -100,25 +160,27 @@ export default function UsersPage() {
             <p className="text-[13px] text-navy/40">
               {new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
             </p>
-            <div>
-              {isCurrentUser ? (
-                <span className="text-[11px] text-navy/25 italic">—</span>
-              ) : deleteConfirm === u.id ? (
-                <div className="flex gap-1.5">
-                  <button onClick={() => handleDelete(u.id)} disabled={deleting === u.id} className="h-7 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold disabled:opacity-50">
-                    {deleting === u.id ? "..." : "Confirm"}
-                  </button>
-                  <button onClick={() => setDeleteConfirm(null)} className="h-7 px-2 rounded-lg bg-navy/[0.06] text-navy/50 text-xs">Cancel</button>
-                </div>
-              ) : (
-                <button onClick={() => setDeleteConfirm(u.id)} className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
-                  </svg>
-                </button>
-              )}
-            </div>
+           <div>
+  {isCurrentUser ? (
+    <span className="text-[11px] text-navy/25 italic">—</span>
+  ) : !isSuperAdmin ? (
+    null
+  ) : deleteConfirm === u.id ? (
+    <div className="flex gap-1.5">
+      <button onClick={() => handleDelete(u.id)} disabled={deleting === u.id} className="h-7 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold disabled:opacity-50">
+        {deleting === u.id ? "..." : "Confirm"}
+      </button>
+      <button onClick={() => setDeleteConfirm(null)} className="h-7 px-2 rounded-lg bg-navy/[0.06] text-navy/50 text-xs">Cancel</button>
+    </div>
+  ) : (
+    <button onClick={() => setDeleteConfirm(u.id)} className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
+      </svg>
+    </button>
+  )}
+</div>
           </div>
 
           {/* Mobile card */}

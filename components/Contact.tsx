@@ -64,12 +64,12 @@ export default function Contact() {
             >
               tagelabstudios@gmail.com
             </a>
-            <a
+            {/* <a
               href="tel:+2349169615448"
               className="font-body text-sm text-white/70 hover:text-blue transition-colors"
             >
               +234 916 961 5448
-            </a>
+            </a> */}
             <p className="font-body text-sm text-white/70">
               Port Harcourt, Nigeria · Available globally
             </p>
@@ -109,15 +109,36 @@ export default function Contact() {
                 </div>
               ))}
 
-              <div>
+              {/* Service — pills on mobile, select on desktop */}
+              <div className="py-6">
                 <label className="block font-body text-xs text-white/50 mb-2 tracking-wide">
                   Service needed
                 </label>
+
+                {/* Mobile: pill buttons */}
+                <div className="flex flex-wrap gap-2 md:hidden">
+                  {services.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setForm({ ...form, service: s })}
+                      className={`px-4 py-2 rounded-full text-xs font-medium font-body border transition-all duration-200 ${
+                        form.service === s
+                          ? "bg-blue border-blue text-white"
+                          : "bg-white/5 border-white/10 text-white/60 hover:border-white/30 hover:text-white/80"
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Desktop: native select */}
                 <select
                   required
                   value={form.service}
                   onChange={(e) => setForm({ ...form, service: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-body focus:outline-none focus:border-blue transition-colors"
+                  className="hidden md:block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-body focus:outline-none focus:border-blue transition-colors"
                 >
                   <option value="" disabled className="bg-navy">Select a service</option>
                   {services.map((s) => (
@@ -146,7 +167,7 @@ export default function Contact() {
 
               <button
                 type="submit"
-                disabled={sending}
+                disabled={sending || !form.service}
                 className="w-full bg-blue text-white font-medium py-4 rounded-full text-sm hover:bg-white hover:text-navy transition-colors duration-200 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {sending ? "Sending..." : "Send message →"}

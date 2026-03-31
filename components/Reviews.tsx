@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/app/lib/supabase";
 
@@ -17,26 +17,24 @@ const fallback: Review[] = [
   { id: "4", name: "Emeka Nwosu", role: "CTO, BrandNG", review: "Clean code, zero hand-holding, polished on first delivery. Will work with them again without hesitation." },
   { id: "5", name: "Zara Abioye", role: "Startup Founder", review: "A pitch deck that made investors lean forward. Minimal, powerful, and done in three days." },
   { id: "6", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
+  { id: "7", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
+  { id: "8", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
+  { id: "9", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
 ];
 
+const PAGE_SIZE = 6;
 const emptyForm = { name: "", role: "", review: "" };
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
 
 const inputClass = "w-full bg-navy/[0.03] border border-navy/10 rounded-xl px-4 py-3 text-navy text-sm font-body placeholder:text-navy/30 focus:outline-none focus:border-blue transition-colors";
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [page, setPage] = useState(0);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchReviews() {
@@ -67,9 +65,18 @@ export default function Reviews() {
   }
 
   const displayed = reviews.length > 0 ? reviews : fallback;
+  const totalPages = Math.ceil(displayed.length / PAGE_SIZE);
+  const paginated = displayed.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const showPagination = displayed.length > PAGE_SIZE;
+
+  function handlePageChange(next: number) {
+    setPage(next);
+    // Scroll the reviews section into view smoothly on page change
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 
   return (
-    <section id="reviews" className="py-10 md:py-17 px-6 bg-offwhite">
+    <section id="reviews" className="py-14 md:py-17 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
@@ -93,48 +100,104 @@ export default function Reviews() {
           </div>
         </motion.div>
 
-        {/* Reviews grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-20">
-          {displayed.map((r, i) => (
-            <motion.div
-              key={r.id}
-              custom={i}
-              // variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: false, margin: "-30px" }}
-              className="bg-white rounded-2xl p-6 flex flex-col gap-4 border border-navy/[0.07] hover:border-navy/15 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300"
-            >
-              {/* Stars */}
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, j) => (
-                  <svg key={j} width="12" height="12" viewBox="0 0 24 24" fill="#4a8fe2" stroke="none">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                ))}
-              </div>
+        {/* Reviews — horizontal scroll on mobile, grid on md+ */}
+        <div ref={scrollRef}>
+          {/* Mobile: horizontal scroll strip */}
+          <div
+            className="
+              md:hidden
+              flex gap-4
+              overflow-x-auto
+              
+              -mx-2 px-6
+              [scrollbar-width:none]
+              [&::-webkit-scrollbar]:hidden
+              snap-x snap-mandatory
+            "
+          >
+            {paginated.map((r, i) => (
+              <motion.div
+                key={r.id}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-30px" }}
+                transition={{ delay: i * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                className="
+                  flex-none w-[80vw] max-w-[320px]
+                  snap-start
+                  bg-white rounded-2xl p-6 flex flex-col gap-4
+                  border border-navy/[0.07]
+                "
+              >
+                <ReviewCardInner r={r} />
+              </motion.div>
+            ))}
+          </div>
 
-              <p className="font-body text-sm text-navy/65 leading-relaxed flex-1">
-                "{r.review}"
-              </p>
-
-              <div className="h-px bg-navy/[0.06]" />
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center shrink-0">
-                  <span className="text-white text-xs font-semibold font-display">{r.name.charAt(0)}</span>
-                </div>
-                <div>
-                  <p className="text-[13px] font-semibold text-navy font-body">{r.name}</p>
-                  <p className="text-[11px] text-navy/40 font-body mt-0.5">{r.role}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+          {/* Desktop: grid */}
+          <div className="hidden md:grid md:grid-cols-3 gap-4">
+            {paginated.map((r, i) => (
+              <motion.div
+                key={r.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-30px" }}
+                transition={{ delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="bg-white rounded-2xl p-6 flex flex-col gap-4 border border-navy/[0.07] hover:border-navy/15 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300"
+              >
+                <ReviewCardInner r={r} />
+              </motion.div>
+            ))}
+          </div>
         </div>
 
+        {/* Pagination breadcrumbs — only when more than PAGE_SIZE reviews */}
+        {showPagination && (
+          <div className="flex items-center justify-center gap-2 mt-10">
+            {/* Prev arrow */}
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 0}
+              aria-label="Previous page"
+              className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+
+            {/* Dots */}
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i)}
+                aria-label={`Page ${i + 1}`}
+                className={`
+                  rounded-full transition-all duration-300
+                  ${i === page
+                    ? "w-6 h-2 bg-navy"
+                    : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+                  }
+                `}
+              />
+            ))}
+
+            {/* Next arrow */}
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages - 1}
+              aria-label="Next page"
+              className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+        )}
+
         {/* Divider */}
-        <div className="h-px bg-navy/[0.07] mb-20" />
+        <div className="h-px bg-navy/[0.07] my-10 md:mt-20 md:mb-20" />
 
         {/* Submit form */}
         <motion.div
@@ -150,7 +213,7 @@ export default function Reviews() {
               Worked with us?<br />Tell the world.
             </h3>
             <p className="font-body text-sm text-navy/50 leading-relaxed max-w-sm">
-              Your review goes through a quick approval before going live. Takes less than a minute.
+              Every project we take on is built on trust and hearing from the people we've built for means everything to us.
             </p>
           </div>
 
@@ -239,5 +302,37 @@ export default function Reviews() {
 
       </div>
     </section>
+  );
+}
+
+// Extracted card inner so it's shared between mobile/desktop layouts
+function ReviewCardInner({ r }: { r: Review }) {
+  return (
+    <>
+      {/* Stars */}
+      <div className="flex gap-1">
+        {[...Array(5)].map((_, j) => (
+          <svg key={j} width="12" height="12" viewBox="0 0 24 24" fill="#4a8fe2" stroke="none">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        ))}
+      </div>
+
+      <p className="font-body text-sm text-navy/65 leading-relaxed flex-1">
+        "{r.review}"
+      </p>
+
+      <div className="h-px bg-navy/[0.06]" />
+
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center shrink-0">
+          <span className="text-white text-xs font-semibold font-display">{r.name.charAt(0)}</span>
+        </div>
+        <div>
+          <p className="text-[13px] font-semibold text-navy font-body">{r.name}</p>
+          <p className="text-[11px] text-navy/40 font-body mt-0.5">{r.role}</p>
+        </div>
+      </div>
+    </>
   );
 }

@@ -50,7 +50,7 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="py-28 px-6 bg-white">
+    <section id="services" className="md:py-25 py-10 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

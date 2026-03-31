@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
@@ -54,11 +54,28 @@ const navItems = [
   },
 ];
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userInitial, setUserInitial] = useState("?");
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) return;
+      setUserInitial(user.email.charAt(0).toUpperCase());
+    }
+    fetchUser();
+  }, []);
 
   const currentPage = navItems.find((n) => n.href === pathname)?.label ?? "Admin";
 
@@ -145,7 +162,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen flex bg-offwhite font-body">
-      <aside className={`hidden md:flex flex-col bg-navy min-h-screen sticky top-0 shrink-0 overflow-hidden transition-all duration-300 ${collapsed ? "w-[72px]" : "w-60"}`}>
+      <aside className={`hidden md:flex flex-col bg-navy min-h-screen fixed top-0 shrink-0 overflow-hidden transition-all duration-300 ${collapsed ? "w-[72px]" : "w-60"}`}>
         <SidebarContent />
       </aside>
 
@@ -157,8 +174,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SidebarContent onLinkClick={() => setMobileOpen(false)} />
       </aside>
 
-      <main className="flex-1 min-h-screen overflow-auto">
-        <header className="px-5 md:px-9 py-4 md:py-5 bg-white border-b border-navy/[0.08] flex items-center justify-between sticky top-0 z-10">
+      <main className={`flex-1 min-h-screen overflow-auto transition-all duration-300 ${collapsed ? "md:pl-[72px]" : "md:pl-60"}`}>
+       <header className={`px-5 md:px-9 py-4 md:py-5 bg-white border-b border-navy/[0.08] flex items-center justify-between fixed top-0 right-0 left-0 z-10 transition-all duration-300 ${collapsed ? "md:left-[72px]" : "md:left-60"}`}>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
@@ -169,18 +186,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="w-3.5 h-0.5 bg-navy rounded-full self-start ml-[5px]" />
             </button>
             <div>
-              <h1 className="font-display font-bold text-lg md:text-xl text-navy leading-tight">{currentPage}</h1>
+              <h1 className="font-display font-bold text-lg md:text-xl text-navy leading-tight">Hello, {getGreeting()} 👋</h1>
               <p className="text-navy/40 text-[12px] md:text-[13px] mt-0.5 hidden sm:block">
                 {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
               </p>
             </div>
           </div>
           <div className="w-9 h-9 rounded-full bg-navy flex items-center justify-center cursor-pointer shrink-0">
-            <span className="text-white text-[13px] font-semibold">H</span>
+            <span className="text-white text-[13px] font-semibold">{userInitial}</span>
           </div>
         </header>
 
-        <div className="p-5 md:p-9">{children}</div>
+        <div className="p-5 md:p-9 pt-24 md:pt-32">{children}</div>
       </main>
     </div>
   );

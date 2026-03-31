@@ -71,12 +71,12 @@ export default function AdminDashboard() {
   return (
     <div className="font-body max-w-[1100px]">
       <div className="mb-8">
-        <h2 className="font-display font-bold text-2xl text-navy">Good morning, Heritage 👋</h2>
+        <h2 className="font-display font-bold text-2xl text-navy">Dashboard</h2>
         <p className="text-navy/50 text-sm mt-1">Here's what's happening with TageLabs today.</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href} className="bg-white rounded-2xl p-6 border border-navy/[0.07] shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 block">
             <div className={`w-10 h-10 rounded-xl ${stat.iconBg} ${stat.iconColor} flex items-center justify-center mb-4`}>
