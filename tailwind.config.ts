@@ -13,10 +13,15 @@ const config: Config = {
         blue: "#4a8fe2",
         offwhite: "#f8f9fc",
       },
+      // fontFamily: {
+      //   display: ["'Playfair Display'", "serif"],
+      //   body: ["'DM Sans'", "sans-serif"],
+      // },
+
       fontFamily: {
-        display: ["'Playfair Display'", "serif"],
-        body: ["'DM Sans'", "sans-serif"],
-      },
+  display: ["var(--font-clash-display)", "sans-serif"],
+  body: ["'DM Sans'", "sans-serif"],
+},
       animation: {
         "fade-up": "fadeUp 0.7s ease forwards",
         "fade-in": "fadeIn 0.6s ease forwards",
