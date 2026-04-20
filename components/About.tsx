@@ -61,7 +61,7 @@ export default function About() {
             viewport={viewport}
             className="font-body text-navy/60 leading-relaxed mb-6 text-sm"
           >
-            TageLabs is a digital solutions studio founded on one belief — that good design and clean code are not luxuries, they are competitive advantages.
+            TageLabs is a digital solutions studio founded on the belief that good design and clean code are competitive advantages.
           </motion.p>
 
           <motion.p

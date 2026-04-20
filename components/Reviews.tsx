@@ -34,6 +34,7 @@ export default function Reviews() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,8 +72,12 @@ export default function Reviews() {
 
   function handlePageChange(next: number) {
     setPage(next);
-    // Scroll the reviews section into view smoothly on page change
+    setExpandedIndex(null);
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function handleCardClick(i: number) {
+    setExpandedIndex(prev => (prev === i ? null : i));
   }
 
   return (
@@ -100,36 +105,31 @@ export default function Reviews() {
           </div>
         </motion.div>
 
-        {/* Reviews — horizontal scroll on mobile, grid on md+ */}
+        {/* Reviews */}
         <div ref={scrollRef}>
           {/* Mobile: horizontal scroll strip */}
           <div
             className="
-              md:hidden
-              flex gap-4
-              overflow-x-auto
-              
-              -mx-2 px-6
-              [scrollbar-width:none]
-              [&::-webkit-scrollbar]:hidden
+              md:hidden flex gap-4 overflow-x-auto -mx-2 px-6
+              [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
               snap-x snap-mandatory
             "
           >
             {paginated.map((r, i) => (
               <motion.div
-                key={r.id}
+                key={i}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-30px" }}
                 transition={{ delay: i * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => handleCardClick(i)}
                 className="
-                  flex-none w-[80vw] max-w-[320px]
-                  snap-start
+                  flex-none w-[80vw] max-w-[320px] snap-start cursor-pointer
                   bg-white rounded-2xl p-6 flex flex-col gap-4
-                  border border-navy/[0.07]
+                  border border-navy/[0.07] transition-all duration-300
                 "
               >
-                <ReviewCardInner r={r} />
+                <ReviewCardInner r={r} expanded={expandedIndex === i} />
               </motion.div>
             ))}
           </div>
@@ -138,23 +138,30 @@ export default function Reviews() {
           <div className="hidden md:grid md:grid-cols-3 gap-4">
             {paginated.map((r, i) => (
               <motion.div
-                key={r.id}
+                key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-30px" }}
                 transition={{ delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="bg-white rounded-2xl p-6 flex flex-col gap-4 border border-navy/[0.07] hover:border-navy/15 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300"
+                onClick={() => handleCardClick(i)}
+                className={`
+                  cursor-pointer bg-white rounded-2xl p-6 flex flex-col gap-4
+                  border transition-all duration-300
+                  ${expandedIndex === i
+                    ? "border-navy/20 shadow-md -translate-y-0.5"
+                    : "border-navy/[0.07] hover:border-navy/15 hover:-translate-y-0.5 hover:shadow-sm"
+                  }
+                `}
               >
-                <ReviewCardInner r={r} />
+                <ReviewCardInner r={r} expanded={expandedIndex === i} />
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Pagination breadcrumbs — only when more than PAGE_SIZE reviews */}
+        {/* Pagination */}
         {showPagination && (
           <div className="flex items-center justify-center gap-2 mt-10">
-            {/* Prev arrow */}
             <button
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 0}
@@ -166,23 +173,15 @@ export default function Reviews() {
               </svg>
             </button>
 
-            {/* Dots */}
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => handlePageChange(i)}
                 aria-label={`Page ${i + 1}`}
-                className={`
-                  rounded-full transition-all duration-300
-                  ${i === page
-                    ? "w-6 h-2 bg-navy"
-                    : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
-                  }
-                `}
+                className={`rounded-full transition-all duration-300 ${i === page ? "w-6 h-2 bg-navy" : "w-2 h-2 bg-navy/20 hover:bg-navy/40"}`}
               />
             ))}
 
-            {/* Next arrow */}
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={page === totalPages - 1}
@@ -207,7 +206,6 @@ export default function Reviews() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="grid md:grid-cols-2 gap-12 items-start"
         >
-          {/* Left copy */}
           <div>
             <h3 className="font-display text-2xl md:text-3xl font-semibold text-navy leading-tight mb-3">
               Worked with us?<br />Tell the world.
@@ -217,7 +215,6 @@ export default function Reviews() {
             </p>
           </div>
 
-          {/* Right form */}
           <AnimatePresence mode="wait">
             {submitted ? (
               <motion.div
@@ -305,11 +302,9 @@ export default function Reviews() {
   );
 }
 
-// Extracted card inner so it's shared between mobile/desktop layouts
-function ReviewCardInner({ r }: { r: Review }) {
+function ReviewCardInner({ r, expanded }: { r: Review; expanded: boolean }) {
   return (
     <>
-      {/* Stars */}
       <div className="flex gap-1">
         {[...Array(5)].map((_, j) => (
           <svg key={j} width="12" height="12" viewBox="0 0 24 24" fill="#4a8fe2" stroke="none">
@@ -318,8 +313,8 @@ function ReviewCardInner({ r }: { r: Review }) {
         ))}
       </div>
 
-      <p className="font-body text-sm text-navy/65 leading-relaxed flex-1">
-        "{r.review}"
+      <p className={`font-body text-sm text-navy/65 leading-relaxed flex-1 transition-all duration-300 ${expanded ? "" : "line-clamp-4"}`}>
+        {r.review}
       </p>
 
       <div className="h-px bg-navy/[0.06]" />
