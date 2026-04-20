@@ -20,21 +20,21 @@ const services = [
     number: "01",
     title: "Landing Page Design",
     description:
-      "We build landing pages that are clean, intentional, and designed with one goal in mind — getting your visitors to take action.",
+      "We build landing pages that are clean, intentional and designed so your visitors take action.",
     tags: ["Next.js", "Tailwind", "Framer Motion"],
   },
   {
     number: "02",
     title: "CV & Portfolio Optimization",
     description:
-      "Professional CVs and portfolio sites that position you for the opportunities you actually want — not just any opportunity.",
+      "Professional CVs and portfolio sites that position you for the best opportunities you desire.",
     tags: ["Design", "Copywriting", "Web"],
   },
   {
     number: "03",
     title: "Minimalist Graphics",
     description:
-      "Clean, intentional graphic design for brands that want to communicate clarity and confidence — not noise.",
+      "Clean, intentional graphic design for brands that want to communicate clarity and confidence.",
     tags: ["Brand", "Visual Identity", "Design"],
   },
   {
