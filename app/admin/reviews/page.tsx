@@ -17,6 +17,7 @@ export default function ReviewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<"All" | "Approved" | "Pending">("All");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   useEffect(() => { fetchReviews(); }, []);
 
@@ -38,15 +39,24 @@ export default function ReviewsPage() {
       .update({ approved: !current })
       .eq("id", id);
     if (error) setError(error.message);
-    else setReviews((prev) =>
-      prev.map((r) => r.id === id ? { ...r, approved: !current } : r)
-    );
+    else {
+      setReviews((prev) =>
+        prev.map((r) => r.id === id ? { ...r, approved: !current } : r)
+      );
+      // Keep dialog in sync
+      if (selectedReview?.id === id) {
+        setSelectedReview((prev) => prev ? { ...prev, approved: !current } : prev);
+      }
+    }
   }
 
   async function handleDelete(id: string) {
     const { error } = await supabase.from("reviews").delete().eq("id", id);
     if (error) setError(error.message);
-    else setReviews((prev) => prev.filter((r) => r.id !== id));
+    else {
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+      if (selectedReview?.id === id) setSelectedReview(null);
+    }
     setDeleteConfirm(null);
   }
 
@@ -91,111 +101,297 @@ export default function ReviewsPage() {
         ))}
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
-        <div className="grid grid-cols-[1fr_180px_100px_110px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
-          {["Review", "Author", "Status", "Actions"].map((h) => (
-            <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
-          ))}
+      {/* Loading */}
+      {loading ? (
+        <div className="flex items-center justify-center py-16 gap-2 text-navy/40 text-sm">
+          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          Loading reviews...
         </div>
+      ) : filtered.length === 0 ? (
+        <p className="text-center py-12 text-navy/35 text-sm">No reviews found.</p>
+      ) : (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
+            <div className="grid grid-cols-[1fr_180px_100px_110px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
+              {["Review", "Author", "Status", "Actions"].map((h) => (
+                <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
+              ))}
+            </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-16 gap-2 text-navy/40 text-sm">
-            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-            Loading reviews...
+            {filtered.map((r, i) => (
+              <div
+                key={r.id}
+                onClick={() => setSelectedReview(r)}
+                className={`grid grid-cols-[1fr_180px_100px_110px] px-6 py-4 items-start hover:bg-navy/[0.02] transition-colors cursor-pointer ${
+                  i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""
+                }`}
+              >
+                {/* Review text */}
+                <div className="pr-6">
+                  <p className="text-sm text-navy/70 leading-relaxed line-clamp-2">"{r.review}"</p>
+                  <p className="text-[11px] text-navy/35 mt-1.5">
+                    {new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </p>
+                </div>
+
+                {/* Author */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center shrink-0">
+                    <span className="text-white text-[12px] font-semibold">{r.name.charAt(0)}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-navy truncate">{r.name}</p>
+                    <p className="text-[11px] text-navy/40 truncate">{r.role}</p>
+                  </div>
+                </div>
+
+                {/* Status badge */}
+                <div>
+                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                    r.approved ? "bg-green-100 text-green-600" : "bg-amber-50 text-amber-500"
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${r.approved ? "bg-green-500" : "bg-amber-400"}`} />
+                    {r.approved ? "Approved" : "Pending"}
+                  </span>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => handleApprove(r.id, r.approved)}
+                    title={r.approved ? "Unapprove" : "Approve"}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                      r.approved
+                        ? "bg-navy/[0.06] hover:bg-navy/[0.12] text-navy/50"
+                        : "bg-green-50 hover:bg-green-100 text-green-500"
+                    }`}
+                  >
+                    {r.approved ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </button>
+
+                  {deleteConfirm === r.id ? (
+                    <button
+                      onClick={() => handleDelete(r.id)}
+                      className="h-8 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold"
+                    >
+                      Confirm
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setDeleteConfirm(r.id)}
+                      className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        ) : filtered.length === 0 ? (
-          <p className="text-center py-12 text-navy/35 text-sm">No reviews found.</p>
-        ) : (
-          filtered.map((r, i) => (
-            <div
-              key={r.id}
-              className={`grid grid-cols-[1fr_180px_100px_110px] px-6 py-4 items-start hover:bg-navy/[0.02] transition-colors ${
-                i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""
-              }`}
-            >
-              {/* Review text */}
-              <div className="pr-6">
-                <p className="text-sm text-navy/70 leading-relaxed line-clamp-2">"{r.review}"</p>
-                <p className="text-[11px] text-navy/35 mt-1.5">
-                  {new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </p>
-              </div>
 
-              {/* Author */}
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center shrink-0">
-                  <span className="text-white text-[12px] font-semibold">{r.name.charAt(0)}</span>
+          {/* Mobile Cards */}
+          <div className="md:hidden flex flex-col gap-3">
+            {filtered.map((r) => (
+              <div
+                key={r.id}
+                onClick={() => setSelectedReview(r)}
+                className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm px-4 py-4 cursor-pointer active:scale-[0.99] transition-transform"
+              >
+                {/* Top row: avatar + name + status */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-full bg-navy flex items-center justify-center shrink-0">
+                      <span className="text-white text-[13px] font-semibold">{r.name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-semibold text-navy leading-tight">{r.name}</p>
+                      <p className="text-[11px] text-navy/40">{r.role}</p>
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                    r.approved ? "bg-green-100 text-green-600" : "bg-amber-50 text-amber-500"
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${r.approved ? "bg-green-500" : "bg-amber-400"}`} />
+                    {r.approved ? "Approved" : "Pending"}
+                  </span>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-[13px] font-semibold text-navy truncate">{r.name}</p>
-                  <p className="text-[11px] text-navy/40 truncate">{r.role}</p>
+
+                {/* Review text */}
+                <p className="text-sm text-navy/65 leading-relaxed line-clamp-3 mb-3">"{r.review}"</p>
+
+                {/* Bottom row: date + actions */}
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] text-navy/35">
+                    {new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </p>
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => handleApprove(r.id, r.approved)}
+                      title={r.approved ? "Unapprove" : "Approve"}
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                        r.approved
+                          ? "bg-navy/[0.06] hover:bg-navy/[0.12] text-navy/50"
+                          : "bg-green-50 hover:bg-green-100 text-green-500"
+                      }`}
+                    >
+                      {r.approved ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {deleteConfirm === r.id ? (
+                      <button
+                        onClick={() => handleDelete(r.id)}
+                        className="h-8 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold"
+                      >
+                        Confirm
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setDeleteConfirm(r.id)}
+                        className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+        </>
+      )}
 
-              {/* Status badge */}
-              <div>
-                <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-                  r.approved
-                    ? "bg-green-100 text-green-600"
-                    : "bg-amber-50 text-amber-500"
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${r.approved ? "bg-green-500" : "bg-amber-400"}`} />
-                  {r.approved ? "Approved" : "Pending"}
-                </span>
+      {/* Review Dialog */}
+      {selectedReview && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+          onClick={() => { setSelectedReview(null); setDeleteConfirm(null); }}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-navy/30 backdrop-blur-[2px]" />
+
+          {/* Panel */}
+          <div
+            className="relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag handle (mobile) */}
+            <div className="sm:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-navy/10" />
+            </div>
+
+            {/* Dialog header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-navy/[0.07]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-navy flex items-center justify-center shrink-0">
+                  <span className="text-white text-[14px] font-semibold">{selectedReview.name.charAt(0)}</span>
+                </div>
+                <div>
+                  <p className="text-[14px] font-semibold text-navy">{selectedReview.name}</p>
+                  <p className="text-[12px] text-navy/40">{selectedReview.role}</p>
+                </div>
               </div>
+              <button
+                onClick={() => { setSelectedReview(null); setDeleteConfirm(null); }}
+                className="w-8 h-8 rounded-lg bg-navy/[0.05] hover:bg-navy/[0.1] text-navy/40 flex items-center justify-center transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
 
-              {/* Actions */}
+            {/* Full review text */}
+            <div className="px-6 py-5">
+              <p className="text-[13px] text-navy/60 leading-relaxed">"{selectedReview.review}"</p>
+              <p className="text-[11px] text-navy/30 mt-3">
+                {new Date(selectedReview.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+              </p>
+            </div>
+
+            {/* Dialog footer: status + actions */}
+            <div className="flex items-center justify-between px-6 py-4 border-t border-navy/[0.07] bg-navy/[0.02]">
+              <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                selectedReview.approved ? "bg-green-100 text-green-600" : "bg-amber-50 text-amber-500"
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${selectedReview.approved ? "bg-green-500" : "bg-amber-400"}`} />
+                {selectedReview.approved ? "Approved" : "Pending"}
+              </span>
+
               <div className="flex items-center gap-2">
-                {/* Approve / Unapprove toggle */}
                 <button
-                  onClick={() => handleApprove(r.id, r.approved)}
-                  title={r.approved ? "Unapprove" : "Approve"}
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                    r.approved
+                  onClick={() => handleApprove(selectedReview.id, selectedReview.approved)}
+                  className={`flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-semibold transition-colors ${
+                    selectedReview.approved
                       ? "bg-navy/[0.06] hover:bg-navy/[0.12] text-navy/50"
-                      : "bg-green-50 hover:bg-green-100 text-green-500"
+                      : "bg-green-50 hover:bg-green-100 text-green-600"
                   }`}
                 >
-                  {r.approved ? (
-                    // X / unapprove
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                  {selectedReview.approved ? (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                      Unapprove
+                    </>
                   ) : (
-                    // Checkmark / approve
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Approve
+                    </>
                   )}
                 </button>
 
-                {/* Delete */}
-                {deleteConfirm === r.id ? (
+                {deleteConfirm === selectedReview.id ? (
                   <button
-                    onClick={() => handleDelete(r.id)}
-                    className="h-8 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold"
+                    onClick={() => handleDelete(selectedReview.id)}
+                    className="h-8 px-3 rounded-lg bg-red-500 text-white text-[12px] font-semibold"
                   >
-                    Confirm
+                    Confirm delete
                   </button>
                 ) : (
                   <button
-                    onClick={() => setDeleteConfirm(r.id)}
-                    className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors"
+                    onClick={() => setDeleteConfirm(selectedReview.id)}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 text-[12px] font-semibold transition-colors"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="3 6 5 6 21 6" />
                       <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
                     </svg>
+                    Delete
                   </button>
                 )}
               </div>
             </div>
-          ))
-        )}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
