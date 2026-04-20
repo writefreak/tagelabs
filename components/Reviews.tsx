@@ -22,7 +22,7 @@ const fallback: Review[] = [
   { id: "9", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
 ];
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 3;
 const emptyForm = { name: "", role: "", review: "" };
 
 const inputClass = "w-full bg-navy/[0.03] border border-navy/10 rounded-xl px-4 py-3 text-navy text-sm font-body placeholder:text-navy/30 focus:outline-none focus:border-blue transition-colors";
@@ -175,7 +175,9 @@ export default function Reviews() {
                 key={i}
                 onClick={() => handlePageChange(i)}
                 aria-label={`Page ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${i === page ? "w-6 h-2 bg-navy" : "w-2 h-2 bg-navy/20 hover:bg-navy/40"}`}
+                className={`rounded-full transition-all duration-300 ${
+                  i === page ? "w-6 h-2 bg-navy" : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+                }`}
               />
             ))}
 
@@ -300,7 +302,6 @@ export default function Reviews() {
       <AnimatePresence>
         {selectedReview && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
@@ -311,7 +312,6 @@ export default function Reviews() {
               className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-50"
             />
 
-            {/* Dialog */}
             <motion.div
               key="dialog"
               initial={{ opacity: 0, scale: 0.95, y: 16 }}
@@ -321,7 +321,6 @@ export default function Reviews() {
               className="fixed inset-0 z-50 flex items-center justify-center px-6 pointer-events-none"
             >
               <div className="bg-white rounded-2xl p-8 w-full max-w-md flex flex-col gap-5 pointer-events-auto shadow-xl">
-                {/* Close */}
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, j) => (
@@ -340,14 +339,12 @@ export default function Reviews() {
                   </button>
                 </div>
 
-                {/* Review text */}
                 <p className="font-body text-sm text-navy/70 leading-relaxed">
                   {selectedReview.review}
                 </p>
 
                 <div className="h-px bg-navy/[0.06]" />
 
-                {/* Author */}
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-navy flex items-center justify-center shrink-0">
                     <span className="text-white text-sm font-semibold font-display">{selectedReview.name.charAt(0)}</span>
