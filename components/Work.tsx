@@ -12,10 +12,20 @@ type Project = {
   description: string;
   tags: string[];
   live_url: string;
+  image_url?: string;
   status: "Published" | "Draft";
 };
 
 const accents = ["#4a8fe2", "#112369", "#4a8fe2", "#112369", "#4a8fe2"];
+
+const FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=600&q=80",
+  "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&q=80",
+  "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&q=80",
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80",
+  "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=80",
+  "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=600&q=80",
+];
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 32 },
@@ -37,24 +47,138 @@ function toAbsoluteUrl(url: string) {
 
 const PAGE_SIZE = 3;
 
+// ── Mobile card component ──────────────────────────────────────────────────
+function MobileCard({
+  project,
+  index,
+  accent,
+  imageSrc,
+}: {
+  project: Project;
+  index: number;
+  accent: string;
+  imageSrc: string;
+}) {
+  const inner = (
+    <div className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col group">
+      {/* Image */}
+      <div className="relative overflow-hidden h-44 w-full">
+        <img
+          src={imageSrc}
+          alt={project.title}
+          className="w-full h-full object-cover"
+        />
+        <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
+          {project.category}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-5">
+        <h3 className="font-display line-clamp-1 text-lg font-semibold text-navy mb-2 leading-snug">
+          {project.title}
+        </h3>
+        <p className="font-body text-navy/55 text-[12px] line-clamp-2 leading-relaxed flex-1">
+          {project.description}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mt-4">
+          {project.tags.map((t) => (
+            <span
+              key={t}
+              className="text-[11px] font-medium border border-navy/15 text-navy/50 px-3 py-1 rounded-full"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+
+        {/* CHANGED: always show footer — "View project" for website cards, "Crafted & delivered" for others */}
+        <div className="flex items-center gap-1 mt-4 pt-4 border-t border-navy/10 text-xs text-navy/40">
+          {project.live_url ? (
+            <>
+              View project
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </>
+          ) : (
+            "Crafted & delivered"
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  return project.live_url ? (
+    <a href={toAbsoluteUrl(project.live_url)} target="_blank" rel="noopener noreferrer">
+      {inner}
+    </a>
+  ) : (
+    <div>{inner}</div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
 export default function Work() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Mobile scroll
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+  const [mobileScrollPage, setMobileScrollPage] = useState(0);
+
   useEffect(() => {
     async function fetchProjects() {
       const { data } = await supabase
         .from("projects")
-        .select("id, title, category, description, tags, live_url, status")
+        .select("id, title, category, description, tags, live_url, image_url, status")
         .eq("status", "Published")
         .order("created_at", { ascending: false });
-      setProjects(data ?? []);
+      const sorted = (data ?? []).sort((a, b) => {
+        const aHasUrl = a.live_url ? 0 : 1;
+        const bHasUrl = b.live_url ? 0 : 1;
+        return aHasUrl - bHasUrl;
+      });
+      setProjects(sorted);
       setLoading(false);
     }
     fetchProjects();
   }, []);
+
+  // Track active dot on mobile as user scrolls
+  useEffect(() => {
+    const el = mobileScrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cardWidth = el.scrollWidth / (projects.length || 1);
+      const index = Math.round(el.scrollLeft / cardWidth);
+      setMobileScrollPage(index);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [projects.length]);
+
+  function scrollMobileTo(index: number) {
+    const el = mobileScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / projects.length;
+    el.scrollTo({ left: cardWidth * index, behavior: "smooth" });
+    setMobileScrollPage(index);
+  }
 
   const totalPages = Math.ceil(projects.length / PAGE_SIZE);
   const paginated = projects.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
@@ -87,14 +211,15 @@ export default function Work() {
         {loading && (
           <div className="flex flex-col gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl p-8 md:p-12 animate-pulse">
-                <div className="flex items-center gap-8">
-                  <div className="hidden md:block w-16 h-16 rounded-full bg-navy/10 shrink-0" />
-                  <div className="flex-1 flex flex-col gap-3">
-                    <div className="h-3 w-24 bg-navy/10 rounded-full" />
-                    <div className="h-5 w-48 bg-navy/10 rounded-full" />
-                    <div className="h-3 w-full max-w-md bg-navy/10 rounded-full" />
-                  </div>
+              <div
+                key={i}
+                className="bg-white rounded-2xl overflow-hidden border animate-pulse flex"
+              >
+                <div className="w-48 md:w-56 bg-navy/10 shrink-0" />
+                <div className="flex-1 p-8 md:p-12 flex flex-col gap-3 justify-center">
+                  <div className="h-3 w-24 bg-navy/10 rounded-full" />
+                  <div className="h-5 w-48 bg-navy/10 rounded-full" />
+                  <div className="h-3 w-full max-w-md bg-navy/10 rounded-full" />
                 </div>
               </div>
             ))}
@@ -121,13 +246,62 @@ export default function Work() {
           </motion.div>
         )}
 
-        {/* Projects list */}
         {!loading && projects.length > 0 && (
           <>
-            <div ref={scrollRef} className="flex flex-col gap-6">
+            {/* ── MOBILE: horizontal snap scroll ── */}
+            <div className="sm:hidden">
+              <div
+                ref={mobileScrollRef}
+                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {projects.map((project, i) => {
+                  const accent = accents[i % accents.length];
+                  const imageSrc =
+                    project.image_url || FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+                  return (
+                    <div
+                      key={project.id}
+                      className="shrink-0 snap-center"
+                      style={{ width: "78vw" }}
+                    >
+                      <MobileCard
+                        project={project}
+                        index={i}
+                        accent={accent}
+                        imageSrc={imageSrc}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              {projects.length > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-5">
+                  {projects.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => scrollMobileTo(i)}
+                      aria-label={`Go to project ${i + 1}`}
+                      className={`rounded-full transition-all duration-300 ${
+                        i === mobileScrollPage
+                          ? "w-5 h-1.5 bg-navy"
+                          : "w-1.5 h-1.5 bg-navy/20"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ── DESKTOP: paginated grid (unchanged) ── */}
+            <div ref={scrollRef} className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {paginated.map((project, i) => {
                 const globalIndex = page * PAGE_SIZE + i;
                 const accent = accents[globalIndex % accents.length];
+                const imageSrc =
+                  project.image_url ?? FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
+
                 const inner = (
                   <motion.div
                     custom={i}
@@ -135,39 +309,64 @@ export default function Work() {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: false, margin: "-60px" }}
-                    className="bg-white border rounded-2xl p-8 md:p-12 flex flex-col md:flex-row md:items-center gap-8 group hover:shadow-md transition-shadow duration-300"
+                    className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 hover:shadow-md transition-all duration-300"
                   >
-                    {/* Number */}
-                    <div
-                      className="hidden md:flex items-center justify-center w-16 h-16 rounded-full text-white font-display font-semibold text-lg shrink-0"
-                      style={{ background: accent }}
-                    >
-                      {String(globalIndex + 1).padStart(2, "0")}
+                    {/* Image */}
+                    <div className="relative overflow-hidden h-48 w-full">
+                      <img
+                        src={imageSrc}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+                      />
+                      <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
+                        {project.category}
+                      </span>
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1">
-                      <p className="font-body text-xs text-blue tracking-widest uppercase mb-2">
-                        {project.category}
-                      </p>
-                      <h3 className="font-display text-2xl font-semibold text-navy mb-3">
+                    {/* Body */}
+                    <div className="flex flex-col flex-1 p-5">
+                      <h3 className="font-display line-clamp-1 text-lg font-semibold text-navy mb-2 leading-snug">
                         {project.title}
                       </h3>
-                      <p className="font-body text-navy/60 text-sm leading-relaxed max-w-lg">
+                      <p className="font-body text-navy/55 text-[12px] line-clamp-2 leading-relaxed flex-1">
                         {project.description}
                       </p>
-                    </div>
 
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 md:justify-end">
-                      {project.tags.map((t) => (
-                        <span
-                          key={t}
-                          className="text-xs font-medium border border-navy/15 text-navy/60 px-3 py-1 rounded-full"
-                        >
-                          {t}
-                        </span>
-                      ))}
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {project.tags.map((t) => (
+                          <span
+                            key={t}
+                            className="text-[11px] font-medium border border-navy/15 text-navy/50 px-3 py-1 rounded-full"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* CHANGED: always show footer — "View project" for website cards, "Crafted & delivered" for others */}
+                      <div className="flex items-center gap-1 mt-4 pt-4 border-t border-navy/10 text-xs text-navy/40 group-hover:text-navy/60 transition-colors">
+                        {project.live_url ? (
+                          <>
+                            View project
+                            <svg
+                              width="11"
+                              height="11"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <line x1="7" y1="17" x2="17" y2="7" />
+                              <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                          </>
+                        ) : (
+                          "Crafted & delivered"
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -187,22 +386,29 @@ export default function Work() {
               })}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination (desktop only) */}
             {showPagination && (
-              <div className="flex items-center justify-center gap-2 mt-10">
-                {/* Prev arrow */}
+              <div className="hidden sm:flex items-center justify-center gap-2 mt-10">
                 <button
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 0}
                   aria-label="Previous page"
                   className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="15 18 9 12 15 6" />
                   </svg>
                 </button>
 
-                {/* Dots */}
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <button
                     key={i}
@@ -214,14 +420,22 @@ export default function Work() {
                   />
                 ))}
 
-                {/* Next arrow */}
                 <button
                   onClick={() => handlePageChange(page + 1)}
                   disabled={page === totalPages - 1}
                   aria-label="Next page"
                   className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </button>

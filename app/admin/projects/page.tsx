@@ -40,6 +40,8 @@ export default function ProjectsPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filter, setFilter] = useState<"All" | "Published" | "Draft">("All");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => { fetchProjects(); }, []);
 
@@ -60,6 +62,28 @@ export default function ProjectsPage() {
     setSaving(true);
     setError(null);
 
+    let image_url = form.image_url;
+
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop();
+      const fileName = `${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("project-images")
+        .upload(fileName, imageFile, { upsert: true });
+
+      if (uploadError) {
+        setError(uploadError.message);
+        setSaving(false);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("project-images")
+        .getPublicUrl(fileName);
+
+      image_url = urlData.publicUrl;
+    }
+
     const tagArray = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
 
     const payload = {
@@ -68,7 +92,7 @@ export default function ProjectsPage() {
       description: form.description,
       tags: tagArray,
       live_url: form.live_url,
-      image_url: form.image_url,
+      image_url,
       status: form.status,
     };
 
@@ -82,6 +106,8 @@ export default function ProjectsPage() {
 
     setSaving(false);
     setForm(emptyForm);
+    setImageFile(null);
+    setImagePreview(null);
     setShowForm(false);
     setEditId(null);
     fetchProjects();
@@ -92,6 +118,7 @@ export default function ProjectsPage() {
       title: p.title, category: p.category, description: p.description,
       tags: p.tags.join(", "), live_url: p.live_url, image_url: p.image_url, status: p.status,
     });
+    setImagePreview(p.image_url || null);
     setEditId(p.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -104,7 +131,27 @@ export default function ProjectsPage() {
     setDeleteConfirm(null);
   }
 
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    setImageFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  }
+
+  function clearImage() {
+    setImageFile(null);
+    setImagePreview(null);
+    setForm((f) => ({ ...f, image_url: "" }));
+  }
+
   const filtered = projects.filter((p) => filter === "All" || p.status === filter);
+  const previewTags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+  const hasPreview = form.title || form.category || imagePreview;
 
   return (
     <div className="font-body max-w-[1100px]">
@@ -118,7 +165,7 @@ export default function ProjectsPage() {
           </p>
         </div>
         <button
-          onClick={() => { setShowForm(!showForm); setEditId(null); setForm(emptyForm); }}
+          onClick={() => { setShowForm(!showForm); setEditId(null); setForm(emptyForm); setImageFile(null); setImagePreview(null); }}
           className="flex items-center justify-center gap-2 bg-navy hover:bg-blue text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors duration-200 w-full sm:w-auto"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -138,73 +185,181 @@ export default function ProjectsPage() {
           <h3 className="font-display font-semibold text-lg text-navy mb-6">
             {editId ? "Edit Project" : "Upload New Project"}
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-            {/* Title */}
-            <div className="col-span-1 sm:col-span-2">
-              <label className={labelClass}>Project Title *</label>
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. BrandKit Agency Site" className={inputClass} />
-            </div>
+          {/* Form + Preview side by side on large screens */}
+          <div className="flex flex-col lg:flex-row gap-7">
 
-            {/* Category */}
-            <div>
-              <label className={labelClass}>Category *</label>
-              {/* Mobile: pills */}
-              <div className="flex flex-wrap gap-2 sm:hidden">
-                {categories.map((c) => (
-                  <button key={c} type="button" onClick={() => setForm({ ...form, category: c })} className={pillClass(form.category === c)}>
-                    {c}
-                  </button>
-                ))}
+            {/* Left: fields */}
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              {/* Title */}
+              <div className="col-span-1 sm:col-span-2">
+                <label className={labelClass}>Project Title *</label>
+                <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. BrandKit Agency Site" className={inputClass} />
               </div>
-              {/* Desktop: select */}
-              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={`${inputClass} hidden sm:block`}>
-                <option value="">Select category</option>
-                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
 
-            {/* Status */}
-            <div>
-              <label className={labelClass}>Status</label>
-              {/* Mobile: pills */}
-              <div className="flex gap-2 sm:hidden">
-                {(["Draft", "Published"] as const).map((s) => (
-                  <button key={s} type="button" onClick={() => setForm({ ...form, status: s })} className={pillClass(form.status === s)}>
-                    {s}
-                  </button>
-                ))}
+              {/* Category */}
+              <div>
+                <label className={labelClass}>Category *</label>
+                <div className="flex flex-wrap gap-2 sm:hidden">
+                  {categories.map((c) => (
+                    <button key={c} type="button" onClick={() => setForm({ ...form, category: c })} className={pillClass(form.category === c)}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+                <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={`${inputClass} hidden sm:block`}>
+                  <option value="">Select category</option>
+                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
-              {/* Desktop: select */}
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as "Published" | "Draft" })} className={`${inputClass} hidden sm:block`}>
-                <option value="Draft">Draft</option>
-                <option value="Published">Published</option>
-              </select>
+
+              {/* Status */}
+              <div>
+                <label className={labelClass}>Status</label>
+                <div className="flex gap-2 sm:hidden">
+                  {(["Draft", "Published"] as const).map((s) => (
+                    <button key={s} type="button" onClick={() => setForm({ ...form, status: s })} className={pillClass(form.status === s)}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+                <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as "Published" | "Draft" })} className={`${inputClass} hidden sm:block`}>
+                  <option value="Draft">Draft</option>
+                  <option value="Published">Published</option>
+                </select>
+              </div>
+
+              {/* Description */}
+              <div className="col-span-1 sm:col-span-2">
+                <label className={labelClass}>Description</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description..." rows={3} className={`${inputClass} resize-y`} />
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label className={labelClass}>Tags (comma-separated)</label>
+                <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="Next.js, Tailwind, Framer Motion" className={inputClass} />
+              </div>
+
+              {/* Live URL */}
+              <div>
+                <label className={labelClass}>Live URL</label>
+                <input value={form.live_url} onChange={(e) => setForm({ ...form, live_url: e.target.value })} placeholder="https://yourproject.com" className={inputClass} />
+              </div>
+
+              {/* Cover Image Upload */}
+              <div className="col-span-1 sm:col-span-2">
+                <label className={labelClass}>Cover Image</label>
+                {!imagePreview ? (
+                  <label className="flex flex-col items-center justify-center w-full h-36 rounded-[10px] border-2 border-dashed border-navy/20 bg-offwhite hover:border-blue hover:bg-blue/[0.03] transition-all duration-200 cursor-pointer group">
+                    <div className="flex flex-col items-center gap-2 pointer-events-none">
+                      <div className="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center group-hover:bg-blue/20 transition-colors">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4a8fe2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="17 8 12 3 7 8" />
+                          <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                      </div>
+                      <p className="text-sm font-medium text-navy/50 group-hover:text-blue transition-colors">
+                        Click to upload image
+                      </p>
+                      <p className="text-[11px] text-navy/30">PNG, JPG, WEBP up to 10MB</p>
+                    </div>
+                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  </label>
+                ) : (
+                  <div className="relative w-full h-36 rounded-[10px] overflow-hidden border border-navy/10 group">
+                    <img src={imagePreview} alt="Cover preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-navy/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-navy text-xs font-semibold cursor-pointer hover:bg-offwhite transition-colors">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        Replace
+                        <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                      </label>
+                      <button type="button" onClick={clearImage} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
+                        </svg>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
             </div>
 
-            {/* Description */}
-            <div className="col-span-1 sm:col-span-2">
-              <label className={labelClass}>Description</label>
-              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description..." rows={3} className={`${inputClass} resize-y`} />
+            {/* Right: live card preview */}
+            <div className="lg:w-72 shrink-0">
+              <p className={labelClass}>Card Preview</p>
+              {hasPreview ? (
+                <div className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col shadow-sm">
+                  {/* Image */}
+                  <div className="relative h-40 w-full bg-navy/5 overflow-hidden">
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="1.5" opacity="0.2">
+                          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                      </div>
+                    )}
+                    {form.category && (
+                      <span className="absolute top-2.5 left-2.5 text-[10px] font-medium uppercase tracking-widest px-2.5 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
+                        {form.category}
+                      </span>
+                    )}
+                    <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-semibold bg-[#4a8fe2]">
+                      01
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="flex flex-col flex-1 p-4">
+                    <h3 className="font-display text-base font-semibold text-navy mb-1.5 leading-snug">
+                      {form.title || <span className="text-navy/25">Project title</span>}
+                    </h3>
+                    <p className="font-body text-navy/50 text-xs leading-relaxed flex-1">
+                      {form.description || <span className="text-navy/25">Your description will appear here...</span>}
+                    </p>
+                    {previewTags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {previewTags.slice(0, 4).map((t) => (
+                          <span key={t} className="text-[10px] font-medium border border-navy/15 text-navy/50 px-2.5 py-0.5 rounded-full">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {form.live_url && (
+                      <div className="flex items-center gap-1 mt-3 pt-3 border-t border-navy/10 text-[11px] text-navy/40">
+                        View project
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="h-64 rounded-2xl border-2 border-dashed border-navy/10 flex flex-col items-center justify-center gap-2 text-center px-4">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="1.5" opacity="0.2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <p className="text-[12px] text-navy/25 leading-relaxed">
+                    Fill in the form to<br />see a card preview
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Tags */}
-            <div>
-              <label className={labelClass}>Tags (comma-separated)</label>
-              <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="Next.js, Tailwind, Framer Motion" className={inputClass} />
-            </div>
-
-            {/* Live URL */}
-            <div>
-              <label className={labelClass}>Live URL</label>
-              <input value={form.live_url} onChange={(e) => setForm({ ...form, live_url: e.target.value })} placeholder="https://yourproject.com" className={inputClass} />
-            </div>
-
-            {/* Image URL */}
-            <div className="col-span-1 sm:col-span-2">
-              <label className={labelClass}>Cover Image URL</label>
-              <input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." className={inputClass} />
-            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
@@ -216,7 +371,7 @@ export default function ProjectsPage() {
               {saving ? "Saving..." : editId ? "Save Changes" : "Upload Project"}
             </button>
             <button
-              onClick={() => { setShowForm(false); setEditId(null); setForm(emptyForm); }}
+              onClick={() => { setShowForm(false); setEditId(null); setForm(emptyForm); setImageFile(null); setImagePreview(null); }}
               className="border border-navy/15 text-navy/50 text-sm px-5 py-2.5 rounded-xl hover:border-navy/30 transition-colors w-full sm:w-auto"
             >
               Cancel
@@ -242,7 +397,6 @@ export default function ProjectsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
-        {/* Desktop header */}
         <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
           {["Project", "Category", "Date", "Status", "Actions"].map((h) => (
             <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
