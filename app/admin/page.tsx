@@ -10,18 +10,24 @@ export default function AdminDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [userCount, setUserCount] = useState(0);
+  // CHANGED: added siteVisits state
+  const [siteVisits, setSiteVisits] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAll() {
-      const [{ data: p }, { data: c }, { count }] = await Promise.all([
+      // CHANGED: added page_visits count to Promise.all
+      const [{ data: p }, { data: c }, { count: users }, { count: visits }] = await Promise.all([
         supabase.from("projects").select("id, title, category, status, created_at").order("created_at", { ascending: false }),
         supabase.from("contacts").select("id, name, email, subject, read, created_at").order("created_at", { ascending: false }),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
+        supabase.from("page_visits").select("*", { count: "exact", head: true }),
       ]);
       setProjects(p ?? []);
       setContacts(c ?? []);
-      setUserCount(count ?? 0);
+      setUserCount(users ?? 0);
+      // CHANGED: set site visits count
+      setSiteVisits(visits ?? 0);
       setLoading(false);
     }
     fetchAll();
@@ -37,11 +43,12 @@ export default function AdminDashboard() {
       iconBg: "bg-blue/10", iconColor: "text-blue",
       icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
     },
+    // CHANGED: replaced "Contact Submissions" with "Site Visits"
     {
-      label: "Contact Submissions", value: contacts.length,
-      change: `${unread} unread`, href: "/admin/contacts",
+      label: "Site Visits", value: siteVisits,
+      change: "All time visits", href: "/admin",
       iconBg: "bg-navy/10", iconColor: "text-navy",
-      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>,
+      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
     },
     {
       label: "Unread Messages", value: unread,
@@ -154,5 +161,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
-

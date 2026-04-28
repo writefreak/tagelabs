@@ -94,7 +94,7 @@ function MobileCard({
           ))}
         </div>
 
-        {/* CHANGED: always show footer — "View project" for website cards, "Crafted & delivered" for others */}
+        {/* CHANGED: always show footer — arrow link for website cards, "Delivered." for others */}
         <div className="flex items-center gap-1 mt-4 pt-4 border-t border-navy/10 text-xs text-navy/40">
           {project.live_url ? (
             <>
@@ -114,7 +114,7 @@ function MobileCard({
               </svg>
             </>
           ) : (
-            "Crafted & delivered"
+            "Crafted and Delivered."
           )}
         </div>
       </div>
@@ -147,13 +147,9 @@ export default function Work() {
         .from("projects")
         .select("id, title, category, description, tags, live_url, image_url, status")
         .eq("status", "Published")
-        .order("created_at", { ascending: false });
-      const sorted = (data ?? []).sort((a, b) => {
-        const aHasUrl = a.live_url ? 0 : 1;
-        const bHasUrl = b.live_url ? 0 : 1;
-        return aHasUrl - bHasUrl;
-      });
-      setProjects(sorted);
+        // CHANGED: fetch by order_index so drag order from admin is respected
+        .order("order_index", { ascending: true });
+      setProjects(data ?? []);
       setLoading(false);
     }
     fetchProjects();
@@ -344,7 +340,7 @@ export default function Work() {
                         ))}
                       </div>
 
-                      {/* CHANGED: always show footer — "View project" for website cards, "Crafted & delivered" for others */}
+                      {/* CHANGED: always show footer — arrow link for website cards, "Delivered." for others */}
                       <div className="flex items-center gap-1 mt-4 pt-4 border-t border-navy/10 text-xs text-navy/40 group-hover:text-navy/60 transition-colors">
                         {project.live_url ? (
                           <>
@@ -364,7 +360,7 @@ export default function Work() {
                             </svg>
                           </>
                         ) : (
-                          "Crafted & delivered"
+                          "Crafted and Delivered"
                         )}
                       </div>
                     </div>
@@ -395,16 +391,7 @@ export default function Work() {
                   aria-label="Previous page"
                   className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6" />
                   </svg>
                 </button>
@@ -426,16 +413,7 @@ export default function Work() {
                   aria-label="Next page"
                   className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </button>

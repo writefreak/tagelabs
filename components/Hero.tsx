@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { saveAs } from "file-saver";
+import { supabase } from "@/app/lib/supabase";
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -8,6 +9,9 @@ export default function Hero() {
   const blobLeftRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const link = "contact"
+  useEffect(() => {
+  supabase.from("page_visits").insert({});
+}, []);
 
   const handleDownload = async () => {
     saveAs("/TageLabs BrandStory.pdf", "TageLabs-Brand-Story.pdf");

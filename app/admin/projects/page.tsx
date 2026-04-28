@@ -1,6 +1,6 @@
 "use client";
 import { supabase } from "@/app/lib/supabase";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type Project = {
   id: string;
@@ -12,6 +12,7 @@ type Project = {
   image_url: string;
   status: "Published" | "Draft";
   created_at: string;
+  order_index: number;
 };
 
 const categories = ["Landing Page", "Web App", "Frontend Dev", "Design", "Portfolio", "E-commerce"];
@@ -43,6 +44,12 @@ export default function ProjectsPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  // ── Drag state ────────────────────────────────────────────────────────────
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [reordering, setReordering] = useState(false);
+  const dragNode = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => { fetchProjects(); }, []);
 
   async function fetchProjects() {
@@ -51,7 +58,8 @@ export default function ProjectsPage() {
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      .order("created_at", { ascending: false });
+      // CHANGED: order by order_index so drag order is respected
+      .order("order_index", { ascending: true });
     if (error) setError(error.message);
     else setProjects(data ?? []);
     setLoading(false);
@@ -149,6 +157,57 @@ export default function ProjectsPage() {
     setForm((f) => ({ ...f, image_url: "" }));
   }
 
+  // ── Drag handlers ─────────────────────────────────────────────────────────
+
+  function handleDragStart(e: React.DragEvent<HTMLDivElement>, index: number) {
+    setDragIndex(index);
+    dragNode.current = e.currentTarget;
+    // Slight delay so the ghost image renders before we apply opacity
+    setTimeout(() => {
+      if (dragNode.current) dragNode.current.style.opacity = "0.4";
+    }, 0);
+  }
+
+  function handleDragEnter(index: number) {
+    if (dragIndex === null || dragIndex === index) return;
+    setDragOverIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault(); // required to allow drop
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>, dropIndex: number) {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === dropIndex) return;
+
+    // Reorder locally first for instant feedback
+    const reordered = [...projects];
+    const [moved] = reordered.splice(dragIndex, 1);
+    reordered.splice(dropIndex, 0, moved);
+    setProjects(reordered);
+
+    // Persist new order to Supabase
+    saveOrder(reordered);
+  }
+
+  function handleDragEnd() {
+    if (dragNode.current) dragNode.current.style.opacity = "1";
+    dragNode.current = null;
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }
+
+  // CHANGED: writes order_index for every project so homepage fetch reflects new order
+  async function saveOrder(ordered: Project[]) {
+    setReordering(true);
+    const updates = ordered.map((p, i) =>
+      supabase.from("projects").update({ order_index: i }).eq("id", p.id)
+    );
+    await Promise.all(updates);
+    setReordering(false);
+  }
+
   const filtered = projects.filter((p) => filter === "All" || p.status === filter);
   const previewTags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
   const hasPreview = form.title || form.category || imagePreview;
@@ -186,19 +245,14 @@ export default function ProjectsPage() {
             {editId ? "Edit Project" : "Upload New Project"}
           </h3>
 
-          {/* Form + Preview side by side on large screens */}
           <div className="flex flex-col lg:flex-row gap-7">
-
-            {/* Left: fields */}
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-              {/* Title */}
               <div className="col-span-1 sm:col-span-2">
                 <label className={labelClass}>Project Title *</label>
                 <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. BrandKit Agency Site" className={inputClass} />
               </div>
 
-              {/* Category */}
               <div>
                 <label className={labelClass}>Category *</label>
                 <div className="flex flex-wrap gap-2 sm:hidden">
@@ -214,7 +268,6 @@ export default function ProjectsPage() {
                 </select>
               </div>
 
-              {/* Status */}
               <div>
                 <label className={labelClass}>Status</label>
                 <div className="flex gap-2 sm:hidden">
@@ -230,25 +283,21 @@ export default function ProjectsPage() {
                 </select>
               </div>
 
-              {/* Description */}
               <div className="col-span-1 sm:col-span-2">
                 <label className={labelClass}>Description</label>
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description..." rows={3} className={`${inputClass} resize-y`} />
               </div>
 
-              {/* Tags */}
               <div>
                 <label className={labelClass}>Tags (comma-separated)</label>
                 <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="Next.js, Tailwind, Framer Motion" className={inputClass} />
               </div>
 
-              {/* Live URL */}
               <div>
                 <label className={labelClass}>Live URL</label>
                 <input value={form.live_url} onChange={(e) => setForm({ ...form, live_url: e.target.value })} placeholder="https://yourproject.com" className={inputClass} />
               </div>
 
-              {/* Cover Image Upload */}
               <div className="col-span-1 sm:col-span-2">
                 <label className={labelClass}>Cover Image</label>
                 {!imagePreview ? (
@@ -261,9 +310,7 @@ export default function ProjectsPage() {
                           <line x1="12" y1="3" x2="12" y2="15" />
                         </svg>
                       </div>
-                      <p className="text-sm font-medium text-navy/50 group-hover:text-blue transition-colors">
-                        Click to upload image
-                      </p>
+                      <p className="text-sm font-medium text-navy/50 group-hover:text-blue transition-colors">Click to upload image</p>
                       <p className="text-[11px] text-navy/30">PNG, JPG, WEBP up to 10MB</p>
                     </div>
                     <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
@@ -290,15 +337,13 @@ export default function ProjectsPage() {
                   </div>
                 )}
               </div>
-
             </div>
 
-            {/* Right: live card preview */}
+            {/* Card preview */}
             <div className="lg:w-72 shrink-0">
               <p className={labelClass}>Card Preview</p>
               {hasPreview ? (
                 <div className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col shadow-sm">
-                  {/* Image */}
                   <div className="relative h-40 w-full bg-navy/5 overflow-hidden">
                     {imagePreview ? (
                       <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
@@ -315,12 +360,7 @@ export default function ProjectsPage() {
                         {form.category}
                       </span>
                     )}
-                    <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-semibold bg-[#4a8fe2]">
-                      01
-                    </div>
                   </div>
-
-                  {/* Body */}
                   <div className="flex flex-col flex-1 p-4">
                     <h3 className="font-display text-base font-semibold text-navy mb-1.5 leading-snug">
                       {form.title || <span className="text-navy/25">Project title</span>}
@@ -331,9 +371,7 @@ export default function ProjectsPage() {
                     {previewTags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-3">
                         {previewTags.slice(0, 4).map((t) => (
-                          <span key={t} className="text-[10px] font-medium border border-navy/15 text-navy/50 px-2.5 py-0.5 rounded-full">
-                            {t}
-                          </span>
+                          <span key={t} className="text-[10px] font-medium border border-navy/15 text-navy/50 px-2.5 py-0.5 rounded-full">{t}</span>
                         ))}
                       </div>
                     )}
@@ -353,13 +391,10 @@ export default function ProjectsPage() {
                     <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
                     <polyline points="21 15 16 10 5 21"/>
                   </svg>
-                  <p className="text-[12px] text-navy/25 leading-relaxed">
-                    Fill in the form to<br />see a card preview
-                  </p>
+                  <p className="text-[12px] text-navy/25 leading-relaxed">Fill in the form to<br />see a card preview</p>
                 </div>
               )}
             </div>
-
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
@@ -381,24 +416,47 @@ export default function ProjectsPage() {
       )}
 
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-5">
-        {(["All", "Published", "Draft"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
-              filter === f ? "bg-navy text-white" : "bg-white text-navy/50 border border-navy/10 hover:border-navy/25"
-            }`}
-          >
-            {f}
-          </button>
-        ))}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex gap-2">
+          {(["All", "Published", "Draft"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+                filter === f ? "bg-navy text-white" : "bg-white text-navy/50 border border-navy/10 hover:border-navy/25"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        {/* CHANGED: reordering indicator */}
+        {reordering && (
+          <span className="flex items-center gap-1.5 text-[12px] text-navy/40">
+            <svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            Saving order...
+          </span>
+        )}
       </div>
+
+      {/* CHANGED: drag hint */}
+      {filtered.length > 1 && (
+        <p className="text-[11px] text-navy/30 mb-3 flex items-center gap-1.5">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/>
+            <circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
+          </svg>
+          Drag rows to reorder — changes reflect on the homepage instantly
+        </p>
+      )}
 
       {/* Table */}
       <div className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
-        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
-          {["Project", "Category", "Date", "Status", "Actions"].map((h) => (
+        <div className="hidden md:grid grid-cols-[28px_2fr_1fr_1fr_120px_100px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
+          {["", "Project", "Category", "Date", "Status", "Actions"].map((h) => (
             <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
           ))}
         </div>
@@ -414,10 +472,28 @@ export default function ProjectsPage() {
           <p className="text-center py-12 text-navy/35 text-sm">No projects found.</p>
         ) : (
           filtered.map((p, i) => (
-            <div key={p.id} className={`${i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""}`}>
-
+            <div
+              key={p.id}
+              // CHANGED: drag-and-drop event handlers on each row
+              draggable
+              onDragStart={(e) => handleDragStart(e, i)}
+              onDragEnter={() => handleDragEnter(i)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, i)}
+              onDragEnd={handleDragEnd}
+              className={`transition-all duration-150 ${i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""} ${
+                dragOverIndex === i ? "bg-blue/[0.04] border-t-2 border-t-blue/40" : ""
+              }`}
+            >
               {/* Desktop row */}
-              <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-4 items-center hover:bg-navy/[0.02] transition-colors">
+              <div className="hidden md:grid grid-cols-[28px_2fr_1fr_1fr_120px_100px] px-6 py-4 items-center hover:bg-navy/[0.02] transition-colors cursor-grab active:cursor-grabbing">
+                {/* CHANGED: drag handle icon */}
+                <div className="text-navy/20 hover:text-navy/40 transition-colors">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/>
+                    <circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
+                  </svg>
+                </div>
                 <div>
                   <p className="text-sm font-semibold text-navy">{p.title}</p>
                   <div className="flex gap-1.5 mt-1.5 flex-wrap">
@@ -456,21 +532,30 @@ export default function ProjectsPage() {
               </div>
 
               {/* Mobile card */}
-              <div className="md:hidden px-5 py-4 hover:bg-navy/[0.02] transition-colors">
+              <div className="md:hidden px-5 py-4 hover:bg-navy/[0.02] transition-colors cursor-grab active:cursor-grabbing">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-navy truncate">{p.title}</p>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <p className="text-[12px] text-navy/50">{p.category}</p>
-                      <span className="text-navy/20">·</span>
-                      <p className="text-[12px] text-navy/40">
-                        {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </p>
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    {/* CHANGED: drag handle on mobile too */}
+                    <div className="text-navy/20 mt-1 shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/>
+                        <circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
+                      </svg>
                     </div>
-                    <div className="flex gap-1.5 mt-2 flex-wrap">
-                      {p.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
-                      ))}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-navy truncate">{p.title}</p>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <p className="text-[12px] text-navy/50">{p.category}</p>
+                        <span className="text-navy/20">·</span>
+                        <p className="text-[12px] text-navy/40">
+                          {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                      <div className="flex gap-1.5 mt-2 flex-wrap">
+                        {p.tags.slice(0, 3).map((tag) => (
+                          <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2.5 shrink-0">
