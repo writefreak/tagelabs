@@ -9,8 +9,12 @@ export default function Hero() {
   const blobLeftRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const link = "contact"
+//   useEffect(() => {
+//   // supabase.from("page_visits").insert({});
+  // }, []);
+  
   useEffect(() => {
-  supabase.from("page_visits").insert({});
+  supabase.from("page_visits").insert({}).then(({ error }) => console.log("visit:", error));
 }, []);
 
   const handleDownload = async () => {
