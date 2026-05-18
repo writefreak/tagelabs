@@ -75,6 +75,224 @@ const MOBILE_STEPS = [
   { id: 4, label: "Preview" },
 ];
 
+// ── CV Viewer Dialog ───────────────────────────────────────────────────────
+
+function CVDialog({ cv, onClose, onEdit }: { cv: CV; onClose: () => void; onEdit: () => void }) {
+  const initials = cv.full_name
+    .split(" ").map((w) => w[0] ?? "").join("").slice(0, 2).toUpperCase() || "?";
+
+  // Close on backdrop click
+  function handleBackdrop(e: React.MouseEvent<HTMLDivElement>) {
+    if (e.target === e.currentTarget) onClose();
+  }
+
+  // Close on Escape
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  // Lock body scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  return (
+    <div
+      onClick={handleBackdrop}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-navy/40 backdrop-blur-sm px-0 sm:px-4"
+    >
+      <div className="relative bg-white w-full sm:max-w-xl max-h-[92dvh] sm:max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col">
+
+        {/* Drag pill (mobile) */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-navy/15" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-start gap-4 px-6 pt-5 pb-5 border-b border-navy/[0.07] sticky top-0 bg-white z-10 rounded-t-3xl sm:rounded-t-2xl">
+          <div className="w-12 h-12 rounded-full bg-blue/[0.1] flex items-center justify-center text-base font-bold text-blue shrink-0">
+            {initials}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-base font-bold text-navy leading-tight">{cv.full_name}</p>
+            <p className="text-[13px] text-navy/50 mt-0.5">{cv.job_title || "—"}</p>
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
+              <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                cv.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${cv.status === "Published" ? "bg-green-500" : "bg-red-400"}`} />
+                {cv.status}
+              </span>
+              <span className="text-[12px] text-navy/30">
+                {new Date(cv.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <button
+              onClick={onEdit}
+              className="w-8 h-8 rounded-lg bg-blue/[0.08] hover:bg-blue/[0.18] text-blue flex items-center justify-center transition-colors"
+              title="Edit CV"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </button>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-lg bg-navy/[0.06] hover:bg-navy/[0.12] text-navy/50 flex items-center justify-center transition-colors"
+              title="Close"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 flex flex-col gap-6 pb-8">
+
+          {/* Contact Info */}
+          {(cv.email || cv.phone || cv.location || cv.website) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {cv.email && (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="2" opacity="0.45">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </div>
+                  <span className="text-[12px] text-navy/55 truncate">{cv.email}</span>
+                </div>
+              )}
+              {cv.phone && (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="2" opacity="0.45">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                  </div>
+                  <span className="text-[12px] text-navy/55">{cv.phone}</span>
+                </div>
+              )}
+              {cv.location && (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="2" opacity="0.45">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                  <span className="text-[12px] text-navy/55">{cv.location}</span>
+                </div>
+              )}
+              {cv.website && (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="2" opacity="0.45">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                  </div>
+                  <a href={cv.website.startsWith("http") ? cv.website : `https://${cv.website}`} target="_blank" rel="noopener noreferrer" className="text-[12px] text-blue/70 hover:text-blue transition-colors truncate">
+                    {cv.website}
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Summary */}
+          {cv.summary && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2">Summary</p>
+              <p className="text-[13px] text-navy/60 leading-relaxed">{cv.summary}</p>
+            </div>
+          )}
+
+          {/* Experience */}
+          {cv.experience?.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-3 pb-2 border-b border-navy/[0.07]">Experience</p>
+              <div className="flex flex-col gap-4">
+                {cv.experience.map((exp, i) => (
+                  <div key={i} className="flex gap-3">
+                    <div className="flex flex-col items-center pt-1">
+                      <div className="w-2 h-2 rounded-full bg-blue/40 shrink-0" />
+                      {i < cv.experience.length - 1 && <div className="w-px flex-1 bg-navy/[0.07] mt-1.5" />}
+                    </div>
+                    <div className="flex-1 min-w-0 pb-1">
+                      <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                        <p className="text-[13px] font-semibold text-navy">
+                          {exp.role} <span className="font-normal text-navy/45">@ {exp.company}</span>
+                        </p>
+                        <span className="text-[11px] text-navy/35 shrink-0">
+                          {exp.start_date}{exp.current ? " – Present" : exp.end_date ? ` – ${exp.end_date}` : ""}
+                        </span>
+                      </div>
+                      {exp.description && (
+                        <p className="text-[12px] text-navy/50 leading-relaxed mt-1">{exp.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Education */}
+          {cv.education?.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-3 pb-2 border-b border-navy/[0.07]">Education</p>
+              <div className="flex flex-col gap-3">
+                {cv.education.map((edu, i) => (
+                  <div key={i} className="flex items-start justify-between gap-3">
+                    <div className="flex gap-3 min-w-0">
+                      <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0 mt-0.5">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="2" opacity="0.4">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-semibold text-navy truncate">{edu.institution}</p>
+                        <p className="text-[12px] text-navy/50">{[edu.degree, edu.field].filter(Boolean).join(" · ")}</p>
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-navy/35 shrink-0 mt-0.5">
+                      {edu.start_date}{edu.end_date ? ` – ${edu.end_date}` : ""}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Skills */}
+          {cv.skills?.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-3 pb-2 border-b border-navy/[0.07]">Skills</p>
+              <div className="flex flex-wrap gap-1.5">
+                {cv.skills.map((s) => (
+                  <span key={s} className="text-[12px] font-medium border border-navy/15 text-navy/55 px-3 py-1 rounded-full bg-navy/[0.02]">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────────────────
 
 export default function CVsPage() {
@@ -87,8 +305,8 @@ export default function CVsPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filter, setFilter] = useState<"All" | "Published" | "Draft">("All");
-  // Mobile step state (only used on mobile)
   const [mobileStep, setMobileStep] = useState(0);
+  const [viewCV, setViewCV] = useState<CV | null>(null);
 
   useEffect(() => { fetchCVs(); }, []);
 
@@ -143,6 +361,7 @@ export default function CVsPage() {
   }
 
   function handleEdit(cv: CV) {
+    setViewCV(null);
     setForm({
       full_name: cv.full_name,
       job_title: cv.job_title ?? "",
@@ -225,6 +444,15 @@ export default function CVsPage() {
   return (
     <div className="font-body max-w-[1100px]">
 
+      {/* CV Viewer Dialog */}
+      {viewCV && (
+        <CVDialog
+          cv={viewCV}
+          onClose={() => setViewCV(null)}
+          onEdit={() => handleEdit(viewCV)}
+        />
+      )}
+
       {error && (
         <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-500">
           {error}
@@ -289,7 +517,12 @@ export default function CVsPage() {
                   {/* Desktop row */}
                   <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_120px_100px] px-6 py-4 items-center hover:bg-navy/[0.02] transition-colors">
                     <div>
-                      <p className="text-sm font-semibold text-navy">{cv.full_name}</p>
+                      <button
+                        onClick={() => setViewCV(cv)}
+                        className="text-sm font-semibold text-navy hover:text-blue transition-colors text-left"
+                      >
+                        {cv.full_name}
+                      </button>
                       <p className="text-[12px] text-navy/45 mt-0.5">{cv.job_title || "—"}</p>
                     </div>
                     <p className="text-[13px] text-navy/55">{cv.location || "—"}</p>
@@ -327,8 +560,11 @@ export default function CVsPage() {
                   {/* Mobile card */}
                   <div className="md:hidden px-5 py-4 hover:bg-navy/[0.02] transition-colors">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-navy truncate">{cv.full_name}</p>
+                      <button
+                        onClick={() => setViewCV(cv)}
+                        className="flex-1 min-w-0 text-left"
+                      >
+                        <p className="text-sm font-semibold text-navy truncate hover:text-blue transition-colors">{cv.full_name}</p>
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                           <p className="text-[12px] text-navy/50">{cv.job_title || "—"}</p>
                           <span className="text-navy/20">·</span>
@@ -336,7 +572,7 @@ export default function CVsPage() {
                             {new Date(cv.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                           </p>
                         </div>
-                      </div>
+                      </button>
                       <div className="flex flex-col items-end gap-2.5 shrink-0">
                         <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
                           cv.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
