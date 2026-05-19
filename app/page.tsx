@@ -11,7 +11,7 @@ import Reviews from "@/components/Reviews";
 export default function Home() {
   return (
     <main>
-      <Navbar />
+      
       <ScrollToTop/>
       <Hero />
       <About />
@@ -19,7 +19,7 @@ export default function Home() {
       <Work />
       <Reviews/>
       <Contact />
-      <Footer />
+     
     </main>
   );
 }

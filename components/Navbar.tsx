@@ -1,10 +1,12 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const router = useRouter();
 
   const handleClick = () => {
     const phone = "2349169615448";
@@ -62,10 +64,10 @@ export default function Navbar() {
               </button>
             ))}
             <button
-              onClick={handleClick}
+              onClick={()=>router.push("/cv-order")}
               className="text-sm font-medium bg-blue text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
             >
-              Get Started
+              Preorder a Modern CV
             </button>
           </div>
 
@@ -105,17 +107,23 @@ export default function Navbar() {
             {link}
           </button>
         ))}
-        <button
+        {/* <button
           onClick={handleClick}
-          className="text-base font-medium bg-blue text-white px-8 py-3 rounded-full text-center hover:bg-blue transition-colors"
+          
+        >
+          Get Started
+        </button> */}
+
+        <button
+              onClick={()=>router.push("/cv-order")}
+              className="text-base font-medium bg-blue text-white px-8 py-3 rounded-full text-center hover:bg-blue transition-colors"
           style={{
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? "translateX(0)" : "translateX(-24px)",
             transition: `opacity 0.35s ease ${links.length * 0.07}s, transform 0.35s ease ${links.length * 0.07}s`,
-          }}
-        >
-          Get Started
-        </button>
+          }}>
+              Preorder a Modern CV
+            </button>
       </div>
     </>
   );
