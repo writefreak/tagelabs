@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "../lib/supabase";
 
 function CustomSelect({
   value,
@@ -161,24 +162,30 @@ export default function CVOrderPage() {
     form.jobField &&
     form.tier;
 
-  async function handleSubmit() {
-    if (!isValid) return;
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/cv-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) throw new Error("Failed");
-      setStep(1);
-    } catch {
-      setError("Something went wrong. Please try again or reach out on WhatsApp.");
-    } finally {
-      setLoading(false);
-    }
+ async function handleSubmit() {
+  if (!isValid) return;
+  setLoading(true);
+  setError("");
+  try {
+    const { error } = await supabase.from("cv_orders").insert({
+      name: form.name,
+      email: form.email,
+      whatsapp: form.whatsapp,
+      job_field: form.jobField,
+      "current_role": form.currentRole || null,
+      "target_role": form.targetRole || null,
+      tier: form.tier,
+      notes: form.notes || null,
+    });
+    if (error) throw error;
+    setStep(1);
+  } catch (err: any) {
+    setError("Something went wrong. Please try again or reach out on WhatsApp.");
+    console.error(err);
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <main className="min-h-screen bg-white px-5 py-16 md:py-24 font-sans">

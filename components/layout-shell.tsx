@@ -1,4 +1,3 @@
-// components/LayoutShell.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -7,13 +6,16 @@ import Footer from "@/components/Footer";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdminPage = pathname?.startsWith("/admin");
+  const hideChrome = 
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/signup");
 
   return (
     <>
-      {!isAdminPage && <Navbar />}
+      {!hideChrome && <Navbar />}
       {children}
-      {!isAdminPage && <Footer />}
+      {!hideChrome && <Footer />}
     </>
   );
 }
