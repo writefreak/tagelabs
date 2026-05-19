@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -46,11 +47,11 @@ export default function Navbar() {
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="font-display font-700 text-xl text-navy tracking-tight">
+          <Link href="/" className="font-display font-700 text-xl text-navy tracking-tight">
             <div className="h-10 w-32">
               <img src="/tagelabslogo.png" alt="" className="h-full w-full" />
             </div>
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">

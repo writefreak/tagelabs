@@ -181,7 +181,7 @@ export default function CVOrderPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f9f8f6] px-5 py-16 md:py-24 font-sans">
+    <main className="min-h-screen bg-white px-5 py-16 md:py-24 font-sans">
       <div className="max-w-2xl mx-auto">
 
         {/* Header */}
@@ -194,7 +194,7 @@ export default function CVOrderPage() {
           {/* <p className="text-xs font-semibold tracking-[0.2em] uppercase text-[#4a8fe2] mb-4">
             TageLabs · CV Design
           </p> */}
-          <h1 className="font-display text-4xl md:text-5xl pt-6 font-semibold text-[#112369] leading-tight mb-4">
+          <h1 className="font-display text-4xl md:text-5xl pt-6 md:pt-10 font-semibold text-[#112369] leading-tight mb-4">
             Your CV, crafted with intention.
           </h1>
           <p className="text-[#112369]/55 text-sm md:text-base leading-relaxed max-w-lg">

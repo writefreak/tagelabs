@@ -1,6 +1,81 @@
 "use client";
 import { supabase } from "@/app/lib/supabase";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+function CustomSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  options: string[];
+  placeholder: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-body focus:outline-none focus:border-blue transition-colors flex items-center justify-between text-left ${
+          value ? "text-white" : "text-white/30"
+        }`}
+      >
+        <span>{value || placeholder}</span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`shrink-0 transition-transform duration-200 text-white/40 ${open ? "rotate-180" : ""}`}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <ul className="absolute z-50 mt-1.5 w-full bg-[#112369] border border-white/10 rounded-xl overflow-hidden shadow-xl">
+          {options.map((opt) => (
+            <li key={opt}>
+              <button
+                type="button"
+                onClick={() => {
+                  onChange(opt);
+                  setOpen(false);
+                }}
+                className={`w-full text-left px-4 py-3 text-sm font-body transition-colors duration-150 ${
+                  value === opt
+                    ? "bg-white/10 text-white font-medium"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                {opt}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
@@ -109,42 +184,17 @@ export default function Contact() {
                 </div>
               ))}
 
-              {/* Service — pills on mobile, select on desktop */}
+              {/* Service — custom dropdown, no hydration mismatch */}
               <div className="py-6">
                 <label className="block font-body text-xs text-white/50 mb-2 tracking-wide">
                   Service needed
                 </label>
-
-                {/* Mobile: pill buttons */}
-                <div className="flex flex-wrap gap-2 md:hidden">
-                  {services.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setForm({ ...form, service: s })}
-                      className={`px-4 py-2 rounded-full text-xs font-medium font-body border transition-all duration-200 ${
-                        form.service === s
-                          ? "bg-blue border-blue text-white"
-                          : "bg-white/5 border-white/10 text-white/60 hover:border-white/30 hover:text-white/80"
-                      }`}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Desktop: native select */}
-                <select
-                  required
+                <CustomSelect
                   value={form.service}
-                  onChange={(e) => setForm({ ...form, service: e.target.value })}
-                  className="hidden md:block w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-body focus:outline-none focus:border-blue transition-colors"
-                >
-                  <option value="" disabled className="bg-navy">Select a service</option>
-                  {services.map((s) => (
-                    <option key={s} value={s} className="bg-navy">{s}</option>
-                  ))}
-                </select>
+                  onChange={(val) => setForm({ ...form, service: val })}
+                  options={services}
+                  placeholder="Select a service"
+                />
               </div>
 
               <div>
