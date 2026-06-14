@@ -78,7 +78,12 @@ function CustomSelect({
 }
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", service: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    service: "",
+    message: "",
+  });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -122,9 +127,6 @@ export default function Contact() {
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20">
         {/* Left */}
         <div>
-          <p className="text-blue text-sm font-medium tracking-widest uppercase mb-4 font-body">
-            Get in touch
-          </p>
           <h2 className="font-display text-4xl md:text-5xl font-semibold text-white leading-tight mb-6">
             Ready to build something great?
           </h2>
@@ -156,18 +158,39 @@ export default function Contact() {
           {sent ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
               <div className="w-16 h-16 rounded-full bg-blue/20 flex items-center justify-center mb-4">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a8fe2" strokeWidth="2.5">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#4a8fe2"
+                  strokeWidth="2.5"
+                >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h3 className="font-display text-2xl font-semibold text-white mb-2">Message sent.</h3>
-              <p className="font-body text-white/50 text-sm">We'll be in touch within 24 hours.</p>
+              <h3 className="font-display text-2xl font-semibold text-white mb-2">
+                Message sent.
+              </h3>
+              <p className="font-body text-white/50 text-sm">
+                We'll be in touch within 24 hours.
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {[
-                { id: "name", label: "Full name", type: "text", placeholder: "John Doe" },
-                { id: "email", label: "Email address", type: "email", placeholder: "john@company.com" },
+                {
+                  id: "name",
+                  label: "Full name",
+                  type: "text",
+                  placeholder: "John Doe",
+                },
+                {
+                  id: "email",
+                  label: "Email address",
+                  type: "email",
+                  placeholder: "john@company.com",
+                },
               ].map((f) => (
                 <div key={f.id}>
                   <label className="block font-body text-xs text-white/50 mb-2 tracking-wide">
@@ -178,7 +201,9 @@ export default function Contact() {
                     placeholder={f.placeholder}
                     required
                     value={form[f.id as keyof typeof form]}
-                    onChange={(e) => setForm({ ...form, [f.id]: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, [f.id]: e.target.value })
+                    }
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-body placeholder:text-white/20 focus:outline-none focus:border-blue transition-colors"
                   />
                 </div>
@@ -206,7 +231,9 @@ export default function Contact() {
                   placeholder="Brief description of what you need..."
                   required
                   value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, message: e.target.value })
+                  }
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-body placeholder:text-white/20 focus:outline-none focus:border-blue transition-colors resize-none"
                 />
               </div>

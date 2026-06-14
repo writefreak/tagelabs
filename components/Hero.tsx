@@ -8,24 +8,26 @@ export default function Hero() {
   const blobRightRef = useRef<HTMLDivElement>(null);
   const blobLeftRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const link = "contact"
-//   useEffect(() => {
-//   // supabase.from("page_visits").insert({});
+  const link = "contact";
+  //   useEffect(() => {
+  //   // supabase.from("page_visits").insert({});
   // }, []);
-  
+
   useEffect(() => {
-  supabase.from("page_visits").insert({}).then(({ error }) => console.log("visit:", error));
-}, []);
+    supabase
+      .from("page_visits")
+      .insert({})
+      .then(({ error }) => console.log("visit:", error));
+  }, []);
 
   const handleDownload = async () => {
     saveAs("/TageLabs BrandStory.pdf", "TageLabs-Brand-Story.pdf");
   };
 
-   const scrollTo = (id: string) => {
+  const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
-
 
   useEffect(() => {
     const els = ref.current?.querySelectorAll(".anim");
@@ -67,7 +69,9 @@ export default function Hero() {
     <section
       ref={ref}
       className="relative min-h-screen flex flex-col justify-center px-6 pt-24 pb-16 overflow-hidden"
-      style={{ background: "linear-gradient(160deg, #ffffff 60%, #eef3fb 100%)" }}
+      style={{
+        background: "linear-gradient(160deg, #ffffff 60%, #eef3fb 100%)",
+      }}
     >
       {/* Subtle grid texture */}
       <div
@@ -84,7 +88,8 @@ export default function Hero() {
         ref={blobRightRef}
         className="absolute top-1/3 right-0 w-96 h-96 rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(74,143,226,0.12) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(74,143,226,0.12) 0%, transparent 70%)",
           transform: "translate(30%, -30%)",
           willChange: "transform",
         }}
@@ -95,7 +100,8 @@ export default function Hero() {
         ref={blobLeftRef}
         className="absolute top-1/2 left-0 w-96 h-96 rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(17,35,105,0.08) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(17,35,105,0.08) 0%, transparent 70%)",
           transform: "translate(-30%, -20%)",
           willChange: "transform",
         }}
@@ -106,20 +112,21 @@ export default function Hero() {
         <div className="flex flex-col justify-center items-center">
           <h1 className="anim opacity-0 text-center font-display text-[46px] md:text-5xl lg:text-7xl font-semibold text-navy leading-tight mb-8 max-w-4xl">
             Transforming businesses with{" "}
-            <span className="text-blue italic">scalable</span> digital solutions.
+            <span className="text-blue italic">scalable</span> digital
+            solutions.
           </h1>
 
           {/* Sub */}
-          <p className="anim opacity-0 text-center font-body text-base md:text-lg text-navy/60 max-w-xl mb-12 leading-relaxed">
+          {/* <p className="anim opacity-0 text-center font-body text-base md:text-lg text-navy/60 max-w-xl mb-12 leading-relaxed">
             We design and build landing pages, portfolios, CVs, and frontend
             products that convert for ambitious businesses worldwide.
-          </p>
+          </p> */}
         </div>
 
         {/* CTAs */}
         <div className="anim opacity-0 flex flex-col sm:flex-row gap-4 justify-center">
           <button
-             onClick={() => scrollTo(link.toLowerCase())}
+            onClick={() => scrollTo(link.toLowerCase())}
             className="inline-flex items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-full hover:bg-blue transition-colors duration-200 text-sm"
           >
             Start a project

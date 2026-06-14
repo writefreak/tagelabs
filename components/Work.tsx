@@ -1,8 +1,8 @@
 "use client";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { supabase } from "@/app/lib/supabase";
 
 type Project = {
@@ -15,8 +15,6 @@ type Project = {
   image_url?: string;
   status: "Published" | "Draft";
 };
-
-const accents = ["#4a8fe2", "#112369", "#4a8fe2", "#112369", "#4a8fe2"];
 
 const FALLBACK_IMAGES = [
   "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=600&q=80",
@@ -45,84 +43,66 @@ function toAbsoluteUrl(url: string) {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
 }
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 4;
 
-// ── Mobile card component ──────────────────────────────────────────────────
-function MobileCard({
+// ── Project card (portrait, same structure as Zufeet ProductCard) ──────────
+function ProjectCard({
   project,
   index,
-  accent,
   imageSrc,
 }: {
   project: Project;
   index: number;
-  accent: string;
   imageSrc: string;
 }) {
   const inner = (
-    <div className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col group">
-      {/* Image */}
-      <div className="relative overflow-hidden h-44 w-full">
-        <img
-          src={imageSrc}
-          alt={project.title}
-          className="w-full h-full object-cover"
-        />
-        <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
-          {project.category}
-        </span>
-      </div>
+    <article className="group relative overflow-hidden rounded-2xl aspect-[2/3] w-full">
+      <img
+        src={imageSrc}
+        alt={project.title}
+        className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-      {/* Body */}
-      <div className="flex flex-col flex-1 p-5">
-        <h3 className="font-display line-clamp-1 text-lg font-semibold text-navy mb-2 leading-snug">
-          {project.title}
-        </h3>
-        <p className="font-body text-navy/55 text-[12px] line-clamp-2 leading-relaxed flex-1">
-          {project.description}
-        </p>
+      <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+        <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-2">
+          <div className="flex items-end justify-between">
+            <div className="min-w-0 flex-1 pr-2">
+              <span className="block text-[10px] font-medium uppercase tracking-widest text-white/50 mb-0.5">
+                {project.category}
+              </span>
+              <h3 className="font-display text-sm font-semibold text-white leading-snug truncate">
+                {project.title}
+              </h3>
+            </div>
+            <div className="shrink-0 w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+              <ArrowUpRight size={13} color="white" />
+            </div>
+          </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {project.tags.map((t) => (
-            <span
-              key={t}
-              className="text-[11px] font-medium border border-navy/15 text-navy/50 px-3 py-1 rounded-full"
-            >
-              {t}
+          <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-1.5 min-w-0">
+              {project.tags.slice(0, 2).map((t) => (
+                <span key={t} className="text-[10px] text-white/55 font-medium">
+                  {t}
+                </span>
+              ))}
+            </div>
+            <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
+              {project.live_url ? "View project" : "Delivered."}
             </span>
-          ))}
-        </div>
-
-        {/* CHANGED: always show footer — arrow link for website cards, "Delivered." for others */}
-        <div className="flex items-center gap-1 mt-4 pt-4 border-t border-navy/10 text-xs text-navy/40">
-          {project.live_url ? (
-            <>
-              View project
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="7" y1="17" x2="17" y2="7" />
-                <polyline points="7 7 17 7 17 17" />
-              </svg>
-            </>
-          ) : (
-            "Crafted and Delivered."
-          )}
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 
   return project.live_url ? (
-    <a href={toAbsoluteUrl(project.live_url)} target="_blank" rel="noopener noreferrer">
+    <a
+      href={toAbsoluteUrl(project.live_url)}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {inner}
     </a>
   ) : (
@@ -137,7 +117,6 @@ export default function Work() {
   const [page, setPage] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Mobile scroll
   const mobileScrollRef = useRef<HTMLDivElement>(null);
   const [mobileScrollPage, setMobileScrollPage] = useState(0);
 
@@ -145,9 +124,10 @@ export default function Work() {
     async function fetchProjects() {
       const { data } = await supabase
         .from("projects")
-        .select("id, title, category, description, tags, live_url, image_url, status")
+        .select(
+          "id, title, category, description, tags, live_url, image_url, status",
+        )
         .eq("status", "Published")
-        // CHANGED: fetch by order_index so drag order from admin is respected
         .order("order_index", { ascending: true });
       setProjects(data ?? []);
       setLoading(false);
@@ -155,7 +135,6 @@ export default function Work() {
     fetchProjects();
   }, []);
 
-  // Track active dot on mobile as user scrolls
   useEffect(() => {
     const el = mobileScrollRef.current;
     if (!el) return;
@@ -177,7 +156,10 @@ export default function Work() {
   }
 
   const totalPages = Math.ceil(projects.length / PAGE_SIZE);
-  const paginated = projects.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const paginated = projects.slice(
+    page * PAGE_SIZE,
+    page * PAGE_SIZE + PAGE_SIZE,
+  );
   const showPagination = projects.length > PAGE_SIZE;
 
   function handlePageChange(next: number) {
@@ -186,7 +168,11 @@ export default function Work() {
   }
 
   return (
-    <section id="work" className="py-10 md:py-17 px-6" style={{ background: "#ffff" }}>
+    <section
+      id="work"
+      className="py-10 md:py-17 px-6"
+      style={{ background: "#ffffff" }}
+    >
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="mb-20"
@@ -195,9 +181,6 @@ export default function Work() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-blue text-sm font-medium tracking-widest uppercase mb-4 font-body">
-            Our Recent Projects
-          </p>
           <h2 className="font-display text-4xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
             Projects Built with Intention.
           </h2>
@@ -205,19 +188,12 @@ export default function Work() {
 
         {/* Loading skeleton */}
         {loading && (
-          <div className="flex flex-col gap-6">
-            {[1, 2, 3].map((i) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl overflow-hidden border animate-pulse flex"
-              >
-                <div className="w-48 md:w-56 bg-navy/10 shrink-0" />
-                <div className="flex-1 p-8 md:p-12 flex flex-col gap-3 justify-center">
-                  <div className="h-3 w-24 bg-navy/10 rounded-full" />
-                  <div className="h-5 w-48 bg-navy/10 rounded-full" />
-                  <div className="h-3 w-full max-w-md bg-navy/10 rounded-full" />
-                </div>
-              </div>
+                className="rounded-2xl overflow-hidden animate-pulse bg-navy/10 aspect-[2/3]"
+              />
             ))}
           </div>
         )}
@@ -237,7 +213,8 @@ export default function Work() {
               Something's brewing.
             </h3>
             <p className="font-body text-navy/50 text-sm max-w-xs leading-relaxed">
-              Projects are being prepared with care. Check back soon — good work takes time.
+              Projects are being prepared with care. Check back soon — good work
+              takes time.
             </p>
           </motion.div>
         )}
@@ -252,19 +229,18 @@ export default function Work() {
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
                 {projects.map((project, i) => {
-                  const accent = accents[i % accents.length];
                   const imageSrc =
-                    project.image_url || FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+                    project.image_url ||
+                    FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
                   return (
                     <div
                       key={project.id}
                       className="shrink-0 snap-center"
-                      style={{ width: "78vw" }}
+                      style={{ width: "60vw" }}
                     >
-                      <MobileCard
+                      <ProjectCard
                         project={project}
                         index={i}
-                        accent={accent}
                         imageSrc={imageSrc}
                       />
                     </div>
@@ -290,94 +266,32 @@ export default function Work() {
               )}
             </div>
 
-            {/* ── DESKTOP: paginated grid (unchanged) ── */}
-            <div ref={scrollRef} className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* ── DESKTOP: 4-column portrait grid ── */}
+            <div
+              ref={scrollRef}
+              className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
               {paginated.map((project, i) => {
                 const globalIndex = page * PAGE_SIZE + i;
-                const accent = accents[globalIndex % accents.length];
                 const imageSrc =
-                  project.image_url ?? FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
+                  project.image_url ??
+                  FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
 
-                const inner = (
+                return (
                   <motion.div
+                    key={project.id}
                     custom={i}
                     variants={fadeUp}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: false, margin: "-60px" }}
-                    className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 hover:shadow-md transition-all duration-300"
                   >
-                    {/* Image */}
-                    <div className="relative overflow-hidden h-48 w-full">
-                      <img
-                        src={imageSrc}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
-                      />
-                      <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
-                        {project.category}
-                      </span>
-                    </div>
-
-                    {/* Body */}
-                    <div className="flex flex-col flex-1 p-5">
-                      <h3 className="font-display line-clamp-1 text-lg font-semibold text-navy mb-2 leading-snug">
-                        {project.title}
-                      </h3>
-                      <p className="font-body text-navy/55 text-[12px] line-clamp-2 leading-relaxed flex-1">
-                        {project.description}
-                      </p>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {project.tags.map((t) => (
-                          <span
-                            key={t}
-                            className="text-[11px] font-medium border border-navy/15 text-navy/50 px-3 py-1 rounded-full"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* CHANGED: always show footer — arrow link for website cards, "Delivered." for others */}
-                      <div className="flex items-center gap-1 mt-4 pt-4 border-t border-navy/10 text-xs text-navy/40 group-hover:text-navy/60 transition-colors">
-                        {project.live_url ? (
-                          <>
-                            View project
-                            <svg
-                              width="11"
-                              height="11"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <line x1="7" y1="17" x2="17" y2="7" />
-                              <polyline points="7 7 17 7 17 17" />
-                            </svg>
-                          </>
-                        ) : (
-                          "Crafted and Delivered"
-                        )}
-                      </div>
-                    </div>
+                    <ProjectCard
+                      project={project}
+                      index={globalIndex}
+                      imageSrc={imageSrc}
+                    />
                   </motion.div>
-                );
-
-                return project.live_url ? (
-                  <a
-                    key={project.id}
-                    href={toAbsoluteUrl(project.live_url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {inner}
-                  </a>
-                ) : (
-                  <div key={project.id}>{inner}</div>
                 );
               })}
             </div>
@@ -391,7 +305,16 @@ export default function Work() {
                   aria-label="Previous page"
                   className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="15 18 9 12 15 6" />
                   </svg>
                 </button>
@@ -402,7 +325,9 @@ export default function Work() {
                     onClick={() => handlePageChange(i)}
                     aria-label={`Page ${i + 1}`}
                     className={`rounded-full transition-all duration-300 ${
-                      i === page ? "w-6 h-2 bg-navy" : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+                      i === page
+                        ? "w-6 h-2 bg-navy"
+                        : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
                     }`}
                   />
                 ))}
@@ -413,7 +338,16 @@ export default function Work() {
                   aria-label="Next page"
                   className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </button>

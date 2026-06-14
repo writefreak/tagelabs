@@ -46,8 +46,6 @@ const services = [
   },
 ];
 
-
-
 export default function Services() {
   return (
     <section id="services" className="md:py-25 py-10 px-6 bg-white">
@@ -61,9 +59,6 @@ export default function Services() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <div>
-            <p className="text-blue text-sm font-medium tracking-widest uppercase mb-4 font-body">
-              What we do
-            </p>
             <h2 className="font-display text-4xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
               Services built for results.
             </h2>

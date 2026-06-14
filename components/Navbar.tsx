@@ -32,7 +32,9 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   const links = ["About", "Services", "Work", "Reviews", "Contact"];
@@ -47,7 +49,10 @@ export default function Navbar() {
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="font-display font-700 text-xl text-navy tracking-tight">
+          <Link
+            href="/"
+            className="font-display font-700 text-xl text-navy tracking-tight"
+          >
             <div className="h-10 w-32">
               <img src="/tagelabslogo.png" alt="" className="h-full w-full" />
             </div>
@@ -64,13 +69,13 @@ export default function Navbar() {
                 {link}
               </button>
             ))}
-            <button
-              onClick={()=>router.push("/cv-order")}
-              className="text-sm font-medium bg-blue text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
-            >
-              Preorder a Modern CV
-            </button>
           </div>
+          <button
+            onClick={() => router.push("/cv-order")}
+            className="text-sm font-medium bg-blue text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
+          >
+            Preorder a Modern CV
+          </button>
 
           {/* Spacer so logo stays left on mobile — hamburger is now a separate fixed element */}
           <div className="md:hidden w-10" />
@@ -83,15 +88,23 @@ export default function Navbar() {
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle menu"
       >
-        <span className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
-        <span className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`} />
-        <span className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+        <span
+          className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+        />
+        <span
+          className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
+        />
+        <span
+          className={`block w-6 h-0.5 bg-navy transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+        />
       </button>
 
       {/* Mobile full-screen overlay */}
       <div
         className={`md:hidden fixed inset-0 z-[60] bg-white flex flex-col items-center justify-center gap-8 transition-all duration-300 ${
-          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       >
         {links.map((link, i) => (
@@ -116,15 +129,16 @@ export default function Navbar() {
         </button> */}
 
         <button
-              onClick={()=>router.push("/cv-order")}
-              className="text-base font-medium bg-blue text-white px-8 py-3 rounded-full text-center hover:bg-blue transition-colors"
+          onClick={() => router.push("/cv-order")}
+          className="text-base font-medium bg-blue text-white px-8 py-3 rounded-full text-center hover:bg-blue transition-colors"
           style={{
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? "translateX(0)" : "translateX(-24px)",
             transition: `opacity 0.35s ease ${links.length * 0.07}s, transform 0.35s ease ${links.length * 0.07}s`,
-          }}>
-              Preorder a Modern CV
-            </button>
+          }}
+        >
+          Preorder a Modern CV
+        </button>
       </div>
     </>
   );

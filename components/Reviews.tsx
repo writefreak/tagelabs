@@ -11,21 +11,76 @@ type Review = {
 };
 
 const fallback: Review[] = [
-  { id: "1", name: "Amara Okafor", role: "Founder, Studio Amara", review: "TageLabs completely transformed how our brand shows up online. Every pixel felt intentional. Delivered ahead of schedule too." },
-  { id: "2", name: "Tunde Fasanya", role: "Product Designer", review: "I needed a portfolio that reflected the quality of my work. The result was cleaner and sharper than anything I imagined." },
-  { id: "3", name: "Claire Mensah", role: "Senior UX Designer", review: "My CV went from getting ignored to landing three interviews in a week. Strategic, not just aesthetic." },
-  { id: "4", name: "Emeka Nwosu", role: "CTO, BrandNG", review: "Clean code, zero hand-holding, polished on first delivery. Will work with them again without hesitation." },
-  { id: "5", name: "Zara Abioye", role: "Startup Founder", review: "A pitch deck that made investors lean forward. Minimal, powerful, and done in three days." },
-  { id: "6", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
-  { id: "7", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
-  { id: "8", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
-  { id: "9", name: "Seun Adeyemi", role: "Creative Director", review: "They think before they build. The landing page didn't just look good — it converted. That's rare." },
+  {
+    id: "1",
+    name: "Amara Okafor",
+    role: "Founder, Studio Amara",
+    review:
+      "TageLabs completely transformed how our brand shows up online. Every pixel felt intentional. Delivered ahead of schedule too.",
+  },
+  {
+    id: "2",
+    name: "Tunde Fasanya",
+    role: "Product Designer",
+    review:
+      "I needed a portfolio that reflected the quality of my work. The result was cleaner and sharper than anything I imagined.",
+  },
+  {
+    id: "3",
+    name: "Claire Mensah",
+    role: "Senior UX Designer",
+    review:
+      "My CV went from getting ignored to landing three interviews in a week. Strategic, not just aesthetic.",
+  },
+  {
+    id: "4",
+    name: "Emeka Nwosu",
+    role: "CTO, BrandNG",
+    review:
+      "Clean code, zero hand-holding, polished on first delivery. Will work with them again without hesitation.",
+  },
+  {
+    id: "5",
+    name: "Zara Abioye",
+    role: "Startup Founder",
+    review:
+      "A pitch deck that made investors lean forward. Minimal, powerful, and done in three days.",
+  },
+  {
+    id: "6",
+    name: "Seun Adeyemi",
+    role: "Creative Director",
+    review:
+      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
+  },
+  {
+    id: "7",
+    name: "Seun Adeyemi",
+    role: "Creative Director",
+    review:
+      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
+  },
+  {
+    id: "8",
+    name: "Seun Adeyemi",
+    role: "Creative Director",
+    review:
+      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
+  },
+  {
+    id: "9",
+    name: "Seun Adeyemi",
+    role: "Creative Director",
+    review:
+      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
+  },
 ];
 
 const PAGE_SIZE = 3;
 const emptyForm = { name: "", role: "", review: "" };
 
-const inputClass = "w-full bg-navy/[0.03] border border-navy/10 rounded-xl px-4 py-3 text-navy text-sm font-body placeholder:text-navy/30 focus:outline-none focus:border-blue transition-colors";
+const inputClass =
+  "w-full bg-navy/[0.03] border border-navy/10 rounded-xl px-4 py-3 text-navy text-sm font-body placeholder:text-navy/30 focus:outline-none focus:border-blue transition-colors";
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -55,7 +110,9 @@ export default function Reviews() {
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [selectedReview]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -71,12 +128,18 @@ export default function Reviews() {
     });
     setSubmitting(false);
     if (error) setError("Something went wrong. Please try again.");
-    else { setSubmitted(true); setForm(emptyForm); }
+    else {
+      setSubmitted(true);
+      setForm(emptyForm);
+    }
   }
 
   const displayed = reviews.length > 0 ? reviews : fallback;
   const totalPages = Math.ceil(displayed.length / PAGE_SIZE);
-  const paginated = displayed.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const paginated = displayed.slice(
+    page * PAGE_SIZE,
+    page * PAGE_SIZE + PAGE_SIZE,
+  );
   const showPagination = displayed.length > PAGE_SIZE;
 
   function handlePageChange(next: number) {
@@ -87,7 +150,6 @@ export default function Reviews() {
   return (
     <section id="reviews" className="py-14 md:py-17 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-
         {/* Header */}
         <motion.div
           className="mb-16"
@@ -96,15 +158,13 @@ export default function Reviews() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-blue text-sm font-medium tracking-widest uppercase mb-4 font-body">
-            Client Reviews
-          </p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <h2 className="font-display text-4xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
               Words from people we've built for.
             </h2>
             <p className="font-body text-navy/45 text-sm max-w-xs leading-relaxed">
-              Real feedback from clients across design, development, and everything in between.
+              Real feedback from clients across design, development, and
+              everything in between.
             </p>
           </div>
         </motion.div>
@@ -125,7 +185,11 @@ export default function Reviews() {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-30px" }}
-                transition={{ delay: i * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  delay: i * 0.06,
+                  duration: 0.45,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
                 onClick={() => setSelectedReview(r)}
                 className="
                   flex-none w-[80vw] max-w-[320px] snap-start cursor-pointer
@@ -146,7 +210,11 @@ export default function Reviews() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-30px" }}
-                transition={{ delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  delay: i * 0.07,
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
                 onClick={() => setSelectedReview(r)}
                 className="cursor-pointer bg-white rounded-2xl p-6 flex flex-col gap-4 border border-navy/[0.07] hover:border-navy/15 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300"
               >
@@ -165,7 +233,16 @@ export default function Reviews() {
               aria-label="Previous page"
               className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <polyline points="15 18 9 12 15 6" />
               </svg>
             </button>
@@ -176,7 +253,9 @@ export default function Reviews() {
                 onClick={() => handlePageChange(i)}
                 aria-label={`Page ${i + 1}`}
                 className={`rounded-full transition-all duration-300 ${
-                  i === page ? "w-6 h-2 bg-navy" : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+                  i === page
+                    ? "w-6 h-2 bg-navy"
+                    : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
                 }`}
               />
             ))}
@@ -187,7 +266,16 @@ export default function Reviews() {
               aria-label="Next page"
               className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
@@ -207,10 +295,13 @@ export default function Reviews() {
         >
           <div>
             <h3 className="font-display text-2xl md:text-3xl font-semibold text-navy leading-tight mb-3">
-              Worked with us?<br />Tell the world.
+              Worked with us?
+              <br />
+              Tell the world.
             </h3>
             <p className="font-body text-sm text-navy/50 leading-relaxed max-w-sm">
-              Every project we take on is built on trust and hearing from the people we've built for means everything to us.
+              Every project we take on is built on trust and hearing from the
+              people we've built for means everything to us.
             </p>
           </div>
 
@@ -224,12 +315,23 @@ export default function Reviews() {
                 className="flex flex-col gap-3 py-4"
               >
                 <div className="w-11 h-11 rounded-full bg-navy/[0.06] flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="2.5">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#112369"
+                    strokeWidth="2.5"
+                  >
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <h4 className="font-display font-semibold text-lg text-navy">Thanks for sharing.</h4>
-                <p className="font-body text-sm text-navy/50">Your review is pending approval and will appear shortly.</p>
+                <h4 className="font-display font-semibold text-lg text-navy">
+                  Thanks for sharing.
+                </h4>
+                <p className="font-body text-sm text-navy/50">
+                  Your review is pending approval and will appear shortly.
+                </p>
                 <button
                   onClick={() => setSubmitted(false)}
                   className="text-sm text-blue font-medium font-body hover:underline w-fit mt-1"
@@ -248,41 +350,55 @@ export default function Reviews() {
               >
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">Name *</label>
+                    <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">
+                      Name *
+                    </label>
                     <input
                       type="text"
                       required
                       placeholder="John Doe"
                       value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      onChange={(e) =>
+                        setForm({ ...form, name: e.target.value })
+                      }
                       className={inputClass}
                     />
                   </div>
                   <div>
-                    <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">Role</label>
+                    <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">
+                      Role
+                    </label>
                     <input
                       type="text"
                       placeholder="Founder, Acme Co."
                       value={form.role}
-                      onChange={(e) => setForm({ ...form, role: e.target.value })}
+                      onChange={(e) =>
+                        setForm({ ...form, role: e.target.value })
+                      }
                       className={inputClass}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">Your review *</label>
+                  <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">
+                    Your review *
+                  </label>
                   <textarea
                     required
                     rows={4}
                     placeholder="Share your experience working with TageLabs..."
                     value={form.review}
-                    onChange={(e) => setForm({ ...form, review: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, review: e.target.value })
+                    }
                     className={`${inputClass} resize-none`}
                   />
                 </div>
 
-                {error && <p className="text-sm text-red-400 font-body">{error}</p>}
+                {error && (
+                  <p className="text-sm text-red-400 font-body">{error}</p>
+                )}
 
                 <button
                   type="submit"
@@ -295,7 +411,6 @@ export default function Reviews() {
             )}
           </AnimatePresence>
         </motion.div>
-
       </div>
 
       {/* Review Dialog */}
@@ -324,7 +439,14 @@ export default function Reviews() {
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, j) => (
-                      <svg key={j} width="14" height="14" viewBox="0 0 24 24" fill="#4a8fe2" stroke="none">
+                      <svg
+                        key={j}
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="#4a8fe2"
+                        stroke="none"
+                      >
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                       </svg>
                     ))}
@@ -333,8 +455,17 @@ export default function Reviews() {
                     onClick={() => setSelectedReview(null)}
                     className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/25 hover:text-navy transition-all duration-200"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                   </button>
                 </div>
@@ -347,11 +478,17 @@ export default function Reviews() {
 
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-navy flex items-center justify-center shrink-0">
-                    <span className="text-white text-sm font-semibold font-display">{selectedReview.name.charAt(0)}</span>
+                    <span className="text-white text-sm font-semibold font-display">
+                      {selectedReview.name.charAt(0)}
+                    </span>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-navy font-body">{selectedReview.name}</p>
-                    <p className="text-xs text-navy/40 font-body mt-0.5">{selectedReview.role}</p>
+                    <p className="text-sm font-semibold text-navy font-body">
+                      {selectedReview.name}
+                    </p>
+                    <p className="text-xs text-navy/40 font-body mt-0.5">
+                      {selectedReview.role}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -359,7 +496,6 @@ export default function Reviews() {
           </>
         )}
       </AnimatePresence>
-
     </section>
   );
 }
@@ -369,7 +505,14 @@ function ReviewCardInner({ r }: { r: Review }) {
     <>
       <div className="flex gap-1">
         {[...Array(5)].map((_, j) => (
-          <svg key={j} width="12" height="12" viewBox="0 0 24 24" fill="#4a8fe2" stroke="none">
+          <svg
+            key={j}
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="#4a8fe2"
+            stroke="none"
+          >
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
           </svg>
         ))}
@@ -383,10 +526,14 @@ function ReviewCardInner({ r }: { r: Review }) {
 
       <div className="flex items-center gap-2.5">
         <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center shrink-0">
-          <span className="text-white text-xs font-semibold font-display">{r.name.charAt(0)}</span>
+          <span className="text-white text-xs font-semibold font-display">
+            {r.name.charAt(0)}
+          </span>
         </div>
         <div>
-          <p className="text-[13px] font-semibold text-navy font-body">{r.name}</p>
+          <p className="text-[13px] font-semibold text-navy font-body">
+            {r.name}
+          </p>
           <p className="text-[11px] text-navy/40 font-body mt-0.5">{r.role}</p>
         </div>
       </div>
