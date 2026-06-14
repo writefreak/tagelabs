@@ -39,9 +39,9 @@ export default function About() {
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="font-display text-4xl md:text-5xl font-semibold text-navy leading-tight mb-8"
+            className="font-display text-3xl md:text-5xl font-semibold text-navy leading-tight mb-8"
           >
-            A studio that builds for the long game.
+            A studio that builds for <br className="md:hidden" /> the long game.
           </motion.h2>
 
           <motion.div
@@ -115,12 +115,12 @@ export default function About() {
             className="rounded-2xl  p-10 bg-blue"
           >
             <p className="font-display text-2xl text-white font-semibold leading-snug">
-              "Your brand does not exist until someone can find it, feel it, and
-              trust it — that is what we build."
+              "Your brand doesn't exist until someone can find it, feel it, and
+              trust it, that is what we build."
             </p>
             <div className="mt-6 w-10 h-0.5 bg-blue" />
             <p className="mt-4 font-body text-xs text-white/80 tracking-widest uppercase">
-              TageLabs Studio
+              Endwell Heritage (Founder, TageLabs)
             </p>
           </motion.div>
 

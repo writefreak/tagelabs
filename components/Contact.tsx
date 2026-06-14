@@ -127,8 +127,8 @@ export default function Contact() {
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20">
         {/* Left */}
         <div>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white leading-tight mb-6">
-            Ready to build something great?
+          <h2 className="font-display text-3xl md:text-5xl font-semibold text-white leading-tight mb-6">
+            Ready to build <br className="md:hidden" /> something great?
           </h2>
           <p className="font-body text-white/50 text-sm leading-relaxed mb-10">
             Tell us what you need and we'll get back to you within 24 hours.

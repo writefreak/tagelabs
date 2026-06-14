@@ -72,7 +72,7 @@ export default function Navbar() {
           </div>
           <button
             onClick={() => router.push("/cv-order")}
-            className="text-sm font-medium bg-blue text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
+            className="text-sm hidden md:block font-medium bg-blue text-white px-5 py-2 rounded-full hover:bg-blue transition-colors duration-200"
           >
             Preorder a Modern CV
           </button>

@@ -68,12 +68,16 @@ function ProjectCard({
         <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-2">
           <div className="flex items-end justify-between">
             <div className="min-w-0 flex-1 pr-2">
-              <span className="block text-[10px] font-medium uppercase tracking-widest text-white/50 mb-0.5">
+              {/* <span className="block text-[7px] font-medium uppercase tracking-widest text-white/50 mb-0.5">
                 {project.category}
-              </span>
+              </span> */}
               <h3 className="font-display text-sm font-semibold text-white leading-snug truncate">
                 {project.title}
               </h3>
+
+              {/* <p className="text-xs line-clamp-2 pt-5 text-white/60">
+                {project.description}
+              </p> */}
             </div>
             <div className="shrink-0 w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
               <ArrowUpRight size={13} color="white" />
@@ -175,13 +179,13 @@ export default function Work() {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="mb-20"
+          className="pb-5 md:pb-16"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+          <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
             Projects Built with Intention.
           </h2>
         </motion.div>
@@ -249,7 +253,7 @@ export default function Work() {
               </div>
 
               {projects.length > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-5">
+                <div className="flex items-center justify-center gap-2 pt-3 md:pt-5">
                   {projects.map((_, i) => (
                     <button
                       key={i}

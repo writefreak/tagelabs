@@ -159,8 +159,8 @@ export default function Reviews() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <h2 className="font-display text-4xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-              Words from people we've built for.
+            <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+              Words from people <br className="md:hidden" /> we've built for.
             </h2>
             <p className="font-body text-navy/45 text-sm max-w-xs leading-relaxed">
               Real feedback from clients across design, development, and
