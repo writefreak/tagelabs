@@ -7,19 +7,21 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ui/scroll-top";
 import Reviews from "@/components/Reviews";
+import RecentBlogs from "@/components/recent-blogs";
 
 export default function Home() {
   return (
     <main>
       {/* <Navbar/> */}
-      <ScrollToTop/>
+      <ScrollToTop />
       <Hero />
       <About />
       <Services />
       <Work />
-      <Reviews/>
+      <RecentBlogs />
+      <Reviews />
       <Contact />
-     {/* <Footer/> */}
+      {/* <Footer/> */}
     </main>
   );
 }
