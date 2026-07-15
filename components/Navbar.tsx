@@ -37,7 +37,7 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
-  const links = ["About", "Services", "Work", "Reviews", "Contact"];
+  const links = ["About", "Services", "Work", "Reviews", "Blogs", "Contact"];
 
   return (
     <>

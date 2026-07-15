@@ -74,11 +74,11 @@ export default function BlogPostClient({
             All posts
           </Link>
 
-          <h1 className="font-display text-3xl md:text-4xl font-semibold text-navy leading-tight mb-3">
+          <h1 className="font-display text-xl md:text-4xl font-semibold text-navy leading-tight mb-3">
             {post.title}
           </h1>
 
-          <p className="text-sm text-navy/40 mb-8">
+          <p className="text-xs md:text-sm text-navy/40 mb-8">
             {formatDate(post.created_at)}
           </p>
 
@@ -100,7 +100,7 @@ export default function BlogPostClient({
                     {section.heading}
                   </h2>
                 )}
-                <p className="font-body text-navy/65 text-xs md:text-sm leading-relaxed">
+                <p className="font-sans text-navy/65 text-xs md:text-sm leading-relaxed">
                   {section.body}
                 </p>
               </div>
