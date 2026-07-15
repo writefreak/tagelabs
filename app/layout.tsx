@@ -36,6 +36,10 @@ export const metadata: Metadata = {
     icon: "/icon.png",
     apple: "/tagelabs.png",
   },
+
+  verification: {
+    google: "umQeoteQzhgFrR7-xPAkZndZZ4zzjK8Z7DMgM9tpQhk",
+  },
 };
 
 export default function RootLayout({
