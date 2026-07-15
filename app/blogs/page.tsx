@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
 
@@ -59,7 +59,7 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-          <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-2">
+          <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-1">
             <div className="flex items-end justify-between">
               <div className="min-w-0 flex-1 pr-2">
                 <h3 className="font-display text-sm font-semibold text-white leading-snug truncate">
@@ -71,15 +71,15 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
               </div>
             </div>
 
-            <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
-              <span className="text-[10px] text-white/55 font-medium truncate min-w-0">
-                {post.excerpt || "Read the post"}
-              </span>
-              <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
-                {formatDate(post.created_at)}
-              </span>
-            </div>
+            {/* <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2"> */}
+            <span className="text-[10px] text-white/55 font-medium truncate min-w-0">
+              {post.excerpt || "Read the post"}
+            </span>
+            {/* </div> */}
           </div>
+          {/* <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
+            {formatDate(post.created_at)}
+          </span> */}
         </div>
       </article>
     </Link>
@@ -141,7 +141,14 @@ export default function BlogArchivePage() {
 
   return (
     <section className="py-16 md:py-24 px-6" style={{ background: "#ffffff" }}>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto pt-12">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
+        >
+          <ArrowLeft size={14} />
+          Back to home
+        </Link>
         <motion.div
           ref={scrollRef}
           className="pb-10 md:pb-16"
@@ -150,8 +157,8 @@ export default function BlogArchivePage() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h1 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-            Thoughts, Worth Sharing.
+          <h1 className="font-display text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+            Our Thoughts, Worth Sharing.
           </h1>
         </motion.div>
 
