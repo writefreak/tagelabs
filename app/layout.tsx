@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/tagelabs.png",
+        url: "/og-tage.png",
         width: 1200,
         height: 630,
         alt: "TageLabs",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TageLabs",
     description: "Transforming businesses with scalable digital solutions.",
-    images: ["/tagelabs.png"],
+    images: ["/og-tage.png"],
   },
   icons: {
     icon: "/icon.png",
