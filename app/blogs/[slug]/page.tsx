@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       publishedTime: post.created_at,
       modifiedTime: post.updated_at,
-      url: `https://tagelabs.com/blog/${post.slug}`,
+      url: `https://tagelabs.vercel.app/blog/${post.slug}`,
       images: post.cover_image_url
         ? [
             {
