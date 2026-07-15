@@ -16,7 +16,7 @@ export default async function sitemap() {
     .returns<SitemapPost[]>();
 
   const blogUrls = (posts || []).map((post: SitemapPost) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
+    url: `${baseUrl}/blogs/${post.slug}`,
     lastModified: post.updated_at,
     changeFrequency: "monthly" as const,
     priority: 0.6,

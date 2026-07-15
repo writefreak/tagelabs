@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/admin",
     },
-    sitemap: "https://tagelabs.com/sitemap.xml",
+    sitemap: "https://tagelabs.vercel.app/sitemap.xml",
   };
 }
