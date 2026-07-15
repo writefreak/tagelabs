@@ -6,7 +6,7 @@ type SitemapPost = {
 };
 
 export default async function sitemap() {
-  const baseUrl = "https://tagelabs.vercel.app"; // swap for your real domain when live
+  const baseUrl = "https://tagelabs.vercel.app";
 
   const supabase = await createClient();
   const { data: posts } = await supabase

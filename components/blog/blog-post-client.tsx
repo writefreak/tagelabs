@@ -96,7 +96,7 @@ export default function BlogPostClient({
             {post.sections.map((section, i) => (
               <div key={i}>
                 {section.heading && (
-                  <h2 className="font-display text-lg md:text-xl font-semibold text-navy mb-3">
+                  <h2 className="font-display text-sm md:text-xl font-semibold text-navy mb-3">
                     {section.heading}
                   </h2>
                 )}
