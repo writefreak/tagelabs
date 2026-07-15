@@ -3,7 +3,7 @@ import "./globals.css";
 import LayoutShell from "@/components/layout-shell";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tagelabs.com"),
+  metadataBase: new URL("https://tagelabs.vercel.app"),
   title: {
     default:
       "TageLabs — Transforming businesses with scalable digital solutions",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "TageLabs",
     description: "Transforming businesses with scalable digital solutions.",
-    url: "https://tagelabs.com",
+    url: "https://tagelabs.vercel.app",
     siteName: "TageLabs",
     type: "website",
     images: [
