@@ -41,9 +41,9 @@ export default function About() {
 
   return (
     <section id="about" className="py-20 md:py-28 px-4 md:px-14 bg-white">
-      <div className="max-w-6xl mx-auto space-y-12 md:space-y-16">
+      <div className="max-w-6xl">
         {/* Header Section: Title + Description */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3 md:gap-4">
           <motion.h2
             variants={fadeUp}
             custom={0}
@@ -63,7 +63,7 @@ export default function About() {
             viewport={viewport}
             className="flex flex-col gap-4"
           >
-            <p className="font-sans text-navy/60 leading-relaxed text-sm">
+            <p className="font-sans md:max-w-sm text-navy/60 leading-relaxed text-sm">
               TageLabs is a digital solutions studio founded on the belief that
               good design and clean code are competitive advantages.
             </p>
@@ -71,7 +71,7 @@ export default function About() {
         </div>
 
         {/* Content Section: 2 Equal Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-7  items-start">
           {/* Overlapping Media Area */}
           <motion.div
             variants={fadeUp}
@@ -82,20 +82,12 @@ export default function About() {
             className="relative w-full h-[380px] sm:h-[450px]"
           >
             {/* Main Image Frame */}
-            <div className="absolute top-0 left-0 w-[82%] h-[85%] rounded-3xl overflow-hidden bg-offwhite border border-navy/10 shadow-sm">
+            <div className="absolute top-0 left-0 w-full h-[85%] rounded-3xl overflow-hidden bg-offwhite border border-navy/10 shadow-sm">
               <img
                 src="/tageimg.png"
                 alt="TageLabs Studio"
                 className="h-full w-full object-cover"
               />
-            </div>
-
-            {/* Quote Card */}
-            <div className="absolute bottom-0 right-0 w-[60%] h-[40%] rounded-3xl overflow-hidden bg-navy p-5 md:p-6 lg:p-8 flex flex-col justify-center shadow-xl border-2 md:border-4 border-white">
-              <p className="font-display text-xs sm:text-sm lg:text-base text-white font-semibold leading-snug">
-                "Your brand doesn't exist until someone can find it, feel it,
-                and trust it."
-              </p>
             </div>
           </motion.div>
 
