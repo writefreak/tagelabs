@@ -34,15 +34,11 @@ body {
 /* Scrollbar */
 /* globals.css */
 ::-webkit-scrollbar {
-  width: 2px;
-}
-
-::-webkit-scrollbar-track {
-  background: white;
+  width: 1px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #377389;
+  background-color: #112369;
 }
 
 /* Staggered animation delays */

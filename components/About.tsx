@@ -1,5 +1,7 @@
 "use client";
-import { motion } from "framer-motion";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
 
 const fadeUp: Variants = {
@@ -18,134 +20,140 @@ const fadeUp: Variants = {
 const viewport = { once: false, margin: "-60px" };
 
 export default function About() {
+  const [openAccordion, setOpenAccordion] = useState<"mission" | "vision">(
+    "mission",
+  );
+
+  const accordionItems = [
+    {
+      id: "mission" as const,
+      title: "Our Mission",
+      content:
+        "TageLabs is a digital solutions studio founded on the belief that good design and clean code are competitive advantages. Every project we take on is treated as a partnership, not a transaction.",
+    },
+    {
+      id: "vision" as const,
+      title: "Our Vision",
+      content:
+        "We work with ambitious businesses and individuals who understand that their digital presence is a direct reflection of their brand. A studio that builds for the long game.",
+    },
+  ];
+
   return (
-    <section id="about" className="py-28 px-6 bg-white">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-        {/* Left */}
-        <div>
-          {/* <motion.p
+    <section id="about" className="py-20 md:py-28 px-6 bg-white">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section: Title on Left, Subtext & Action on Right */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
+          <motion.h2
             variants={fadeUp}
+            custom={0}
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="text-blue text-sm font-medium tracking-widest uppercase mb-4 font-body"
+            className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-navy leading-tight max-w-xl"
           >
-            About TageLabs
-          </motion.p> */}
+            A studio that builds for the long game.
+          </motion.h2>
 
-          <motion.h2
+          <motion.div
             variants={fadeUp}
             custom={1}
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="font-display text-3xl md:text-5xl font-semibold text-navy leading-tight mb-8"
+            className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-start sm:items-center md:items-start lg:items-center gap-6 max-w-lg"
           >
-            A studio that builds for <br className="md:hidden" /> the long game.
-          </motion.h2>
+            <p className="font-body text-navy/60 leading-relaxed text-sm">
+              TageLabs is a digital solutions studio founded on the belief that
+              good design and clean code are competitive advantages.
+            </p>
+            <a
+              href="#contact"
+              className="px-6 py-3 bg-blue text-white font-body font-medium text-sm rounded-full whitespace-nowrap hover:bg-navy transition-colors duration-300 shadow-sm"
+            >
+              Learn More
+            </a>
+          </motion.div>
+        </div>
 
+        {/* Content Layout: Overlapping Media Grid (Left) + Accordion (Right) */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* Overlapping Image Container */}
           <motion.div
             variants={fadeUp}
             custom={2}
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="w-16 h-0.5 bg-blue mb-8"
-          />
-
-          <motion.p
-            variants={fadeUp}
-            custom={3}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="font-body text-navy/60 leading-relaxed mb-6 text-sm"
+            className="lg:col-span-6 relative w-full h-[380px] sm:h-[450px]"
           >
-            TageLabs is a digital solutions studio founded on the belief that
-            good design and clean code are competitive advantages.
-          </motion.p>
+            {/* Primary Background Card/Image */}
+            <div className="absolute top-0 left-0 w-[80%] h-[85%] rounded-3xl overflow-hidden bg-offwhite border border-navy/10 shadow-sm flex items-center justify-center p-8">
+              <div className="text-center">
+                <img src="" alt="" />
+              </div>
+            </div>
 
-          <motion.p
-            variants={fadeUp}
-            custom={4}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="font-body text-navy/60 leading-relaxed text-sm"
-          >
-            We work with ambitious businesses and individuals who understand
-            that their digital presence is a direct reflection of their brand.
-            Every project we take on is treated as a partnership, not a
-            transaction.
-          </motion.p>
-
-          <div className="mt-10 grid grid-cols-2 gap-6">
-            {[
-              { label: "Precision", desc: "Every detail is intentional." },
-              { label: "Speed", desc: "Fast delivery without compromise." },
-              { label: "Clarity", desc: "We deliver innovative results." },
-              { label: "Ambition", desc: "We build for scale." },
-            ].map((v, i) => (
-              <motion.div
-                key={v.label}
-                custom={5 + i}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="border-l-2 border-blue pl-4"
-              >
-                <p className="font-body font-semibold text-navy text-sm">
-                  {v.label}
+            {/* Overlapping Secondary Card */}
+            <div className="absolute bottom-0 right-0 w-[60%] h-[65%] rounded-3xl overflow-hidden bg-navy p-6 lg:p-8 flex flex-col justify-between shadow-xl border-4 border-white">
+              <p className="font-display text-lg lg:text-xl text-white font-semibold leading-snug">
+                "Your brand doesn't exist until someone can find it, feel it,
+                and trust it."
+              </p>
+              <div>
+                <div className="w-8 h-0.5 bg-blue mb-2" />
+                <p className="font-body text-[10px] text-white/70 tracking-widest uppercase">
+                  Endwell Heritage
                 </p>
-                <p className="font-body text-navy/50 text-xs mt-1">{v.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right */}
-        <div className="flex flex-col gap-6 ">
-          <motion.div
-            variants={fadeUp}
-            custom={1}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="rounded-2xl  p-10 bg-blue"
-          >
-            <p className="font-display text-2xl text-white font-semibold leading-snug">
-              "Your brand doesn't exist until someone can find it, feel it, and
-              trust it, that is what we build."
-            </p>
-            <div className="mt-6 w-10 h-0.5 bg-blue" />
-            <p className="mt-4 font-body text-xs text-white/80 tracking-widest uppercase">
-              Endwell Heritage (Founder, TageLabs)
-            </p>
+              </div>
+            </div>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { value: "100%", label: "Client satisfaction" },
-              { value: "Fast", label: "Turnaround times" },
-              { value: "Premium", label: "Services offered" },
-              { value: "Global", label: "Clientele" },
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                custom={2 + i}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="rounded-2xl border border-navy/10 p-6 flex flex-col gap-1 hover:border-blue transition-colors duration-200"
-              >
-                <p className="font-display text-xl font-semibold text-navy">
-                  {stat.value}
-                </p>
-                <p className="font-body text-xs text-navy/50">{stat.label}</p>
-              </motion.div>
-            ))}
+          {/* Accordion Column */}
+          <div className="lg:col-span-6 flex flex-col gap-4">
+            {accordionItems.map((item, index) => {
+              const isOpen = openAccordion === item.id;
+              return (
+                <motion.div
+                  key={item.id}
+                  variants={fadeUp}
+                  custom={3 + index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={viewport}
+                  className={`rounded-2xl transition-all duration-300 border ${
+                    isOpen
+                      ? "bg-offwhite border-navy/10 shadow-sm p-6 lg:p-8"
+                      : "bg-white border-navy/10 hover:border-blue/50 p-6"
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenAccordion(item.id)}
+                    className="w-full flex items-center justify-between text-left focus:outline-none"
+                  >
+                    <h3 className="font-display text-base lg:text-3xl font-semibold text-navy">
+                      {item.title}
+                    </h3>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="font-body text-navy/70 text-xs md:text-sm lg:text-base leading-relaxed mt-4">
+                          {item.content}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

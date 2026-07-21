@@ -144,7 +144,7 @@ export default function BlogArchivePage() {
       <div className="max-w-6xl mx-auto pt-12">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
+          className="inline-flex pb-4 items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
         >
           <ArrowLeft size={14} />
           Back to home

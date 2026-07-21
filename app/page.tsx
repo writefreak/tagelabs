@@ -8,13 +8,15 @@ import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ui/scroll-top";
 import Reviews from "@/components/Reviews";
 import RecentBlogs from "@/components/recent-blogs";
+import TestHero from "@/components/test-hero";
 
 export default function Home() {
   return (
     <main>
       {/* <Navbar/> */}
       <ScrollToTop />
-      <Hero />
+      {/* <Hero /> */}
+      <TestHero />
       <About />
       <Services />
       <Work />
