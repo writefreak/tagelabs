@@ -40,17 +40,17 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="py-20 md:py-28 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
-        {/* Header Section: Title on Left, Subtext & Action on Right */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
+    <section id="about" className="py-20 md:py-28 px-4 md:px-14 bg-white">
+      <div className="max-w-6xl mx-auto space-y-12 md:space-y-16">
+        {/* Header Section: Title + Description */}
+        <div className="flex flex-col gap-2">
           <motion.h2
             variants={fadeUp}
             custom={0}
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-navy leading-tight max-w-xl"
+            className="font-display max-w-sm md:max-w-xl text-4xl sm:text-5xl lg:text-5xl font-semibold text-navy leading-tight"
           >
             A studio that builds for the long game.
           </motion.h2>
@@ -61,56 +61,46 @@ export default function About() {
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-start sm:items-center md:items-start lg:items-center gap-6 max-w-lg"
+            className="flex flex-col gap-4"
           >
-            <p className="font-body text-navy/60 leading-relaxed text-sm">
+            <p className="font-sans text-navy/60 leading-relaxed text-sm">
               TageLabs is a digital solutions studio founded on the belief that
               good design and clean code are competitive advantages.
             </p>
-            <a
-              href="#contact"
-              className="px-6 py-3 bg-blue text-white font-body font-medium text-sm rounded-full whitespace-nowrap hover:bg-navy transition-colors duration-300 shadow-sm"
-            >
-              Learn More
-            </a>
           </motion.div>
         </div>
 
-        {/* Content Layout: Overlapping Media Grid (Left) + Accordion (Right) */}
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Overlapping Image Container */}
+        {/* Content Section: 2 Equal Columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
+          {/* Overlapping Media Area */}
           <motion.div
             variants={fadeUp}
             custom={2}
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="lg:col-span-6 relative w-full h-[380px] sm:h-[450px]"
+            className="relative w-full h-[380px] sm:h-[450px]"
           >
-            {/* Primary Background Card/Image */}
-            <div className="absolute top-0 left-0 w-[80%] h-[85%] rounded-3xl overflow-hidden bg-offwhite border border-navy/10 shadow-sm flex items-center justify-center p-8">
-              <div className="text-center">
-                <img src="" alt="" />
-              </div>
+            {/* Main Image Frame */}
+            <div className="absolute top-0 left-0 w-[82%] h-[85%] rounded-3xl overflow-hidden bg-offwhite border border-navy/10 shadow-sm">
+              <img
+                src="/tageimg.png"
+                alt="TageLabs Studio"
+                className="h-full w-full object-cover"
+              />
             </div>
 
-            {/* Overlapping Secondary Card */}
-            <div className="absolute bottom-0 right-0 w-[60%] h-[65%] rounded-3xl overflow-hidden bg-navy p-6 lg:p-8 flex flex-col justify-between shadow-xl border-4 border-white">
-              <p className="font-display text-lg lg:text-xl text-white font-semibold leading-snug">
+            {/* Quote Card */}
+            <div className="absolute bottom-0 right-0 w-[60%] h-[40%] rounded-3xl overflow-hidden bg-navy p-5 md:p-6 lg:p-8 flex flex-col justify-center shadow-xl border-2 md:border-4 border-white">
+              <p className="font-display text-xs sm:text-sm lg:text-base text-white font-semibold leading-snug">
                 "Your brand doesn't exist until someone can find it, feel it,
                 and trust it."
               </p>
-              <div>
-                <div className="w-8 h-0.5 bg-blue mb-2" />
-                <p className="font-body text-[10px] text-white/70 tracking-widest uppercase">
-                  Endwell Heritage
-                </p>
-              </div>
             </div>
           </motion.div>
 
-          {/* Accordion Column */}
-          <div className="lg:col-span-6 flex flex-col gap-4">
+          {/* Accordion List */}
+          <div className="flex flex-col gap-4 w-full">
             {accordionItems.map((item, index) => {
               const isOpen = openAccordion === item.id;
               return (
@@ -131,7 +121,7 @@ export default function About() {
                     onClick={() => setOpenAccordion(item.id)}
                     className="w-full flex items-center justify-between text-left focus:outline-none"
                   >
-                    <h3 className="font-display text-base lg:text-3xl font-semibold text-navy">
+                    <h3 className="font-display text-lg lg:text-2xl font-semibold text-navy">
                       {item.title}
                     </h3>
                   </button>
@@ -145,7 +135,7 @@ export default function About() {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className="font-body text-navy/70 text-xs md:text-sm lg:text-base leading-relaxed mt-4">
+                        <p className="font-body text-navy/70 text-xs md:text-sm leading-relaxed mt-4">
                           {item.content}
                         </p>
                       </motion.div>
