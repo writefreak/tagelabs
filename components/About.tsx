@@ -114,7 +114,7 @@ function ParallaxImage({ className }: { className: string }) {
       className={className}
     >
       <motion.img
-        src="/tageimg2.png"
+        src="/tagebg.png"
         alt="TageLabs studio"
         style={{ y: imageY }}
         className="absolute left-0 -top-[15%] h-[130%] w-full object-cover"
@@ -135,10 +135,11 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="mt-3 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl"
+          className="py-3 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl"
         >
           A studio that builds for the long game.
         </motion.h2>
+        <div className="h-1 w-16 bg-navy" />
 
         <ParallaxImage className="mt-10 relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
         <motion.p
@@ -150,10 +151,10 @@ export default function About() {
         >
           We work with startups launching their first digital product, job
           seekers and creatives who need a CV/portfolio that reflects the pure
-          quality of their work and businesses that want a web development
-          experience their users will remember. Whether the need is a single
-          landing page, a portfolio or an entire website revamp, TageLabs meets
-          you where you are, thinks with you, and builds for the long game.
+          quality of their work and businesses that want a website experience
+          their users will remember. Whether the need is a single landing page,
+          a portfolio or an entire digital revamp, TageLabs meets you where you
+          are, thinks with you, and builds for the long game.
         </motion.p>
 
         {/* <StatGrid /> */}
@@ -179,24 +180,26 @@ export default function About() {
               A studio that builds for the long game
             </motion.h2>
 
+            <div className="h-1 w-20 bg-blue" />
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55, delay: 0.15 }}
-              className="font-sans text-sm leading-relaxed text-navy/60 md:max-w-xl"
+              className="font-sans pt-5 text-sm leading-relaxed text-navy/60 md:max-w-xl"
             >
               We work with startups launching their first digital product, job
               seekers and creatives who need a CV/portfolio that reflects the
-              pure quality of their work and businesses that want a web
-              development experience their users will remember. Whether the need
-              is a single landing page, a portfolio or an entire website revamp,
-              TageLabs meets you where you are, thinks with you, and builds for
-              the long game.
+              pure quality of their work and businesses that want a website
+              experience their users will remember. Whether the need is a single
+              landing page, a portfolio or an entire digital revamp, TageLabs
+              meets you where you are, thinks with you, and builds for the long
+              game.
             </motion.p>
           </div>
           <div className="flex md:items-end">
-            <button className="inline-flex  items-center justify-center bg-blue text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
+            <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project
             </button>
           </div>
