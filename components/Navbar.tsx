@@ -112,7 +112,7 @@ export default function Navbar() {
                 <motion.button
                   key={link}
                   onClick={() => scrollTo(link.toLowerCase())}
-                  className="text-2xl md:text-3xl font-display font-semibold text-navy/70 hover:text-blue transition-colors text-center"
+                  className="text-xl md:text-2xl font-display font-semibold text-navy/70 hover:text-blue transition-colors text-center"
                   variants={{
                     open: { opacity: 1, x: 0 },
                     closed: { opacity: 0, x: -24 },
@@ -128,7 +128,7 @@ export default function Navbar() {
                   setMenuOpen(false);
                   router.push("/cv-order");
                 }}
-                className="text-base font-medium bg-blue text-white px-8 py-3 rounded-full text-center hover:bg-blue transition-colors"
+                className="text-base font-medium bg-blue text-white px-8 py-3 rounded-2xl text-center hover:bg-blue transition-colors"
                 variants={{
                   open: { opacity: 1, x: 0 },
                   closed: { opacity: 0, x: -24 },

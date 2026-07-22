@@ -1,142 +1,207 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import type { Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useInView,
+  animate,
+} from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.55,
+// TODO: replace with TageLabs' real numbers
+const STATS = [
+  { value: 3, suffix: "+", label: "Years", desc: "building since 2023" },
+  {
+    value: 20,
+    suffix: "+",
+    label: "Projects Shipped",
+    desc: "landing pages, sites, portfolios",
+  },
+  {
+    value: 15,
+    suffix: "+",
+    label: "Clients",
+    desc: "across web and design work",
+  },
+  {
+    value: 3,
+    suffix: "",
+    label: "Team Members",
+    desc: "hands-on with every build",
+  },
+];
+
+function Counter({
+  target,
+  suffix = "",
+  duration = 1.6,
+  delay = 0,
+}: {
+  target: number;
+  suffix?: string;
+  duration?: number;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    const controls = animate(0, target, {
+      duration,
+      delay,
       ease: [0.22, 1, 0.36, 1],
-    },
-  }),
-};
-
-const viewport = { once: false, margin: "-60px" };
-
-export default function About() {
-  const [openAccordion, setOpenAccordion] = useState<"mission" | "vision">(
-    "mission",
-  );
-
-  const accordionItems = [
-    {
-      id: "mission" as const,
-      title: "Our Mission",
-      content:
-        "TageLabs is a digital solutions studio founded on the belief that good design and clean code are competitive advantages. Every project we take on is treated as a partnership, not a transaction.",
-    },
-    {
-      id: "vision" as const,
-      title: "Our Vision",
-      content:
-        "We work with ambitious businesses and individuals who understand that their digital presence is a direct reflection of their brand. A studio that builds for the long game.",
-    },
-  ];
+      onUpdate: (v) => setCount(Math.floor(v)),
+    });
+    return () => controls.stop();
+  }, [isInView, target, duration, delay]);
 
   return (
-    <section id="about" className="py-20 md:py-28 px-4 md:px-14 bg-white">
-      <div className="max-w-6xl">
-        {/* Header Section: Title + Description */}
-        <div className="flex flex-col gap-3 md:gap-4">
-          <motion.h2
-            variants={fadeUp}
-            custom={0}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="font-display max-w-sm md:max-w-xl text-4xl sm:text-5xl lg:text-5xl font-semibold text-navy leading-tight"
-          >
-            A studio that builds for the long game.
-          </motion.h2>
+    <p
+      ref={ref}
+      className="font-display text-3xl font-semibold text-navy sm:text-4xl"
+    >
+      {count.toLocaleString()}
+      {suffix}
+    </p>
+  );
+}
 
-          <motion.div
-            variants={fadeUp}
-            custom={1}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="flex flex-col gap-4"
-          >
-            <p className="font-sans md:max-w-sm text-navy/60 leading-relaxed text-sm">
-              TageLabs is a digital solutions studio founded on the belief that
-              good design and clean code are competitive advantages.
-            </p>
-          </motion.div>
+function StatGrid() {
+  return (
+    <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-10">
+      {STATS.map((stat, i) => (
+        <motion.div
+          key={stat.label}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}
+          className="flex flex-col"
+        >
+          <Counter
+            target={stat.value}
+            suffix={stat.suffix}
+            delay={0.1 + i * 0.1}
+          />
+          <p className="mt-1 font-sans text-xs md:text-sm text-navy/60">
+            {stat.label}
+          </p>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function ParallaxImage({ className }: { className: string }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: wrapperRef,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
+  return (
+    <motion.div
+      ref={wrapperRef}
+      initial={{ opacity: 0, scale: 0.96 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={className}
+    >
+      <motion.img
+        src="/tageimg2.png"
+        alt="TageLabs studio"
+        style={{ y: imageY }}
+        className="absolute left-0 -top-[15%] h-[130%] w-full object-cover"
+      />
+    </motion.div>
+  );
+}
+
+export default function About() {
+  return (
+    <section
+      id="about"
+      className="bg-white px-6 py-20 sm:py-24 lg:px-10 lg:py-36 border-t border-t-gray-100"
+    >
+      <div className="mx-auto flex max-w-6xl flex-col lg:hidden">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          className="mt-3 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl"
+        >
+          A studio that builds for the long game.
+        </motion.h2>
+
+        <ParallaxImage className="mt-10 relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, delay: 0.15 }}
+          className="mt-5 font-sans text-xs leading-relaxed text-navy/60 w-full"
+        >
+          We work with startups launching their first digital product, job
+          seekers and creatives who need a CV/portfolio that reflects the pure
+          quality of their work and businesses that want a web development
+          experience their users will remember. Whether the need is a single
+          landing page, a portfolio or an entire website revamp, TageLabs meets
+          you where you are, thinks with you, and builds for the long game.
+        </motion.p>
+
+        {/* <StatGrid /> */}
+        <div className="flex pt-6">
+          <button className="flex gap-2 items-center justify-center bg-blue text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
+            Start a project <ArrowRight size={13} />
+          </button>
         </div>
+      </div>
 
-        {/* Content Section: 2 Equal Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-7  items-start">
-          {/* Overlapping Media Area */}
-          <motion.div
-            variants={fadeUp}
-            custom={2}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="relative w-full h-[380px] sm:h-[450px]"
-          >
-            {/* Main Image Frame */}
-            <div className="absolute top-0 left-0 w-full h-[85%] rounded-3xl overflow-hidden bg-offwhite border border-navy/10 shadow-sm">
-              <img
-                src="/tageimg.png"
-                alt="TageLabs Studio"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </motion.div>
+      <div className="mx-auto hidden max-w-6xl gap-16 lg:grid lg:grid-cols-2">
+        <ParallaxImage className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
 
-          {/* Accordion List */}
-          <div className="flex flex-col gap-4 w-full">
-            {accordionItems.map((item, index) => {
-              const isOpen = openAccordion === item.id;
-              return (
-                <motion.div
-                  key={item.id}
-                  variants={fadeUp}
-                  custom={3 + index}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={viewport}
-                  className={`rounded-2xl transition-all duration-300 border ${
-                    isOpen
-                      ? "bg-offwhite border-navy/10 shadow-sm p-6 lg:p-8"
-                      : "bg-white border-navy/10 hover:border-blue/50 p-6"
-                  }`}
-                >
-                  <button
-                    onClick={() => setOpenAccordion(item.id)}
-                    className="w-full flex items-center justify-between text-left focus:outline-none"
-                  >
-                    <h3 className="font-display text-lg lg:text-2xl font-semibold text-navy">
-                      {item.title}
-                    </h3>
-                  </button>
+        <div className="flex flex-col md:gap-12">
+          <div className="flex flex-col gap-4">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55, delay: 0.05 }}
+              className="mt-3 font-display text-3xl md:text-5xl font-semibold leading-tight text-navy"
+            >
+              A studio that builds for the long game
+            </motion.h2>
 
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                      >
-                        <p className="font-body text-navy/70 text-xs md:text-sm leading-relaxed mt-4">
-                          {item.content}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55, delay: 0.15 }}
+              className="font-sans text-sm leading-relaxed text-navy/60 md:max-w-xl"
+            >
+              We work with startups launching their first digital product, job
+              seekers and creatives who need a CV/portfolio that reflects the
+              pure quality of their work and businesses that want a web
+              development experience their users will remember. Whether the need
+              is a single landing page, a portfolio or an entire website revamp,
+              TageLabs meets you where you are, thinks with you, and builds for
+              the long game.
+            </motion.p>
           </div>
+          <div className="flex md:items-end">
+            <button className="inline-flex  items-center justify-center bg-blue text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
+              Start a project
+            </button>
+          </div>
+
+          {/* <StatGrid /> */}
         </div>
       </div>
     </section>
