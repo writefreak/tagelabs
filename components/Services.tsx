@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { Layout, FileUser, Palette, Code2 } from "lucide-react";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 32 },
@@ -17,39 +18,35 @@ const fadeUp: Variants = {
 
 const services = [
   {
-    number: "01",
-    title: "Landing Page Design",
+    icon: Layout,
+    title: "Professional Website Design",
     description:
-      "We build landing pages that are clean, intentional and designed so your visitors take action.",
-    tags: ["Next.js", "Tailwind", "Framer Motion"],
+      "We build websites that are clean, intentional and designed so your visitors take action.",
   },
   {
-    number: "02",
+    icon: FileUser,
     title: "CV & Portfolio Optimization",
     description:
       "Professional CVs and portfolio sites that position you for the best opportunities you desire.",
-    tags: ["Design", "Copywriting", "Web"],
   },
   {
-    number: "03",
+    icon: Palette,
     title: "Minimalist Graphics",
     description:
       "Clean, intentional graphic design for brands that want to communicate clarity and confidence.",
-    tags: ["Brand", "Visual Identity", "Design"],
   },
   {
-    number: "04",
+    icon: Code2,
     title: "Frontend Development",
     description:
       "Scalable, performant frontend code using modern frameworks. From component libraries to full product UIs.",
-    tags: ["React", "TypeScript", "React Native"],
   },
 ];
 
 export default function Services() {
   return (
     <section id="services" className="md:py-25 py-8 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl 2xl:max-w-[1600px] mx-auto">
         {/* Header */}
         <motion.div
           className="flex flex-col md:flex-row md:items-end justify-between pb-5 md:pb-16 gap-6"
@@ -60,7 +57,7 @@ export default function Services() {
         >
           <div>
             <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-              Services built for <br className="md:hidden" /> results.
+              Our services are built for results.
             </h2>
           </div>
           <p className="font-body text-navy/50 max-w-sm text-sm leading-relaxed">
@@ -70,38 +67,32 @@ export default function Services() {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 gap-px bg-navy/10">
-          {services.map((s, i) => (
-            <motion.div
-              key={s.number}
-              custom={i}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: false, margin: "-60px" }}
-              className="bg-white p-10 group hover:bg-offwhite transition-colors duration-300"
-            >
-              {/* <span className="font-body text-xs text-blue tracking-widest">
-                {s.number}
-              </span> */}
-              <h3 className="font-display text-xl md:text-2xl font-semibold text-navy mt-4 mb-4 group-hover:text-blue transition-colors duration-200">
-                {s.title}
-              </h3>
-              <p className="font-body text-navy/60 text-xs md:text-sm leading-relaxed mb-6">
-                {s.description}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {s.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs font-medium bg-blue/10 text-blue px-3 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 2xl:gap-6">
+          {services.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <motion.div
+                key={s.title}
+                custom={i}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, margin: "-60px" }}
+                className="group bg-navy rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(21,68,153,0.45)]"
+              >
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-6">
+                  <Icon className="w-5 h-5 text-navy" strokeWidth={1.75} />
+                </div>
+
+                <h3 className="font-display text-sm md:text-base 2xl:text-xl font-semibold text-white mb-3">
+                  {s.title}
+                </h3>
+                <p className="font-body text-white/75 text-xs md:text-sm 2xl:text-base leading-relaxed">
+                  {s.description}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

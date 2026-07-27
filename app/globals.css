@@ -1,15 +1,15 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"); */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* everything below stays as is, just move scrollbar here */
-
 :root {
   --navy: #112369;
   --blue: #4a8fe2;
   --offwhite: #f8f9fc;
+}
+
+@theme {
+  --font-display: var(--font-display-raw), sans-serif;
+  --font-body: var(--font-body-raw), sans-serif;
 }
 
 * {
@@ -27,12 +27,11 @@ html {
 body {
   background-color: #ffffff;
   color: var(--navy);
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Scrollbar */
-/* globals.css */
 ::-webkit-scrollbar {
   width: 1px;
 }

@@ -9,21 +9,25 @@ import ScrollToTop from "@/components/ui/scroll-top";
 import Reviews from "@/components/Reviews";
 import RecentBlogs from "@/components/recent-blogs";
 import TestHero from "@/components/test-hero";
+import TeamSection from "@/components/team";
 
 export default function Home() {
   return (
-    <main>
-      {/* <Navbar/> */}
-      <ScrollToTop />
-      {/* <Hero /> */}
-      <TestHero />
-      <About />
-      <Services />
-      <Work />
-      <RecentBlogs />
-      <Reviews />
-      {/* <Contact /> */}
-      {/* <Footer/> */}
-    </main>
+   <div>
+
+     {/* <Navbar/> */}
+     <ScrollToTop />
+     {/* <Hero /> */}
+     <TestHero />
+     <About />
+     <Services />
+     <Work />
+     {/* <TeamSection/> */}
+     <RecentBlogs />
+     <Reviews />
+     {/* <Contact /> */}
+     {/* <Footer/> */}
+   </div>
+    
   );
 }

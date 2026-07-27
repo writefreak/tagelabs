@@ -54,11 +54,11 @@ export default function TestHero() {
         animate="visible"
         className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-28 pb-20 lg:px-14 lg:pt-28"
       >
-        <div className="max-w-4xl md:max-w-2xl">
+        <div className="max-w-4xl md:max-w-3xl">
           <div className="flex flex-col gap-3">
             <motion.h1
               variants={item}
-              className="font-display text-center md:text-left text-2xl font-semibold leading-[1.08] text-white sm:text-4xl lg:text-6xl"
+              className="font-display text-center md:text-left text-2xl font-semibold leading-[1.08] text-white sm:text-4xl lg:text-7xl"
             >
               Transforming Brands With Scalable Digital Solutions.
             </motion.h1>
