@@ -39,7 +39,7 @@ export default function TestHero() {
     >
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* solid navy overlay sits above the image */}
-        <div className="absolute inset-0 z-10 bg-[#112369]/70" />
+        <div className="absolute inset-0 z-10 bg-black/70" />
         <motion.img
           src="/tagebg.png"
           alt="TageLabs Digital Solutions"

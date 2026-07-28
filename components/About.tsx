@@ -114,7 +114,7 @@ function ParallaxImage({ className }: { className: string }) {
       className={className}
     >
       <motion.img
-        src="/tagebg.png"
+        src="/code.jpg"
         alt="TageLabs studio"
         style={{ y: imageY }}
         className="absolute left-0 -top-[15%] h-[130%] w-full object-cover"
