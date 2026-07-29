@@ -112,7 +112,7 @@ export default function Services() {
                 viewport={{ once: false, margin: "-60px" }}
                 className="group border border-white/25 bg-white/10 backdrop-blur-md shadow-lg rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
               >
-                <div className="w-12 h-12 rounded-full bg-blue/50 flex items-center justify-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-blue/70 flex items-center justify-center mb-6">
                   <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
                 </div>
 

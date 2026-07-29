@@ -181,8 +181,9 @@ export default function About() {
           </div>
 
           <div className="flex md:items-end">
-            <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
+            <button className="inline-flex gap-2 items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project
+              <ArrowRight size={14} />
             </button>
           </div>
         </div>

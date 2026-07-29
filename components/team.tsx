@@ -1,67 +1,121 @@
 "use client";
-import React from "react";
 
-const team = [
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import TeamCard from "./ui/team-card";
+
+interface TeamMember {
+  name: string;
+  title: string;
+  image: string;
+}
+
+const team: TeamMember[] = [
   {
     name: "Endwell Heritage",
-    role: "Founder & Lead Developer",
-
-    image: "/heritage.jpg",
+    title: "Founder & Lead Developer",
+    image: "/tage.png",
   },
   {
     name: "Meshack Douglas",
-    role: "Frontend Developer & Growth Lead",
-
+    title: "Frontend Developer & Growth Lead",
     image: "/meshack.jpg",
   },
   {
     name: "Asonye Samuel",
-    role: "Brand Development & Client Partnership",
+    title: "Brand Development & Client Partnership",
     image: "/meshack.jpg",
   },
 ];
 
 export default function TeamSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollPage, setScrollPage] = useState(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cardWidth = el.scrollWidth / (team.length || 1);
+      const index = Math.round(el.scrollLeft / cardWidth);
+      setScrollPage(index);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  function scrollTo(index: number) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / team.length;
+    el.scrollTo({ left: cardWidth * index, behavior: "smooth" });
+    setScrollPage(index);
+  }
+
   return (
-    <section className="w-full  py-20 px-6 md:px-14">
+    <section
+      id="team"
+      className="py-16 border-b border-b-gray-100 md:px-14 px-6 md:py-28"
+    >
       <div className="mx-auto ">
-        <div className="max-w-2xl mb-12 lg:mb-16">
-          <h2 className="font-display text-2xl  lg:text-5xl font-semibold text-navy mb-4">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.55 }}
+            className="font-display text-2xl font-semibold leading-tight text-primary sm:text-5xl"
+          >
             Meet Our Team
-          </h2>
-          <p className="font-body text-xs lg:text-sm max-w-sm  text-navy/50 leading-relaxed">
-            We're a result-driven team focused on fostering elite growth, and
-            client partnership through excellent project delivery
-          </p>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.55 }}
+            className="max-w-lg text-center font-body text-xs md:text-base leading-relaxed text-neutral-600"
+          >
+            We're a result-driven team focused on fostering growth, and client
+            partnership through excellent project delivery
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 xl:gap-10">
+        <div
+          ref={scrollRef}
+          className="flex mx-auto gap-4 pt-10 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:max-w-5xl"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {team.map((member, i) => (
-            <div
+            <motion.div
               key={member.name}
-              className={`opacity-0-init animate-fade-in delay-${
-                (i + 1) * 100
-              } group bg-white border border-navy/10 rounded-2xl overflow-hidden hover:border-[var(--blue)]/40 transition-colors duration-300`}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: (i % 3) * 0.06 }}
+              className="w-[60vw] shrink-0 snap-start sm:w-auto sm:shrink"
             >
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-navy/5">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                />
-              </div>
-
-              <div className="p-6 lg:p-7">
-                <h3 className="font-display text-lg lg:text-xl font-semibold text-navy mb-1">
-                  {member.name}
-                </h3>
-                <p className="font-body text-sm text-[var(--blue)] font-medium mb-4">
-                  {member.role}
-                </p>
-              </div>
-            </div>
+              <TeamCard member={member} />
+            </motion.div>
           ))}
         </div>
+
+        {team.length > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-5 md:hidden">
+            {team.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => scrollTo(i)}
+                aria-label={`Go to member ${i + 1}`}
+                className={`rounded-full transition-all duration-300 ${
+                  i === scrollPage
+                    ? "w-5 h-1.5 bg-navy"
+                    : "w-1.5 h-1.5 bg-navy/20"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
