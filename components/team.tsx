@@ -1,42 +1,37 @@
-"use client"
+"use client";
 import React from "react";
 
 const team = [
   {
     name: "Endwell Heritage",
     role: "Founder & Lead Developer",
-   
-    
+
     image: "/heritage.jpg",
   },
   {
     name: "Meshack Douglas",
     role: "Frontend Developer & Growth Lead",
-  
+
     image: "/meshack.jpg",
   },
   {
     name: "Asonye Samuel",
     role: "Brand Development & Client Partnership",
     image: "/meshack.jpg",
-
-   
-    
   },
 ];
 
 export default function TeamSection() {
   return (
-    <section className="w-full  py-20 px-6 lg:px-12 xl:px-24 2xl:px-32">
-      <div className="mx-auto max-w-7xl">
+    <section className="w-full  py-20 px-6 md:px-14">
+      <div className="mx-auto ">
         <div className="max-w-2xl mb-12 lg:mb-16">
-          
-          <h2 className="font-display text-2xl  lg:text-4xl font-semibold text-navy mb-4">
-           Meet Our Team
+          <h2 className="font-display text-2xl  lg:text-5xl font-semibold text-navy mb-4">
+            Meet Our Team
           </h2>
           <p className="font-body text-xs lg:text-sm max-w-sm  text-navy/50 leading-relaxed">
-            A small, deliverable-driven team out of Port Harcourt: engineering,
-            growth, and client partnership under one roof.
+            We're a result-driven team focused on fostering elite growth, and
+            client partnership through excellent project delivery
           </p>
         </div>
 
@@ -54,7 +49,6 @@ export default function TeamSection() {
                   alt={member.name}
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
-               
               </div>
 
               <div className="p-6 lg:p-7">
@@ -64,8 +58,6 @@ export default function TeamSection() {
                 <p className="font-body text-sm text-[var(--blue)] font-medium mb-4">
                   {member.role}
                 </p>
-                
-              
               </div>
             </div>
           ))}
