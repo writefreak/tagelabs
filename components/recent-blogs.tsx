@@ -59,7 +59,7 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
           <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-2">
             <div className="flex items-end justify-between">
               <div className="min-w-0 flex-1 pr-2">
@@ -72,13 +72,13 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
               </div>
             </div>
 
-            <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
+            <div className=" flex flex-col gap-2">
               <span className="text-[10px] text-white/55 font-medium truncate min-w-0">
                 {post.excerpt || "Read the post"}
               </span>
-              <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
-                {formatDate(post.created_at)}
-              </span>
+              {/* <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap"> */}
+              {/* {formatDate(post.created_at)} */}
+              {/* </span> */}
             </div>
           </div>
         </div>
