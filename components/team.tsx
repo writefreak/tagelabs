@@ -19,12 +19,12 @@ const team: TeamMember[] = [
   {
     name: "Meshack Douglas",
     title: "Frontend Dev/Growth Lead",
-    image: "/meshack.jpg",
+    image: "/douglas.jpg",
   },
   {
     name: "Asonye Samuel",
     title: "Strategy/Client Partnership",
-    image: "/meshack.jpg",
+    image: "/sammy.png",
   },
 ];
 

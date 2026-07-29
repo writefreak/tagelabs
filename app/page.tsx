@@ -20,7 +20,7 @@ export default function Home() {
       <TestHero />
       <About />
       <Services />
-      {/* <TeamSection /> */}
+      <TeamSection />
       <Work />
       <RecentBlogs />
       <Reviews />
