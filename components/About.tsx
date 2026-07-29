@@ -33,6 +33,13 @@ const STATS = [
   },
 ];
 
+const WHATSAPP_NUMBER = "2349041281560";
+const WHATSAPP_MESSAGE =
+  "Hi TageLabs, I'd like to start a project with you. Can we talk?";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  WHATSAPP_MESSAGE,
+)}`;
+
 function Counter({
   target,
   suffix = "",
@@ -181,10 +188,17 @@ export default function About() {
           </div>
 
           <div className="flex md:items-end">
-            <button className="inline-flex gap-2 items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
-              Start a project
-              <ArrowRight size={14} />
-            </button>
+            <div className="flex md:items-end">
+              <button
+                onClick={() =>
+                  window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
+                }
+                className="inline-flex gap-2 items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm"
+              >
+                Start a project
+                <ArrowRight size={14} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
