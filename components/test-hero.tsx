@@ -76,13 +76,13 @@ export default function TestHero() {
 
           <motion.div
             variants={item}
-            className=" flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-5 md:pt-10 "
+            className=" flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-8 md:pt-10 "
           >
-            <button className="flex gap-2 items-center md:w-44 w-52 md:items-center md:justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-sm">
+            <button className="flex gap-2 items-center md:w-44 w-[210px] md:items-center md:justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-sm">
               Start a project
               <ArrowRight size={14} />
             </button>
-            <button className="flex md:w-44 w-48 md:items-center md:justify-center border border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm">
+            <button className="flex md:w-44 w-48 md:items-center md:justify-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm">
               Our Brand Story
             </button>
           </motion.div>
