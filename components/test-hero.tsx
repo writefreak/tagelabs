@@ -23,6 +23,15 @@ const item = {
   },
 };
 
+const WHATSAPP_NUMBER = "2349041281560";
+const WHATSAPP_MESSAGE =
+  "Hi TageLabs, I'd like to start a project with you. Can we talk?";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  WHATSAPP_MESSAGE,
+)}`;
+
+const BRAND_STORY_PATH = "/brand-story.pdf";
+
 export default function TestHero() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -31,6 +40,23 @@ export default function TestHero() {
     offset: ["start end", "end start"],
   });
   const imageY = useTransform(scrollYProgress, [0, 1], ["-40%", "40%"]);
+
+  async function handleBrandStoryDownload() {
+    try {
+      const res = await fetch(BRAND_STORY_PATH);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "TageLabs-Brand-Story.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Brand story download failed:", err);
+    }
+  }
 
   return (
     <section
@@ -44,6 +70,9 @@ export default function TestHero() {
         <motion.img
           src="/tagebg.png"
           alt="TageLabs Digital Solutions"
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
           style={{ y: imageY }}
           className="h-full w-full object-cover absolute  left-0"
         />
@@ -78,11 +107,19 @@ export default function TestHero() {
             variants={item}
             className=" flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-8 md:pt-10 "
           >
-            <button className="flex gap-2 items-center md:w-44 w-[210px] md:items-center md:justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-sm">
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex gap-2 items-center md:w-44 w-[210px] md:items-center md:justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-sm"
+            >
               Start a project
               <ArrowRight size={14} />
-            </button>
-            <button className="flex md:w-44 w-48 md:items-center md:justify-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm">
+            </a>
+            <button
+              onClick={handleBrandStoryDownload}
+              className="flex md:w-44 w-48 md:items-center md:justify-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm"
+            >
               Our Brand Story
             </button>
           </motion.div>

@@ -209,7 +209,7 @@ export default function Reviews() {
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, margin: "-30px" }}
+                viewport={{ once: false, margin: "" }}
                 transition={{
                   delay: i * 0.07,
                   duration: 0.5,
