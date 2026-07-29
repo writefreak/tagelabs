@@ -72,7 +72,7 @@ function Counter({
 
 function StatGrid() {
   return (
-    <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-10">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 sm:gap-x-10">
       {STATS.map((stat, i) => (
         <motion.div
           key={stat.label}
@@ -150,19 +150,19 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55, delay: 0.05 }}
-              className="mt-3 font-display hidden md:block text-2xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
+              className="mt-3 font-display hidden md:block text-3xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
             >
               About Us
             </motion.h2>
 
-            <div className="h-1 w-20 hidden md:block bg-blue" />
+            <div className="h-1 w-14 md:w-20 hidden md:block bg-blue" />
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55, delay: 0.15 }}
-              className="font-sans pt-5 text-sm leading-relaxed text-navy/60 md:max-w-xl"
+              className="font-sans pt-5 text-xs md:text-sm leading-relaxed text-navy/60 md:max-w-xl"
             >
               We work with startups launching their first digital product, job
               seekers and creatives who need a CV/portfolio that reflects the
@@ -175,14 +175,16 @@ export default function About() {
           </div>
           <div className="md:hidden py-6">
             <ParallaxImage className="relative  aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
+            <StatGrid />
+          </div>
+          <div className="hidden md:block">
+            <StatGrid />
           </div>
           <div className="flex md:items-end">
             <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project
             </button>
           </div>
-
-          {/* <StatGrid /> */}
         </div>
       </div>
     </section>
