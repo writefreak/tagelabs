@@ -137,7 +137,7 @@ export default function About() {
           transition={{ duration: 0.55, delay: 0.05 }}
           className="py-3 font-display md:hidden text-3xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
         >
-          About Us
+          About Tagelabs
         </motion.h2>
         <div className="h-1 w-12 md:hidden  bg-blue" />
 
@@ -152,7 +152,7 @@ export default function About() {
               transition={{ duration: 0.55, delay: 0.05 }}
               className="mt-3 font-display hidden md:block text-3xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
             >
-              About Us
+              About Tagelabs
             </motion.h2>
 
             <div className="h-1 w-14 md:w-20 hidden md:block bg-blue" />

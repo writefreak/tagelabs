@@ -45,7 +45,10 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="md:py-25 py-8 px-6 bg-white">
+    <section
+      id="services"
+      className="md:py-25 py-8 px-6 bg-white border-t border-t-gray-100"
+    >
       <div className="max-w-6xl md:max-w-5xl mx-auto">
         {/* Header */}
         <motion.div
@@ -57,13 +60,13 @@ export default function Services() {
         >
           <div>
             <h2 className="font-display text-3xl md:text-5xl font-semibold text-headtext max-w-md leading-tight">
-              Our services are built for results.
+              Explore Our services
             </h2>
+            <p className="font-body text-navy/50 max-w-sm text-xs md:text-sm leading-relaxed">
+              Every service is designed to move your business forward in a way
+              that's visible, measurable, and lasting.
+            </p>
           </div>
-          <p className="font-body text-navy/50 max-w-sm text-sm leading-relaxed">
-            Every service is designed to move your business forward in a way
-            that's visible, measurable, and lasting.
-          </p>
         </motion.div>
 
         {/* Grid */}
@@ -78,16 +81,16 @@ export default function Services() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false, margin: "-60px" }}
-                className="group bg-navy rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(21,68,153,0.45)]"
+                className="group shadow-sm border border-gray-100 rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 "
               >
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-6">
-                  <Icon className="w-5 h-5 text-navy" strokeWidth={1.75} />
+                <div className="w-12 h-12 rounded-full bg-navy flex items-center justify-center mb-6">
+                  <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
                 </div>
 
-                <h3 className="font-display text-sm md:text-base 2xl:text-xl font-semibold text-white mb-3">
+                <h3 className="font-jet text-sm md:text-base 2xl:text-xl font-semibold text-neutral-700 mb-3">
                   {s.title}
                 </h3>
-                <p className="font-body text-white/75 text-xs md:text-sm 2xl:text-base leading-relaxed">
+                <p className="font-body text-neutral-400 text-xs md:text-sm 2xl:text-base leading-relaxed">
                   {s.description}
                 </p>
               </motion.div>
