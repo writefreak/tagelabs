@@ -62,17 +62,21 @@ export default function Services() {
     >
       <motion.div
         style={{ y: imageY }}
-        className="absolute inset-0 -z-10 h-[130%] -top-[15%]"
+        className="absolute hidden md:block inset-0 -z-10 h-[130%] -top-[15%]"
       >
-        <Image
-          src="/office.jpg"
+        <img src="/office.jpg" alt="" className="w-full h-full object-cover" />
+      </motion.div>
+      <motion.div
+        style={{ y: imageY }}
+        className="absolute md:hidden inset-0 -z-10 h-[130%] -top-[15%]"
+      >
+        <img
+          src="/mainoffice.png"
           alt=""
-          fill
-          priority={false}
-          className="object-cover"
+          className="w-full h-full object-cover"
         />
       </motion.div>
-      <div className="absolute inset-0 -z-10 bg-black/60" />
+      <div className="absolute inset-0 -z-10 bg-navy/50" />
 
       <div className="max-w-6xl md:max-w-6xl mx-auto">
         {/* Header */}
@@ -108,7 +112,7 @@ export default function Services() {
                 viewport={{ once: false, margin: "-60px" }}
                 className="group border border-white/25 bg-white/10 backdrop-blur-md shadow-lg rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
               >
-                <div className="w-12 h-12 rounded-full bg-blue/30 flex items-center justify-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-blue/50 flex items-center justify-center mb-6">
                   <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
                 </div>
 
