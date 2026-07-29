@@ -66,7 +66,7 @@ export default function TestHero() {
 
             <motion.p
               variants={item}
-              className="text-xs text-center md:text-left leading-relaxed text-neutral-300 md:mt-0 md:max-w-sm md:w-full w-64 md:text-sm font-sans"
+              className="text-xs text-left leading-relaxed text-neutral-300 md:mt-0 md:max-w-sm md:w-full w-64 md:text-sm font-sans"
             >
               At Tagelabs, we design, build, and scale digital experiences that
               turn ambitious ideas into measurable business growth.
@@ -75,12 +75,12 @@ export default function TestHero() {
 
           <motion.div
             variants={item}
-            className="mt-10 flex flex-col md:flex-row md:items-center gap-4 md:pt-10"
+            className=" flex flex-col md:flex-row md:items-center gap-4 md:pt-10"
           >
-            <button className="inline-flex items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
+            <button className="inline-flex md:items-center md:justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project
             </button>
-            <button className="inline-flex items-center justify-center border border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-xs md:text-sm">
+            <button className="inline-flex md:items-center md:justify-center border border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-xs md:text-sm">
               Our Brand Story
             </button>
           </motion.div>
