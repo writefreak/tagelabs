@@ -129,44 +129,19 @@ export default function About() {
       id="about"
       className="bg-white px-6 py-20 sm:py-24 lg:px-10 lg:py-36 border-t border-t-gray-100"
     >
-      <div className="mx-auto flex max-w-6xl flex-col lg:hidden">
+      <div className="mx-auto max-w-6xl gap-16 lg:grid lg:grid-cols-2">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="py-3 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl"
+          className="py-3 font-display md:hidden text-2xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
         >
-          A studio that builds for the long game.
+          About Us
         </motion.h2>
-        <div className="h-1 w-16 bg-navy" />
+        <div className="h-1 w-20 md:hidden  bg-blue" />
 
-        <ParallaxImage className="mt-10 relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.55, delay: 0.15 }}
-          className="mt-5 font-sans text-xs leading-relaxed text-navy/60 w-full"
-        >
-          We work with startups launching their first digital product, job
-          seekers and creatives who need a CV/portfolio that reflects the pure
-          quality of their work and businesses that want a website experience
-          their users will remember. Whether the need is a single landing page,
-          a portfolio or an entire digital revamp, TageLabs meets you where you
-          are, thinks with you, and builds for the long game.
-        </motion.p>
-
-        {/* <StatGrid /> */}
-        <div className="flex pt-6">
-          <button className="flex gap-2 items-center justify-center bg-blue text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
-            Start a project <ArrowRight size={13} />
-          </button>
-        </div>
-      </div>
-
-      <div className="mx-auto hidden max-w-6xl gap-16 lg:grid lg:grid-cols-2">
-        <ParallaxImage className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
+        <ParallaxImage className="relative hidden md:block aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
 
         <div className="flex flex-col md:gap-12">
           <div className="flex flex-col gap-4">
@@ -175,12 +150,12 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55, delay: 0.05 }}
-              className="mt-3 font-display text-3xl md:text-5xl font-semibold leading-tight text-navy"
+              className="mt-3 font-display hidden md:block text-2xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
             >
-              A studio that builds for the long game
+              About Us
             </motion.h2>
 
-            <div className="h-1 w-20 bg-blue" />
+            <div className="h-1 w-20 hidden md:block bg-blue" />
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -197,6 +172,9 @@ export default function About() {
               meets you where you are, thinks with you, and builds for the long
               game.
             </motion.p>
+          </div>
+          <div className="md:hidden py-6">
+            <ParallaxImage className="relative  aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
           </div>
           <div className="flex md:items-end">
             <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">

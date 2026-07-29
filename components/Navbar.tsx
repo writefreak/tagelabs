@@ -54,7 +54,7 @@ export default function Navbar() {
     <div className="fixed top-0 left-0 right-0 z-[80] flex items-center justify-center gap-3 px-4 pt-5 md:px-14 md:pt-7 2xl:px-24 transition-opacity duration-300">
       {/* Desktop pill nav */}
       <div className="hidden md:flex border border-navy/10 bg-offwhite backdrop-blur-md shadow-md max-w-8xl p-1 px-2 rounded-2xl items-center justify-between">
-        <Link href="/" className="h-10">
+        <Link href="/" className="h-10 md:pr-4">
           <img
             src="/tagelabslogo.png"
             alt="TageLabs"
@@ -83,7 +83,7 @@ export default function Navbar() {
           <div>
             <button
               onClick={goToCvOrder}
-              className="rounded-2xl py-3 px-3 text-white text-sm font-medium bg-navy hover:bg-blue hover:-translate-y-1 transition-all duration-500"
+              className="rounded-2xl py-3 px-3 text-white text-xs font-medium bg-navy hover:bg-blue hover:-translate-y-1 transition-all duration-500"
             >
               Preorder a Modern CV
             </button>
@@ -141,7 +141,7 @@ export default function Navbar() {
                       setMobileOpen(false);
                       scrollToSection(link);
                     }}
-                    className="font-display text-2xl font-medium text-navy/80 hover:text-blue cursor-pointer transition-colors duration-200"
+                    className="font-display text-2xl font-medium text-neutral-600 hover:text-blue cursor-pointer transition-colors duration-200"
                   >
                     {link}
                   </a>
@@ -154,7 +154,7 @@ export default function Navbar() {
               >
                 <button
                   onClick={goToCvOrder}
-                  className="rounded-2xl py-3 px-6 text-white text-sm font-medium bg-navy hover:bg-blue hover:-translate-y-1 transition-all duration-500"
+                  className="rounded-2xl py-3 px-6 text-white text-xs md:text-sm font-medium bg-navy hover:bg-blue hover:-translate-y-1 transition-all duration-500"
                 >
                   Preorder a Modern CV
                 </button>

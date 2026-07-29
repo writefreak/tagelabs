@@ -46,7 +46,7 @@ const services = [
 export default function Services() {
   return (
     <section id="services" className="md:py-25 py-8 px-6 bg-white">
-      <div className="max-w-6xl 2xl:max-w-[1600px] mx-auto">
+      <div className="max-w-6xl md:max-w-5xl mx-auto">
         {/* Header */}
         <motion.div
           className="flex flex-col md:flex-row md:items-end justify-between pb-5 md:pb-16 gap-6"
@@ -56,7 +56,7 @@ export default function Services() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <div>
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+            <h2 className="font-display text-3xl md:text-5xl font-semibold text-headtext max-w-md leading-tight">
               Our services are built for results.
             </h2>
           </div>
@@ -67,7 +67,7 @@ export default function Services() {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 2xl:gap-6">
+        <div className="grid md:grid-cols-2 gap-2 md:gap-4">
           {services.map((s, i) => {
             const Icon = s.icon;
             return (
