@@ -18,12 +18,12 @@ const team: TeamMember[] = [
   },
   {
     name: "Meshack Douglas",
-    title: "Frontend Developer & Growth Lead",
+    title: "Frontend Dev/Growth Lead",
     image: "/meshack.jpg",
   },
   {
     name: "Asonye Samuel",
-    title: "Brand Development & Client Partnership",
+    title: "Strategy/Client Partnership",
     image: "/meshack.jpg",
   },
 ];
@@ -66,7 +66,7 @@ export default function TeamSection() {
             transition={{ duration: 0.55 }}
             className="font-display text-2xl font-semibold leading-tight text-primary sm:text-5xl"
           >
-            Meet Our Team
+            Meet Our Elite Team
           </motion.h2>
 
           <motion.p

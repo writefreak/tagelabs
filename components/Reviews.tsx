@@ -158,11 +158,11 @@ export default function Reviews() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-              Words from people <br className="md:hidden" /> we've built for.
+          <div className="flex flex-col gap-4">
+            <h2 className="font-display text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+              Words from people <br className="md:hidden" /> we've built for
             </h2>
-            <p className="font-body text-navy/45 text-sm max-w-xs leading-relaxed">
+            <p className="font-body text-neutral-700 text-xs md:text-sm max-w-xs leading-relaxed">
               Real feedback from clients across design, development, and
               everything in between.
             </p>
@@ -299,9 +299,9 @@ export default function Reviews() {
               <br />
               Tell the world.
             </h3>
-            <p className="font-body text-sm text-navy/50 leading-relaxed max-w-sm">
-              Every project we take on is built on trust and hearing from the
-              people we've built for means everything to us.
+            <p className="font-lato text-xs md:text-sm text-neutral-700 leading-relaxed w-[290px] md:w-full max-w-sm">
+              Every project we accept is built on client trust and hearing from
+              the people we've built for means everything to us.
             </p>
           </div>
 

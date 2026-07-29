@@ -179,15 +179,31 @@ export default function Work() {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="pb-5 md:pb-16"
+          className="pb-7 md:pb-14 flex flex-col gap-1 md:gap-2"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="font-display  text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "" }}
+            transition={{ duration: 0.55 }}
+            className="font-display  text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight"
+          >
             Higlighted Projects
-          </h2>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "" }}
+            transition={{ duration: 0.55 }}
+            className="max-w-sm font-body text-xs md:text-base leading-relaxed text-neutral-600"
+          >
+            Click each card to explore a thoughtful curation of our most recent
+            projects
+          </motion.p>
         </motion.div>
 
         {/* Loading skeleton */}

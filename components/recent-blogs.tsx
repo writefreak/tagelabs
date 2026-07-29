@@ -138,15 +138,33 @@ export default function RecentBlogs() {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="pb-5 md:pb-16 flex items-end justify-between gap-4 flex-wrap"
+          className="pb-7 md:pb-14 flex items-end justify-between gap-4 flex-wrap"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="font-display text-2xl md:text-5xl font-semibold text-navy  leading-tight">
-            Our Timeless Thoughts
-          </h2>
+          <div className="flex flex-col gap-1 md:gap-2">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55 }}
+              className="font-display text-2xl md:text-5xl font-semibold text-navy  leading-tight"
+            >
+              Our Timeless Thoughts
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "" }}
+              transition={{ duration: 0.55 }}
+              className="max-w-sm font-body text-xs md:text-base leading-relaxed text-neutral-600"
+            >
+              Click each card to explore a thoughtful curation of topics and
+              interesting updates from us
+            </motion.p>
+          </div>
           <Link
             href="/blogs"
             className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-navy/50 hover:text-navy transition-colors"
