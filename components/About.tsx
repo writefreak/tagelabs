@@ -129,7 +129,7 @@ export default function About() {
       id="about"
       className="bg-white px-6 py-20 sm:py-24 lg:px-10 lg:py-36 border-t border-t-gray-100"
     >
-      <div className="mx-auto max-w-6xl gap-16 lg:grid lg:grid-cols-2">
+      <div className="mx-auto max-w-6xl gap-16 lg:grid lg:grid-cols-2 md:items-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -172,21 +172,6 @@ export default function About() {
               meets you where you are, thinks with you, and builds for the long
               game.
             </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.55, delay: 0.15 }}
-              className="font-sans hidden md:block pt-5 text-xs md:text-sm leading-relaxed text-navy/60 md:max-w-xl"
-            >
-              We work with startups launching their first digital product, job
-              seekers and creatives who need a CV/portfolio that reflects the
-              pure quality of their work and businesses that want a website
-              experience their users will remember. Whether the need is a single
-              landing page, a portfolio or an entire digital revamp, TageLabs
-              meets you where you are, thinks with you, and builds for the long
-              game.
-            </motion.p>
           </div>
           <div className="md:hidden py-6">
             <div className="pb-6">
@@ -194,9 +179,7 @@ export default function About() {
             </div>
             {/* <StatGrid /> */}
           </div>
-          {/* <div className="hidden md:block">
-            <StatGrid />
-          </div> */}
+
           <div className="flex md:items-end">
             <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project
