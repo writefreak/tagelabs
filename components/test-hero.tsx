@@ -58,9 +58,9 @@ export default function TestHero() {
           <div className="flex flex-col gap-3">
             <motion.h1
               variants={item}
-              className="font-display text-center md:text-left text-2xl font-semibold leading-[1.08] text-white sm:text-4xl lg:text-7xl"
+              className="font-display text-center md:text-left text-2xl font-bold leading-[1.08] text-white sm:text-4xl lg:text-7xl"
             >
-              Transforming Brands With Scalable Digital Solutions.
+              Transforming Brands With Scalable Digital Solutions
             </motion.h1>
             <p className="text-xs text-center md:text-left md:text-sm text-gray-300 max-w-sm font-sans">
               At Tagelabs, we design, build, and scale digital experiences that

@@ -53,7 +53,7 @@ export default function Navbar() {
   return (
     <div className="fixed top-0 left-0 right-0 z-[80] flex items-center justify-center gap-3 px-4 pt-5 md:px-14 md:pt-7 2xl:px-24 transition-opacity duration-300">
       {/* Desktop pill nav */}
-      <div className="hidden md:flex border border-navy/10 bg-offwhite backdrop-blur-md shadow-md nax-w-8xl p-1 px-2 rounded-2xl items-center justify-between">
+      <div className="hidden md:flex border border-navy/10 bg-offwhite backdrop-blur-md shadow-md max-w-8xl p-1 px-2 rounded-2xl items-center justify-between">
         <Link href="/" className="h-10">
           <img
             src="/tagelabslogo.png"
@@ -92,7 +92,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile bar */}
-      <div className="flex md:hidden w-full items-center justify-between border border-navy/10 bg-offwhite/80 backdrop-blur-md shadow-md p-2 pl-3 rounded-2xl">
+      <div className="relative z-[90] flex md:hidden w-full items-center justify-between border border-navy/10 bg-offwhite/80 backdrop-blur-md shadow-md p-2 pl-3 rounded-2xl">
         <Link href="/" className="h-9">
           <img
             src="/tagelabslogo.png"
