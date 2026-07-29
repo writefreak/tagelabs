@@ -144,7 +144,7 @@ export default function RecentBlogs() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy  leading-tight">
+          <h2 className="font-display text-2xl md:text-5xl font-semibold text-navy  leading-tight">
             Our Timeless Thoughts
           </h2>
           <Link

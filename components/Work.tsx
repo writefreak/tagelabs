@@ -185,7 +185,7 @@ export default function Work() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
+          <h2 className="font-display text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
             Higlighted Projects
           </h2>
         </motion.div>

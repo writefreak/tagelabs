@@ -84,7 +84,7 @@ export default function Services() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="flex flex-col gap-2 pb-2">
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-white leading-tight">
+            <h2 className="font-display text-2xl md:text-5xl font-semibold text-white leading-tight">
               Explore Our services
             </h2>
 
