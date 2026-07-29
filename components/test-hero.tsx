@@ -35,7 +35,7 @@ export default function TestHero() {
     <section
       ref={sectionRef}
       id="top"
-      className="relative flex md:h-screen h-[500px] items-center overflow-hidden"
+      className="relative overflow-hidden md:flex h-[600px] md:h-screen md:items-center"
     >
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* solid navy overlay sits above the image */}
@@ -44,7 +44,7 @@ export default function TestHero() {
           src="/tagebg.png"
           alt="TageLabs Digital Solutions"
           style={{ y: imageY }}
-          className="h-[140%] w-full object-cover absolute -top-[20%] left-0"
+          className="h-full w-full object-cover absolute  left-0"
         />
       </div>
 
@@ -52,26 +52,32 @@ export default function TestHero() {
         variants={container}
         initial="hidden"
         animate="visible"
-        className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-28 pb-20 lg:px-14 lg:pt-28"
+        className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-36  md:px-14 md:pt-28 md:pb-20"
       >
-        <div className="max-w-4xl md:max-w-3xl">
-          <div className="flex flex-col gap-3">
+        <div className="max-w-4xl md:max-w-2xl">
+          <div className="flex flex-col  gap-3">
             <motion.h1
               variants={item}
-              className="font-display text-center md:text-left text-2xl font-bold leading-[1.08] text-white sm:text-4xl lg:text-7xl"
+              className="font-jet text-left text-[38px] font-extrabold leading-[1.05] tracking-tight text-white md:text-6xl md:font-semibold md:leading-[1.08]"
             >
-              Transforming Brands With Scalable Digital Solutions
+              Transforming <br className="md:hidden" /> Brands With{" "}
+              <br className="md:hidden" /> Scalable Digital Solutions
             </motion.h1>
-            <p className="text-xs text-center md:text-left md:text-sm text-gray-300 max-w-sm font-sans">
+
+            <motion.p
+              variants={item}
+              className="text-xs text-center md:text-left leading-relaxed text-neutral-300 md:mt-0 md:max-w-sm md:w-full w-64 md:text-sm font-sans"
+            >
               At Tagelabs, we design, build, and scale digital experiences that
               turn ambitious ideas into measurable business growth.
-            </p>
+            </motion.p>
           </div>
+
           <motion.div
             variants={item}
-            className="pt-6 md:pt-10 flex flex-col sm:flex-row md:items-center gap-2 md:gap-4"
+            className="mt-10 flex flex-col md:flex-row md:items-center gap-4 md:pt-10"
           >
-            <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
+            <button className="inline-flex items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project
             </button>
             <button className="inline-flex items-center justify-center border border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-xs md:text-sm">

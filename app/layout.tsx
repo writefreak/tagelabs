@@ -1,29 +1,31 @@
 import type { Metadata } from "next";
-import { Sora, DM_Sans, Plus_Jakarta_Sans } from "next/font/google";
+import { Lato, Oxygen } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/layout-shell";
 
-const display = Plus_Jakarta_Sans({
+const jet = Oxygen({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-display-raw",
+  weight: ["400", "300", "700"],
+  variable: "--font-jet",
   display: "swap",
 });
 
-const body = DM_Sans({
+const lato = Lato({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-body-raw",
+  weight: ["100", "300", "400", "700", "900"],
+  variable: "--font-lato",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tagelabs.vercel.app"),
   title: {
-    default: "TageLabs — Transforming businesses with scalable digital solutions",
+    default:
+      "TageLabs — Transforming businesses with scalable digital solutions",
     template: "%s | TageLabs",
   },
-  description: "TageLabs builds landing pages, CVs, portfolio sites, and digital products for ambitious businesses worldwide.",
+  description:
+    "TageLabs builds landing pages, CVs, portfolio sites, and digital products for ambitious businesses worldwide.",
   openGraph: {
     title: "TageLabs",
     description: "Transforming businesses with scalable digital solutions.",
@@ -60,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${jet.variable} ${lato.variable}`}>
       <body suppressHydrationWarning>
         <LayoutShell>{children}</LayoutShell>
       </body>
