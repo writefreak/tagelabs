@@ -179,7 +179,7 @@ export default function Work() {
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="pb-7 md:pb-14 flex flex-col gap-1 md:gap-2"
+          className="pb-7 md:pb-14 flex flex-col gap-2 md:gap-3"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-80px" }}

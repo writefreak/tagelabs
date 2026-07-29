@@ -144,7 +144,7 @@ export default function RecentBlogs() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex flex-col gap-1 md:gap-2">
+          <div className="flex flex-col gap-2 md:gap-3">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

@@ -148,7 +148,7 @@ export default function Contact() {
               +234 916 961 5448
             </a> */}
             <p className="font-body text-sm text-white/70">
-              Port Harcourt, Nigeria · Available globally
+              Available globally
             </p>
           </div>
         </div>
