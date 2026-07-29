@@ -47,9 +47,9 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="md:py-25 py-8 px-6 bg-white border-t border-t-gray-100"
+      className="md:py-25 py-14 px-6 bg-white border-t border-t-gray-100"
     >
-      <div className="max-w-6xl md:max-w-5xl mx-auto">
+      <div className="max-w-6xl md:max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           className="flex flex-col md:flex-row md:items-end justify-between pb-5 md:pb-16 gap-6"
@@ -58,8 +58,8 @@ export default function Services() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div>
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-headtext max-w-md leading-tight">
+          <div className="flex flex-col gap-2 pb-3">
+            <h2 className="font-display text-3xl md:text-5xl font-semibold text-headtext  leading-tight">
               Explore Our services
             </h2>
             <p className="font-body text-navy/50 max-w-sm text-xs md:text-sm leading-relaxed">
@@ -70,7 +70,7 @@ export default function Services() {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 gap-2 md:gap-4">
+        <div className="grid md:grid-cols-4 gap-2 md:gap-4">
           {services.map((s, i) => {
             const Icon = s.icon;
             return (
@@ -81,10 +81,18 @@ export default function Services() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false, margin: "-60px" }}
-                className="group shadow-sm border border-gray-100 rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 "
+                className="group shadow-sm rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: "#ffffff",
+                  border: "1px solid transparent",
+                  backgroundImage:
+                    "linear-gradient(#ffffff, #ffffff), linear-gradient(to bottom, rgba(17,35,105,0.08) 0%, #4a8fe2 100%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "padding-box, border-box",
+                }}
               >
-                <div className="w-12 h-12 rounded-full bg-navy flex items-center justify-center mb-6">
-                  <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
+                <div className="w-12 h-12 rounded-full bg-blue/20 flex items-center justify-center mb-6">
+                  <Icon className="w-5 h-5 text-blue" strokeWidth={1.75} />
                 </div>
 
                 <h3 className="font-jet text-sm md:text-base 2xl:text-xl font-semibold text-neutral-700 mb-3">
