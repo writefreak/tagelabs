@@ -134,19 +134,18 @@ export default function RecentBlogs() {
   return (
     <section
       id="blog"
-      className="py-10 md:py-17 px-6"
-      style={{ background: "#ffffff" }}
+      className="py-16 bg-white border-y border-t-gray-100 md:py-28 px-6"
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="pb-5 md:pb-16 flex items-end justify-between gap-4 flex-wrap"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-80px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-            Our Thoughts, Worth Sharing.
+          <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy  leading-tight">
+            Our Timeless Thoughts
           </h2>
           <Link
             href="/blogs"
