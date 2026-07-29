@@ -13,21 +13,19 @@ import TeamSection from "@/components/team";
 
 export default function Home() {
   return (
-   <div>
-
-     {/* <Navbar/> */}
-     <ScrollToTop />
-     {/* <Hero /> */}
-     <TestHero />
-     <About />
-     <Services />
-     <Work />
-     {/* <TeamSection/> */}
-     <RecentBlogs />
-     <Reviews />
-     {/* <Contact /> */}
-     {/* <Footer/> */}
-   </div>
-    
+    <div>
+      {/* <Navbar/> */}
+      <ScrollToTop />
+      {/* <Hero /> */}
+      <TestHero />
+      <About />
+      <Services />
+      <Work />
+      <TeamSection />
+      <RecentBlogs />
+      <Reviews />
+      {/* <Contact /> */}
+      {/* <Footer/> */}
+    </div>
   );
 }

@@ -7,15 +7,14 @@ import { Layout, FileUser, Palette, Code2, Globe } from "lucide-react";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 32 },
-  visible: (i: number) => ({
+  visible: {
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.12,
       duration: 0.55,
       ease: [0.22, 1, 0.36, 1],
     },
-  }),
+  },
 };
 
 const services = [
@@ -53,7 +52,7 @@ export default function Services() {
     offset: ["start end", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-40%", "40%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <section
@@ -98,12 +97,11 @@ export default function Services() {
 
         {/* Grid */}
         <div className="grid md:grid-cols-4 gap-2 md:gap-4">
-          {services.map((s, i) => {
+          {services.map((s) => {
             const Icon = s.icon;
             return (
               <motion.div
                 key={s.title}
-                custom={i}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
