@@ -47,7 +47,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="md:py-25 py-14 px-6 bg-white border-t border-t-gray-100"
+      className="md:py-25 py-14 px-6 bg-blue/5 border-t border-t-gray-100"
     >
       <div className="max-w-6xl md:max-w-6xl mx-auto">
         {/* Header */}
@@ -81,15 +81,7 @@ export default function Services() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false, margin: "-60px" }}
-                className="group shadow-sm rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1"
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid transparent",
-                  backgroundImage:
-                    "linear-gradient(#ffffff, #ffffff), linear-gradient(to bottom, rgba(17,35,105,0.08) 0%, #4a8fe2 100%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "padding-box, border-box",
-                }}
+                className="group border bg-white border-gray-200 shadow-sm rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="w-12 h-12 rounded-full bg-blue/20 flex items-center justify-center mb-6">
                   <Icon className="w-5 h-5 text-blue" strokeWidth={1.75} />
