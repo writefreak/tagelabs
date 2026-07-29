@@ -47,7 +47,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="md:py-25 py-14 px-6 bg-[#f8fbfe] border-t border-t-gray-100"
+      className="md:py-28 py-16 px-6 bg-[#f8fbfe] border-t border-t-gray-100"
     >
       <div className="max-w-6xl md:max-w-6xl mx-auto">
         {/* Header */}

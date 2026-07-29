@@ -174,7 +174,7 @@ export default function Work() {
   return (
     <section
       id="work"
-      className="py-10 md:pt-28  md:pb-17 px-6"
+      className="py-16 md:pt-32  md:pb-17 px-6"
       style={{ background: "#ffffff" }}
     >
       <div className="max-w-6xl mx-auto">
