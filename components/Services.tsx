@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import { Layout, FileUser, Palette, Code2 } from "lucide-react";
+import { Layout, FileUser, Palette, Code2, Globe } from "lucide-react";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 32 },
@@ -18,7 +18,7 @@ const fadeUp: Variants = {
 
 const services = [
   {
-    icon: Layout,
+    icon: Globe,
     title: "Professional Website Design",
     description:
       "We build websites that are clean, intentional and designed so your visitors take action.",
@@ -47,7 +47,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="md:py-25 py-14 px-6 bg-blue/5 border-t border-t-gray-100"
+      className="md:py-25 py-14 px-6 bg-[#f8fbfe] border-t border-t-gray-100"
     >
       <div className="max-w-6xl md:max-w-6xl mx-auto">
         {/* Header */}
@@ -58,10 +58,11 @@ export default function Services() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex flex-col gap-2 pb-3">
+          <div className="flex flex-col gap-2 pb-2">
             <h2 className="font-display text-3xl md:text-5xl font-semibold text-headtext  leading-tight">
               Explore Our services
             </h2>
+
             <p className="font-body text-navy/50 max-w-sm text-xs md:text-sm leading-relaxed">
               Every service is designed to move your business forward in a way
               that's visible, measurable, and lasting.
