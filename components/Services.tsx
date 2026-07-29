@@ -1,6 +1,8 @@
 "use client";
-import { motion } from "framer-motion";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { useRef } from "react";
 import { Layout, FileUser, Palette, Code2, Globe } from "lucide-react";
 
 const fadeUp: Variants = {
@@ -44,11 +46,35 @@ const services = [
 ];
 
 export default function Services() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-40%", "40%"]);
+
   return (
     <section
+      ref={sectionRef}
       id="services"
-      className="md:py-28 py-16 px-6 bg-[#f8fbfe] border-t border-t-gray-100"
+      className="relative overflow-hidden md:py-28 py-16 px-6 border-t border-t-gray-100"
     >
+      <motion.div
+        style={{ y: imageY }}
+        className="absolute inset-0 -z-10 h-[130%] -top-[15%]"
+      >
+        <Image
+          src="/office.jpg"
+          alt=""
+          fill
+          priority={false}
+          className="object-cover"
+        />
+      </motion.div>
+      <div className="absolute inset-0 -z-10 bg-black/60" />
+
       <div className="max-w-6xl md:max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -59,11 +85,11 @@ export default function Services() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="flex flex-col gap-2 pb-2">
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-headtext  leading-tight">
+            <h2 className="font-display text-3xl md:text-5xl font-semibold text-white leading-tight">
               Explore Our services
             </h2>
 
-            <p className="font-body text-navy/50 max-w-sm text-xs md:text-sm leading-relaxed">
+            <p className="font-body text-white/70 max-w-sm text-xs md:text-sm leading-relaxed">
               Every service is designed to move your business forward in a way
               that's visible, measurable, and lasting.
             </p>
@@ -82,16 +108,16 @@ export default function Services() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false, margin: "-60px" }}
-                className="group border bg-white border-gray-200 shadow-sm rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1"
+                className="group border border-white/25 bg-white/10 backdrop-blur-md shadow-lg rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
               >
-                <div className="w-12 h-12 rounded-full bg-blue/20 flex items-center justify-center mb-6">
-                  <Icon className="w-5 h-5 text-blue" strokeWidth={1.75} />
+                <div className="w-12 h-12 rounded-full bg-blue/30 flex items-center justify-center mb-6">
+                  <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
                 </div>
 
-                <h3 className="font-jet text-sm md:text-base 2xl:text-xl font-semibold text-neutral-700 mb-3">
+                <h3 className="font-jet text-sm md:text-base 2xl:text-xl font-semibold text-white mb-3">
                   {s.title}
                 </h3>
-                <p className="font-body text-neutral-400 text-xs md:text-sm 2xl:text-base leading-relaxed">
+                <p className="font-body text-white/70 text-xs md:text-sm 2xl:text-base leading-relaxed">
                   {s.description}
                 </p>
               </motion.div>

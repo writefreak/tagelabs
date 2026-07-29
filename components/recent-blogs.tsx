@@ -214,6 +214,16 @@ export default function RecentBlogs() {
                 })}
               </div>
 
+              <div className="flex justify-center pt-6 sm:hidden">
+                <Link
+                  href="/blogs"
+                  className="flex items-center gap-1.5 text-xs font-medium text-navy/50 hover:text-navy transition-colors"
+                >
+                  View all posts
+                  <ArrowUpRight size={14} />
+                </Link>
+              </div>
+
               {posts.length > 1 && (
                 <div className="flex items-center justify-center gap-2 pt-3 md:pt-5">
                   {posts.map((_, i) => (
@@ -230,16 +240,6 @@ export default function RecentBlogs() {
                   ))}
                 </div>
               )}
-
-              <div className="flex justify-center pt-6 sm:hidden">
-                <Link
-                  href="/blogs"
-                  className="flex items-center gap-1.5 text-sm font-medium text-navy/50 hover:text-navy transition-colors"
-                >
-                  View all posts
-                  <ArrowUpRight size={14} />
-                </Link>
-              </div>
             </div>
 
             {/* ── DESKTOP: 3-column portrait grid ── */}
