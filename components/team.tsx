@@ -83,7 +83,7 @@ export default function TeamSection() {
 
         <div
           ref={scrollRef}
-          className="flex mx-auto gap-4 pt-10 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:max-w-5xl"
+          className="flex mx-auto gap-4 pt-10 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth md:grid md:grid-cols-3 md:gap- md:overflow-visible md:max-w-5xl"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {team.map((member, i) => (
@@ -93,7 +93,7 @@ export default function TeamSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.06 }}
-              className="w-[60vw] shrink-0 snap-start sm:w-auto sm:shrink"
+              className="w-[60vw] md:w-[24vw] shrink-0 snap-start sm:w-auto sm:shrink"
             >
               <TeamCard member={member} />
             </motion.div>

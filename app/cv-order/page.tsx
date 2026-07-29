@@ -92,21 +92,36 @@ const CV_TIERS = [
     name: "Essential",
     price: "₦7,000",
     desc: "Clean, professional layout for entry-level roles and fresh graduates.",
-    includes: ["1-page design", "ATS-friendly format", "PDF delivery", "1 revision"],
+    includes: [
+      "1-page design",
+      "ATS-friendly format",
+      "PDF delivery",
+      "1 revision",
+    ],
   },
   {
     id: "professional",
     name: "Professional",
     price: "₦12,000",
     desc: "Polished, detailed design for mid-level professionals who want to stand out.",
-    includes: ["Up to 2 pages", "Custom layout", "PDF + Word delivery", "2 revisions"],
+    includes: [
+      "Up to 2 pages",
+      "Custom layout",
+      "PDF + Word delivery",
+      "2 revisions",
+    ],
   },
   {
     id: "executive",
     name: "Executive",
     price: "₦15,000",
     desc: "Premium, bespoke design for senior professionals, leaders, and creatives.",
-    includes: ["Up to 3 pages", "Branded design", "PDF + Word + editable source", "Unlimited revisions"],
+    includes: [
+      "Up to 3 pages",
+      "Branded design",
+      "PDF + Word + editable source",
+      "Unlimited revisions",
+    ],
   },
 ];
 
@@ -162,35 +177,36 @@ export default function CVOrderPage() {
     form.jobField &&
     form.tier;
 
- async function handleSubmit() {
-  if (!isValid) return;
-  setLoading(true);
-  setError("");
-  try {
-    const { error } = await supabase.from("cv_orders").insert({
-      name: form.name,
-      email: form.email,
-      whatsapp: form.whatsapp,
-      job_field: form.jobField,
-      "current_role": form.currentRole || null,
-      "target_role": form.targetRole || null,
-      tier: form.tier,
-      notes: form.notes || null,
-    });
-    if (error) throw error;
-    setStep(1);
-  } catch (err: any) {
-    setError("Something went wrong. Please try again or reach out on WhatsApp.");
-    console.error(err);
-  } finally {
-    setLoading(false);
+  async function handleSubmit() {
+    if (!isValid) return;
+    setLoading(true);
+    setError("");
+    try {
+      const { error } = await supabase.from("cv_orders").insert({
+        name: form.name,
+        email: form.email,
+        whatsapp: form.whatsapp,
+        job_field: form.jobField,
+        current_role: form.currentRole || null,
+        target_role: form.targetRole || null,
+        tier: form.tier,
+        notes: form.notes || null,
+      });
+      if (error) throw error;
+      setStep(1);
+    } catch (err: any) {
+      setError(
+        "Something went wrong. Please try again or reach out on WhatsApp.",
+      );
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   return (
     <main className="min-h-screen bg-white px-5 py-16 md:py-24 font-sans">
       <div className="max-w-2xl mx-auto">
-
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -198,14 +214,13 @@ export default function CVOrderPage() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12"
         >
-          {/* <p className="text-xs font-semibold tracking-[0.2em] uppercase text-[#4a8fe2] mb-4">
-            TageLabs · CV Design
-          </p> */}
-          <h1 className="font-display text-4xl md:text-5xl pt-6 md:pt-10 font-semibold text-[#112369] leading-tight mb-4">
-            Your CV, crafted with intention.
+          <h1 className="font-jet text-2xl md:text-5xl pt-10 md:pt-10 font-semibold text-[#112369] leading-tight mb-4">
+            Pre-Order Your <br className="md:hidden" /> Modern CV
           </h1>
-          <p className="text-[#112369]/55 text-sm md:text-base leading-relaxed max-w-lg">
-            Fill in the details below and we'll get back to you on WhatsApp within 24 hours to begin. Every CV is designed with accuracy and precision.
+          <p className="text-neutral-700 font-body text-xs md:text-sm leading-relaxed max-w-lg">
+            Fill in the details below and we'll get back to you on WhatsApp
+            within 24 hours to begin. Every CV is designed with accuracy and
+            precision.
           </p>
         </motion.div>
 
@@ -221,7 +236,7 @@ export default function CVOrderPage() {
             >
               {/* Personal info */}
               <div className="bg-white rounded-2xl border border-[#112369]/8 p-6 md:p-8 flex flex-col gap-5">
-                <h2 className="text-sm font-semibold tracking-widest uppercase text-[#112369]/40">
+                <h2 className="text-sm font-semibold uppercase text-[#112369]/40">
                   Your Details
                 </h2>
 
@@ -245,7 +260,11 @@ export default function CVOrderPage() {
                   />
                 </Field>
 
-                <Field label="WhatsApp number" required hint="Include country code, e.g. +234...">
+                <Field
+                  label="WhatsApp number"
+                  required
+                  hint="Include country code, e.g. +234..."
+                >
                   <input
                     type="tel"
                     placeholder="+234 800 000 0000"
@@ -258,7 +277,7 @@ export default function CVOrderPage() {
 
               {/* Role info */}
               <div className="bg-white rounded-2xl border border-[#112369]/8 p-6 md:p-8 flex flex-col gap-5">
-                <h2 className="text-sm font-semibold tracking-widest uppercase text-[#112369]/40">
+                <h2 className="text-sm font-semibold uppercase text-[#112369]/40">
                   Your Career Context
                 </h2>
 
@@ -271,7 +290,10 @@ export default function CVOrderPage() {
                   />
                 </Field>
 
-                <Field label="Current role or last held position" hint="Leave blank if you're a fresh graduate">
+                <Field
+                  label="Current role or last held position"
+                  hint="Leave blank if you're a fresh graduate"
+                >
                   <input
                     type="text"
                     placeholder="e.g. Marketing Associate at Flutterwave"
@@ -281,7 +303,10 @@ export default function CVOrderPage() {
                   />
                 </Field>
 
-                <Field label="Role or level you're targeting" hint="Helps us pitch the CV's tone correctly">
+                <Field
+                  label="Role or level you're targeting"
+                  hint="Helps us pitch the CV's tone correctly"
+                >
                   <input
                     type="text"
                     placeholder="e.g. Senior Product Designer, Entry-level Finance roles"
@@ -294,7 +319,7 @@ export default function CVOrderPage() {
 
               {/* Tier selection */}
               <div className="bg-white rounded-2xl border border-[#112369]/8 p-6 md:p-8 flex flex-col gap-5">
-                <h2 className="text-sm font-semibold tracking-widest uppercase text-[#112369]/40">
+                <h2 className="text-sm font-semibold uppercase text-[#112369]/40">
                   Choose a Package <span className="text-[#4a8fe2]">*</span>
                 </h2>
 
@@ -311,10 +336,16 @@ export default function CVOrderPage() {
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-semibold text-[#112369] text-base">{tier.name}</span>
-                        <span className="text-[#4a8fe2] font-semibold text-sm">{tier.price}</span>
+                        <span className="font-semibold text-[#112369] text-base">
+                          {tier.name}
+                        </span>
+                        <span className="text-[#4a8fe2] font-semibold text-sm">
+                          {tier.price}
+                        </span>
                       </div>
-                      <p className="text-[#112369]/50 text-xs leading-relaxed mb-3">{tier.desc}</p>
+                      <p className="text-[#112369]/50 text-xs leading-relaxed mb-3">
+                        {tier.desc}
+                      </p>
                       <ul className="flex flex-wrap gap-2">
                         {tier.includes.map((item) => (
                           <li
@@ -332,10 +363,13 @@ export default function CVOrderPage() {
 
               {/* Notes */}
               <div className="bg-white rounded-2xl border border-[#112369]/8 p-6 md:p-8 flex flex-col gap-5">
-                <h2 className="text-sm font-semibold tracking-widest uppercase text-[#112369]/40">
+                <h2 className="text-sm font-semibold uppercase text-[#112369]/40">
                   Anything else?
                 </h2>
-                <Field label="Additional notes" hint="Specific requirements, style preferences, urgency, etc.">
+                <Field
+                  label="Additional notes"
+                  hint="Specific requirements, style preferences, urgency, etc."
+                >
                   <textarea
                     rows={4}
                     placeholder="e.g. I need this urgently for a Friday deadline, I prefer a minimal dark theme..."
@@ -359,7 +393,8 @@ export default function CVOrderPage() {
               </button>
 
               <p className="text-center text-[#112369]/35 text-xs leading-relaxed">
-                No payment yet. We'll reach out on WhatsApp to confirm details and share payment info before we begin.
+                No payment yet. We'll reach out on WhatsApp to confirm details
+                and share payment info before we begin.
               </p>
             </motion.div>
           ) : (
@@ -371,13 +406,25 @@ export default function CVOrderPage() {
               className="bg-white rounded-2xl border border-[#112369]/8 p-10 md:p-16 text-center"
             >
               <div className="w-16 h-16 rounded-full bg-[#4a8fe2]/10 flex items-center justify-center mx-auto mb-6">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a8fe2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#4a8fe2"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h2 className="font-display text-2xl font-semibold text-[#112369] mb-3">Order received.</h2>
+              <h2 className="font-display text-2xl font-semibold text-[#112369] mb-3">
+                Order received.
+              </h2>
               <p className="text-[#112369]/50 text-sm leading-relaxed max-w-sm mx-auto">
-                We've got your details and will reach out on WhatsApp within 24 hours. Good things take a little time.
+                We've got your details and will reach out on WhatsApp within 24
+                hours. Good things take a little time.
               </p>
             </motion.div>
           )}
@@ -407,7 +454,9 @@ function Field({
         {label} {required && <span className="text-[#4a8fe2]">*</span>}
       </label>
       {children}
-      {hint && <p className="text-[10px] text-[#112369]/35 leading-relaxed">{hint}</p>}
+      {hint && (
+        <p className="text-[10px] text-[#112369]/35 leading-relaxed">{hint}</p>
+      )}
     </div>
   );
 }
