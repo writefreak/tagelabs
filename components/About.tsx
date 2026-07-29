@@ -62,7 +62,7 @@ function Counter({
   return (
     <p
       ref={ref}
-      className="font-display text-3xl font-semibold text-navy sm:text-4xl"
+      className="font-jet font-extrabold text-3xl text-navy md:text-4xl"
     >
       {count.toLocaleString()}
       {suffix}
@@ -72,7 +72,7 @@ function Counter({
 
 function StatGrid() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 sm:gap-x-10">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {STATS.map((stat, i) => (
         <motion.div
           key={stat.label}
@@ -80,7 +80,7 @@ function StatGrid() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}
-          className="flex flex-col"
+          className="flex flex-col "
         >
           <Counter
             target={stat.value}
@@ -135,11 +135,11 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="py-3 font-display md:hidden text-2xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
+          className="py-3 font-display md:hidden text-3xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
         >
           About Us
         </motion.h2>
-        <div className="h-1 w-20 md:hidden  bg-blue" />
+        <div className="h-1 w-12 md:hidden  bg-blue" />
 
         <ParallaxImage className="relative hidden md:block aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
 
@@ -172,14 +172,31 @@ export default function About() {
               meets you where you are, thinks with you, and builds for the long
               game.
             </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55, delay: 0.15 }}
+              className="font-sans hidden md:block pt-5 text-xs md:text-sm leading-relaxed text-navy/60 md:max-w-xl"
+            >
+              We work with startups launching their first digital product, job
+              seekers and creatives who need a CV/portfolio that reflects the
+              pure quality of their work and businesses that want a website
+              experience their users will remember. Whether the need is a single
+              landing page, a portfolio or an entire digital revamp, TageLabs
+              meets you where you are, thinks with you, and builds for the long
+              game.
+            </motion.p>
           </div>
           <div className="md:hidden py-6">
-            <ParallaxImage className="relative  aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
-            <StatGrid />
+            <div className="pb-6">
+              <ParallaxImage className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
+            </div>
+            {/* <StatGrid /> */}
           </div>
-          <div className="hidden md:block">
+          {/* <div className="hidden md:block">
             <StatGrid />
-          </div>
+          </div> */}
           <div className="flex md:items-end">
             <button className="inline-flex  items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm">
               Start a project

@@ -53,7 +53,7 @@ export default function Navbar() {
   return (
     <div className="fixed top-0 left-0 right-0 z-[80] flex items-center justify-center gap-3 px-4 pt-5 md:px-14 md:pt-7 2xl:px-24 transition-opacity duration-300">
       {/* Desktop pill nav */}
-      <div className="hidden md:flex border border-navy/10 bg-offwhite backdrop-blur-md shadow-md max-w-8xl p-1 px-2 rounded-2xl items-center justify-between">
+      <div className="hidden md:flex border border-navy/10 bg-offwhite backdrop-blur-md shadow-md max-w-8xl p-2 px-2 rounded-2xl items-center justify-between">
         <Link href="/" className="h-10 md:pr-4">
           <img
             src="/tagelabslogo.png"
