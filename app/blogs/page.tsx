@@ -160,6 +160,12 @@ export default function BlogArchivePage() {
   const mobileScrollRef = useRef<HTMLDivElement>(null);
   const [mobileScrollPage, setMobileScrollPage] = useState(0);
 
+  // Editor's Picks gets its own independent pagination, separate from the main list.
+  const [editorsPage, setEditorsPage] = useState(0);
+  const editorsScrollRef = useRef<HTMLDivElement>(null);
+  const editorsMobileScrollRef = useRef<HTMLDivElement>(null);
+  const [editorsMobileScrollPage, setEditorsMobileScrollPage] = useState(0);
+
   useEffect(() => {
     async function fetchPosts() {
       const { data } = await supabase
@@ -179,6 +185,12 @@ export default function BlogArchivePage() {
 
   const totalPages = Math.ceil(posts.length / PAGE_SIZE);
   const paginated = posts.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+
+  const editorsTotalPages = Math.ceil(editorsPicks.length / PAGE_SIZE);
+  const editorsPaginated = editorsPicks.slice(
+    editorsPage * PAGE_SIZE,
+    editorsPage * PAGE_SIZE + PAGE_SIZE,
+  );
 
   useEffect(() => {
     const el = mobileScrollRef.current;
@@ -200,6 +212,42 @@ export default function BlogArchivePage() {
     el.scrollTo({ left: 0, behavior: "auto" });
     setMobileScrollPage(0);
   }, [page]);
+
+  useEffect(() => {
+    const el = editorsMobileScrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cardWidth = el.scrollWidth / (editorsPaginated.length || 1);
+      const index = Math.round(el.scrollLeft / cardWidth);
+      setEditorsMobileScrollPage(index);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [editorsPaginated.length]);
+
+  useEffect(() => {
+    const el = editorsMobileScrollRef.current;
+    if (!el) return;
+    el.scrollTo({ left: 0, behavior: "auto" });
+    setEditorsMobileScrollPage(0);
+  }, [editorsPage]);
+
+  function scrollEditorsMobileTo(index: number) {
+    const el = editorsMobileScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / editorsPaginated.length;
+    el.scrollTo({ left: cardWidth * index, behavior: "smooth" });
+    setEditorsMobileScrollPage(index);
+  }
+
+  function handleEditorsPageChange(next: number) {
+    setEditorsPage(next);
+    setEditorsMobileScrollPage(0);
+    editorsScrollRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
 
   function scrollMobileTo(index: number) {
     const el = mobileScrollRef.current;
@@ -313,17 +361,10 @@ export default function BlogArchivePage() {
                   ))}
                 </div>
               )}
-
-              {/* Page-level controls — same component and behavior as desktop */}
-              <PagePagination
-                page={page}
-                totalPages={totalPages}
-                onChange={handlePageChange}
-              />
             </div>
 
             {/* ── DESKTOP: 4-column portrait grid ── */}
-            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="hidden sm:grid sm:grid-cols-4 gap-4">
               {paginated.map((post, i) => {
                 const globalIndex = page * PAGE_SIZE + i;
                 const imageSrc =
@@ -345,19 +386,17 @@ export default function BlogArchivePage() {
               })}
             </div>
 
-            {/* Desktop page-level controls — same component, same handler as mobile */}
-            <div className="hidden sm:block">
-              <PagePagination
-                page={page}
-                totalPages={totalPages}
-                onChange={handlePageChange}
-              />
-            </div>
-
-            {/* Editor's Picks — now below the main list */}
+            {/* Editor's Picks — now below the main list, fully browsable */}
             {editorsPicks.length > 0 && (
               <div className="pt-10 md:pt-16">
-                <div className="flex flex-col gap-1 pb-7">
+                <motion.div
+                  ref={editorsScrollRef}
+                  className="flex flex-col gap-1 pb-7"
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, margin: "-80px" }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                >
                   <h2 className="font-display text-lg md:text-2xl font-semibold text-navy">
                     Editor's Picks
                   </h2>
@@ -365,12 +404,57 @@ export default function BlogArchivePage() {
                     A curated list of our favorite topics to keep you updated on
                     what's trending
                   </p>
+                </motion.div>
+
+                {/* Mobile: horizontal snap scroll, paginated same as main list */}
+                <div className="sm:hidden">
+                  <div
+                    ref={editorsMobileScrollRef}
+                    className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                  >
+                    {editorsPaginated.map((post, i) => {
+                      const globalIndex = editorsPage * PAGE_SIZE + i;
+                      const imageSrc =
+                        post.cover_image_url ||
+                        FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
+                      return (
+                        <div
+                          key={post.id}
+                          className="shrink-0 snap-center"
+                          style={{ width: "60vw" }}
+                        >
+                          <BlogCard post={post} imageSrc={imageSrc} />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {editorsPaginated.length > 1 && (
+                    <div className="flex items-center justify-center gap-2 pt-3 md:pt-5">
+                      {editorsPaginated.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => scrollEditorsMobileTo(i)}
+                          aria-label={`Go to editor's pick ${i + 1}`}
+                          className={`rounded-full transition-all duration-300 ${
+                            i === editorsMobileScrollPage
+                              ? "w-5 h-1.5 bg-navy"
+                              : "w-1.5 h-1.5 bg-navy/20"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {editorsPicks.slice(0, 4).map((post, i) => {
+
+                {/* Desktop: 4-column grid, no intermediate 2-col step */}
+                <div className="hidden sm:grid sm:grid-cols-4 gap-4">
+                  {editorsPaginated.map((post, i) => {
+                    const globalIndex = editorsPage * PAGE_SIZE + i;
                     const imageSrc =
                       post.cover_image_url ||
-                      FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+                      FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
                     return (
                       <motion.div
                         key={post.id}
@@ -385,6 +469,8 @@ export default function BlogArchivePage() {
                     );
                   })}
                 </div>
+
+                <div className="hidden sm:block"></div>
               </div>
             )}
           </>
