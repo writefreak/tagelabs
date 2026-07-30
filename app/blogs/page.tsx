@@ -326,6 +326,9 @@ export default function BlogArchivePage() {
                 <h2 className="font-display text-lg md:text-2xl font-semibold text-navy mb-4">
                   Editor's Picks
                 </h2>
+                <p className="text-xs md:text-sm text-neutral-700">
+                  A curated list of our favorite topics to keep you updated
+                </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {editorsPicks.slice(0, 4).map((post, i) => {
                     const imageSrc =
