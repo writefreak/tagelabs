@@ -323,12 +323,15 @@ export default function BlogArchivePage() {
             {/* Editor's Picks — now below the main list */}
             {editorsPicks.length > 0 && (
               <div className="pt-10 md:pt-16">
-                <h2 className="font-display text-lg md:text-2xl font-semibold text-navy mb-4">
-                  Editor's Picks
-                </h2>
-                <p className="text-xs md:text-sm text-neutral-700">
-                  A curated list of our favorite topics to keep you updated
-                </p>
+                <div className="flex flex-col gap-1 pb-7">
+                  <h2 className="font-display text-lg md:text-2xl font-semibold text-navy">
+                    Editor's Picks
+                  </h2>
+                  <p className="text-xs md:text-sm text-neutral-700">
+                    A curated list of our favorite topics to keep you updated on
+                    what's trending
+                  </p>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {editorsPicks.slice(0, 4).map((post, i) => {
                     const imageSrc =
