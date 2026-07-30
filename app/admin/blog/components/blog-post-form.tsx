@@ -13,6 +13,7 @@ type BlogPostInput = {
   excerpt: string;
   sections: BlogSection[];
   published: boolean;
+  isEditorsPick: boolean; // ← add
 };
 
 type InitialPost = {
@@ -21,6 +22,7 @@ type InitialPost = {
   excerpt?: string;
   sections?: BlogSection[];
   published?: boolean;
+  isEditorsPick?: boolean; // ← add
 } | null;
 
 type BlogPostFormProps = {
@@ -43,6 +45,9 @@ export default function BlogPostForm({
       : [{ heading: "", body: "" }],
   );
   const [published, setPublished] = useState(initialPost?.published || false);
+  const [isEditorsPick, setIsEditorsPick] = useState(
+    initialPost?.isEditorsPick || false,
+  ); // ← add
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
@@ -98,6 +103,7 @@ export default function BlogPostForm({
         excerpt,
         sections: sections.filter((s) => s.body.trim().length > 0),
         published,
+        isEditorsPick, // ← add
       });
     } catch (err) {
       setError(

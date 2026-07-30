@@ -13,6 +13,7 @@ type BlogPost = {
   excerpt: string;
   cover_image_url?: string;
   created_at: string;
+  is_editors_pick?: boolean;
 };
 
 const FALLBACK_IMAGES = [
@@ -71,15 +72,10 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
               </div>
             </div>
 
-            {/* <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2"> */}
             <span className="text-[10px] text-white/55 font-medium truncate min-w-0">
               {post.excerpt || "Read the post"}
             </span>
-            {/* </div> */}
           </div>
-          {/* <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
-            {formatDate(post.created_at)}
-          </span> */}
         </div>
       </article>
     </Link>
@@ -100,7 +96,9 @@ export default function BlogArchivePage() {
     async function fetchPosts() {
       const { data } = await supabase
         .from("blog_posts")
-        .select("id, title, slug, excerpt, cover_image_url, created_at")
+        .select(
+          "id, title, slug, excerpt, cover_image_url, created_at, is_editors_pick",
+        )
         .eq("published", true)
         .order("created_at", { ascending: false });
       setPosts(data ?? []);
@@ -108,6 +106,8 @@ export default function BlogArchivePage() {
     }
     fetchPosts();
   }, []);
+
+  const editorsPicks = posts.filter((p) => p.is_editors_pick);
 
   const totalPages = Math.ceil(posts.length / PAGE_SIZE);
   const paginated = posts.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
@@ -161,6 +161,34 @@ export default function BlogArchivePage() {
             Our Thoughts, Worth Sharing
           </h1>
         </motion.div>
+
+        {/* Editor's Picks */}
+        {!loading && editorsPicks.length > 0 && (
+          <div className="pb-10 md:pb-16">
+            <h2 className="font-display text-lg md:text-2xl font-semibold text-navy mb-4">
+              Editor's Picks
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {editorsPicks.slice(0, 4).map((post, i) => {
+                const imageSrc =
+                  post.cover_image_url ||
+                  FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+                return (
+                  <motion.div
+                    key={post.id}
+                    custom={i}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: false, margin: "-60px" }}
+                  >
+                    <BlogCard post={post} imageSrc={imageSrc} />
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Loading skeleton */}
         {loading && (
@@ -240,7 +268,7 @@ export default function BlogArchivePage() {
             </div>
 
             {/* ── DESKTOP: 4-column portrait grid ── */}
-            <div className="hidden sm:grid  md:grid-cols-4 gap-4">
+            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4">
               {paginated.map((post, i) => {
                 const globalIndex = page * PAGE_SIZE + i;
                 const imageSrc =

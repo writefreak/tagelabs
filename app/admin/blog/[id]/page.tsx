@@ -3,6 +3,7 @@ import { supabase } from "@/app/lib/supabase";
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { FileText, Star } from "lucide-react";
 
 type Section = {
   heading: string;
@@ -17,8 +18,8 @@ type BlogPost = {
   cover_image_url: string | null;
   sections: Section[];
   published: boolean;
+  is_editors_pick: boolean; // ← add
 };
-
 const inputClass =
   "w-full px-3.5 py-2.5 rounded-[10px] border border-navy/15 bg-offwhite text-sm text-navy font-body outline-none focus:border-blue transition-colors";
 const labelClass =
@@ -38,6 +39,7 @@ const emptyForm = () => ({
   cover_image_url: "" as string,
   sections: [emptySection()] as Section[],
   published: false,
+  is_editors_pick: false, // ← add
 });
 
 function slugify(value: string) {
@@ -79,7 +81,9 @@ export default function BlogEditorPage() {
     setError(null);
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("id, title, slug, excerpt, cover_image_url, sections, published")
+      .select(
+        "id, title, slug, excerpt, cover_image_url, sections, published, is_editors_pick",
+      ) // ← added is_editors_pick
       .eq("id", id)
       .single();
     if (error || !data) {
@@ -92,6 +96,7 @@ export default function BlogEditorPage() {
         cover_image_url: data.cover_image_url ?? "",
         sections: data.sections?.length ? data.sections : [emptySection()],
         published: data.published ?? false,
+        is_editors_pick: data.is_editors_pick ?? false, // ← add
       });
       setSlugTouched(true);
     }
@@ -190,6 +195,7 @@ export default function BlogEditorPage() {
       cover_image_url: form.cover_image_url || null,
       sections: form.sections.filter((s) => s.body.trim().length > 0),
       published: form.published,
+      is_editors_pick: form.is_editors_pick, // ← add
     };
 
     if (isNew) {
@@ -378,7 +384,6 @@ export default function BlogEditorPage() {
                   className="hidden"
                 />
               </div>
-
               <div>
                 <label className={labelClass}>Title *</label>
                 <input
@@ -416,6 +421,53 @@ export default function BlogEditorPage() {
                 <p className="text-[11px] text-navy/35 mt-1">
                   {form.excerpt.length}/160
                 </p>
+              </div>
+              <div className="rounded-[10px] border border-navy/15 bg-offwhite p-3.5">
+                <label className={labelClass}>Post status</label>
+                <div className="relative grid grid-cols-2 gap-1 p-1 rounded-[9px] bg-navy/[0.06]">
+                  <div
+                    className="absolute inset-y-1 z-0 w-[calc(50%-4px)] rounded-[7px] bg-white shadow-[0_1px_3px_rgba(17,35,105,0.12)] transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                    style={{
+                      transform: form.is_editors_pick
+                        ? "translateX(calc(100% + 8px))"
+                        : "translateX(0)",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({ ...f, is_editors_pick: false }))
+                    }
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2.5 rounded-[7px] text-[12.5px] font-semibold font-body transition-colors duration-200 ${
+                      !form.is_editors_pick
+                        ? "text-navy"
+                        : "text-navy/35 hover:text-navy/55"
+                    }`}
+                  >
+                    <FileText size={13} strokeWidth={2} />
+                    Standard
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({ ...f, is_editors_pick: true }))
+                    }
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2.5 rounded-[7px] text-[12.5px] font-semibold font-body transition-colors duration-200 ${
+                      form.is_editors_pick
+                        ? "text-navy"
+                        : "text-navy/35 hover:text-navy/55"
+                    }`}
+                  >
+                    <Star
+                      size={13}
+                      strokeWidth={2}
+                      fill={form.is_editors_pick ? "#4a8fe2" : "none"}
+                      color={form.is_editors_pick ? "#4a8fe2" : "currentColor"}
+                      className="transition-all duration-200"
+                    />
+                    Editor's Pick
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -541,6 +593,8 @@ export default function BlogEditorPage() {
           </div>
 
           {/* Save bar */}
+          {/* Save bar */}
+          {/* Save bar */}
           <div className="flex flex-col sm:flex-row items-center gap-3 pb-8">
             <div className="flex gap-2">
               {([false, true] as const).map((val) => (
@@ -554,6 +608,7 @@ export default function BlogEditorPage() {
                 </button>
               ))}
             </div>
+
             <div className="flex gap-3 sm:ml-auto w-full sm:w-auto">
               {!isNew &&
                 (deleteConfirm ? (
