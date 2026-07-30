@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/app/lib/supabase/server";
 import BlogPostClient from "@/components/blog/blog-post-client";
+import BlogPostActions from "@/components/blog-post-actions";
 
 type Props = {
   params: { slug: string };
@@ -57,5 +58,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const post = await getPost(params.slug);
-  return <BlogPostClient post={post} slug={params.slug} />;
+
+  return (
+    <>
+      <BlogPostClient post={post} slug={params.slug} />
+    </>
+  );
 }

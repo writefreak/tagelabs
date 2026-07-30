@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import BlogPostActions from "../blog-post-actions";
 
 type Section = {
   heading: string;
@@ -93,6 +94,11 @@ export default function BlogPostClient({
             </div>
           )}
 
+          {post && (
+            <div className="max-w-5xl mx-auto hidden md:block">
+              <BlogPostActions title={post.title} slug={post.slug} />
+            </div>
+          )}
           <div className="flex flex-col gap-7">
             {post.sections.map((section, i) => (
               <div key={i}>
@@ -108,6 +114,12 @@ export default function BlogPostClient({
             ))}
           </div>
         </motion.div>
+
+        {post && (
+          <div className="max-w-5xl mx-auto pt-8 md:hidden">
+            <BlogPostActions title={post.title} slug={post.slug} />
+          </div>
+        )}
       </div>
     </article>
   );
