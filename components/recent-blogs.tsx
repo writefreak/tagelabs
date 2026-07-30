@@ -39,6 +39,7 @@ const fadeUp: Variants = {
 };
 
 const RECENT_COUNT = 6;
+const PAGE_SIZE = 4;
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -91,6 +92,8 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
 export default function RecentBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const desktopScrollRef = useRef<HTMLDivElement>(null);
 
   const mobileScrollRef = useRef<HTMLDivElement>(null);
   const [mobileScrollPage, setMobileScrollPage] = useState(0);
@@ -129,6 +132,18 @@ export default function RecentBlogs() {
     const cardWidth = el.scrollWidth / posts.length;
     el.scrollTo({ left: cardWidth * index, behavior: "smooth" });
     setMobileScrollPage(index);
+  }
+
+  const totalPages = Math.ceil(posts.length / PAGE_SIZE);
+  const paginated = posts.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const showPagination = posts.length > PAGE_SIZE;
+
+  function handlePageChange(next: number) {
+    setPage(next);
+    desktopScrollRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   }
 
   return (
@@ -260,12 +275,16 @@ export default function RecentBlogs() {
               )}
             </div>
 
-            {/* ── DESKTOP: 3-column portrait grid ── */}
-            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4">
-              {posts.map((post, i) => {
+            {/* ── DESKTOP: 4-column portrait grid ── */}
+            <div
+              ref={desktopScrollRef}
+              className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+              {paginated.map((post, i) => {
+                const globalIndex = page * PAGE_SIZE + i;
                 const imageSrc =
                   post.cover_image_url ||
-                  FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+                  FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
 
                 return (
                   <motion.div
@@ -281,6 +300,64 @@ export default function RecentBlogs() {
                 );
               })}
             </div>
+
+            {/* Pagination (desktop only) */}
+            {showPagination && (
+              <div className="hidden sm:flex items-center justify-center gap-2 mt-10">
+                <button
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 0}
+                  aria-label="Previous page"
+                  className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    aria-label={`Page ${i + 1}`}
+                    className={`rounded-full transition-all duration-300 ${
+                      i === page
+                        ? "w-6 h-2 bg-navy"
+                        : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+                    }`}
+                  />
+                ))}
+
+                <button
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages - 1}
+                  aria-label="Next page"
+                  className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
