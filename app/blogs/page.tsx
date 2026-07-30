@@ -82,6 +82,74 @@ function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
   );
 }
 
+// ── Shared page-level pagination controls (prev/next + page dots) ─────────
+function PagePagination({
+  page,
+  totalPages,
+  onChange,
+}: {
+  page: number;
+  totalPages: number;
+  onChange: (next: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-2 mt-6 md:mt-10">
+      <button
+        onClick={() => onChange(page - 1)}
+        disabled={page === 0}
+        aria-label="Previous page"
+        className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+
+      {Array.from({ length: totalPages }).map((_, i) => (
+        <button
+          key={i}
+          onClick={() => onChange(i)}
+          aria-label={`Page ${i + 1}`}
+          className={`rounded-full transition-all duration-300 ${
+            i === page
+              ? "w-6 h-2 bg-navy"
+              : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+          }`}
+        />
+      ))}
+
+      <button
+        onClick={() => onChange(page + 1)}
+        disabled={page === totalPages - 1}
+        aria-label="Next page"
+        className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 // ── Main page ────────────────────────────────────────────────────────────
 export default function BlogArchivePage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -111,7 +179,6 @@ export default function BlogArchivePage() {
 
   const totalPages = Math.ceil(posts.length / PAGE_SIZE);
   const paginated = posts.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
-  const showPagination = posts.length > PAGE_SIZE;
 
   useEffect(() => {
     const el = mobileScrollRef.current;
@@ -124,6 +191,15 @@ export default function BlogArchivePage() {
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [paginated.length]);
+
+  // Reset mobile scroll position whenever the page changes so the snap
+  // container always starts at the first card of the new page.
+  useEffect(() => {
+    const el = mobileScrollRef.current;
+    if (!el) return;
+    el.scrollTo({ left: 0, behavior: "auto" });
+    setMobileScrollPage(0);
+  }, [page]);
 
   function scrollMobileTo(index: number) {
     const el = mobileScrollRef.current;
@@ -197,7 +273,7 @@ export default function BlogArchivePage() {
 
         {!loading && posts.length > 0 && (
           <>
-            {/* ── MOBILE: horizontal snap scroll ── */}
+            {/* ── MOBILE: horizontal snap scroll (paginated, same slice as desktop) ── */}
             <div className="sm:hidden">
               <div
                 ref={mobileScrollRef}
@@ -237,6 +313,13 @@ export default function BlogArchivePage() {
                   ))}
                 </div>
               )}
+
+              {/* Page-level controls — same component and behavior as desktop */}
+              <PagePagination
+                page={page}
+                totalPages={totalPages}
+                onChange={handlePageChange}
+              />
             </div>
 
             {/* ── DESKTOP: 4-column portrait grid ── */}
@@ -262,63 +345,14 @@ export default function BlogArchivePage() {
               })}
             </div>
 
-            {/* Desktop-only numbered pagination */}
-            {showPagination && (
-              <div className="hidden sm:flex items-center justify-center gap-2 mt-10">
-                <button
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 0}
-                  aria-label="Previous page"
-                  className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                </button>
-
-                {Array.from({ length: totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handlePageChange(i)}
-                    aria-label={`Page ${i + 1}`}
-                    className={`rounded-full transition-all duration-300 ${
-                      i === page
-                        ? "w-6 h-2 bg-navy"
-                        : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
-                    }`}
-                  />
-                ))}
-
-                <button
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page === totalPages - 1}
-                  aria-label="Next page"
-                  className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-              </div>
-            )}
+            {/* Desktop page-level controls — same component, same handler as mobile */}
+            <div className="hidden sm:block">
+              <PagePagination
+                page={page}
+                totalPages={totalPages}
+                onChange={handlePageChange}
+              />
+            </div>
 
             {/* Editor's Picks — now below the main list */}
             {editorsPicks.length > 0 && (
