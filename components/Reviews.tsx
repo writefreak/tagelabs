@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/app/lib/supabase";
+import { ArrowRight } from "lucide-react";
 
 type Review = {
   id: string;
@@ -334,9 +335,9 @@ export default function Reviews() {
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="text-sm text-blue font-medium font-body hover:underline w-fit mt-1"
+                  className="text-sm text-blue flex items-center gap-2 font-medium font-body hover:underline w-fit mt-1"
                 >
-                  Leave another →
+                  Leave another <ArrowRight size={12} />
                 </button>
               </motion.div>
             ) : (
@@ -403,7 +404,7 @@ export default function Reviews() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-navy hover:bg-blue disabled:opacity-50 text-white font-medium py-3 rounded-full text-sm transition-colors duration-200 font-body"
+                  className="w-full bg-navy hover:bg-blue disabled:opacity-50 text-white font-medium py-3 rounded-2xl text-sm transition-colors duration-200 font-body"
                 >
                   {submitting ? "Submitting..." : "Submit Review →"}
                 </button>
@@ -453,7 +454,7 @@ export default function Reviews() {
                   </div>
                   <button
                     onClick={() => setSelectedReview(null)}
-                    className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/25 hover:text-navy transition-all duration-200"
+                    className="w-8 h-8 flex items-center justify-center rounded-2xl border border-navy/10 text-navy/40 hover:border-navy/25 hover:text-navy transition-all duration-200"
                   >
                     <svg
                       width="14"

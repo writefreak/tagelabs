@@ -245,7 +245,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={sending || !form.service}
-                className="w-full bg-blue text-white font-medium py-4 rounded-full text-sm hover:bg-white hover:text-navy transition-colors duration-200 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full bg-blue text-white font-medium py-4 rounded-2xl text-sm hover:bg-white hover:text-navy transition-colors duration-200 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {sending ? "Sending..." : "Send message →"}
               </button>

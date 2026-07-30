@@ -157,8 +157,8 @@ export default function BlogArchivePage() {
           viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h1 className="font-display text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-            Our Thoughts, Worth Sharing.
+          <h1 className="font-jet text-2xl md:text-5xl font-semibold text-navy leading-tight">
+            Our Thoughts, Worth Sharing
           </h1>
         </motion.div>
 
@@ -240,7 +240,7 @@ export default function BlogArchivePage() {
             </div>
 
             {/* ── DESKTOP: 4-column portrait grid ── */}
-            <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="hidden sm:grid  md:grid-cols-4 gap-4">
               {paginated.map((post, i) => {
                 const globalIndex = page * PAGE_SIZE + i;
                 const imageSrc =
