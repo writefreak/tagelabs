@@ -38,7 +38,7 @@ const fadeUp: Variants = {
   }),
 };
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 4;
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -162,34 +162,6 @@ export default function BlogArchivePage() {
           </h1>
         </motion.div>
 
-        {/* Editor's Picks */}
-        {!loading && editorsPicks.length > 0 && (
-          <div className="pb-10 md:pb-16">
-            <h2 className="font-display text-lg md:text-2xl font-semibold text-navy mb-4">
-              Editor's Picks
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {editorsPicks.slice(0, 4).map((post, i) => {
-                const imageSrc =
-                  post.cover_image_url ||
-                  FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
-                return (
-                  <motion.div
-                    key={post.id}
-                    custom={i}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: false, margin: "-60px" }}
-                  >
-                    <BlogCard post={post} imageSrc={imageSrc} />
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* Loading skeleton */}
         {loading && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -290,8 +262,9 @@ export default function BlogArchivePage() {
               })}
             </div>
 
+            {/* Desktop-only numbered pagination */}
             {showPagination && (
-              <div className="flex items-center justify-center gap-2 mt-6 sm:mt-10">
+              <div className="hidden sm:flex items-center justify-center gap-2 mt-10">
                 <button
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 0}
@@ -344,6 +317,34 @@ export default function BlogArchivePage() {
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
                 </button>
+              </div>
+            )}
+
+            {/* Editor's Picks — now below the main list */}
+            {editorsPicks.length > 0 && (
+              <div className="pt-10 md:pt-16">
+                <h2 className="font-display text-lg md:text-2xl font-semibold text-navy mb-4">
+                  Editor's Picks
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {editorsPicks.slice(0, 4).map((post, i) => {
+                    const imageSrc =
+                      post.cover_image_url ||
+                      FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+                    return (
+                      <motion.div
+                        key={post.id}
+                        custom={i}
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, margin: "-60px" }}
+                      >
+                        <BlogCard post={post} imageSrc={imageSrc} />
+                      </motion.div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </>
