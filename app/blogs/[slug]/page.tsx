@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/app/lib/supabase/server";
 import BlogPostClient from "@/components/blog/blog-post-client";
-import BlogPostActions from "@/components/blog-post-actions";
+import EditorsPicks from "@/components/blog/editors-pick-client";
 
 type Props = {
   params: { slug: string };
@@ -60,8 +60,18 @@ export default async function BlogPostPage({ params }: Props) {
   const post = await getPost(params.slug);
 
   return (
-    <>
-      <BlogPostClient post={post} slug={params.slug} />
-    </>
+    <div className="bg-white min-h-screen py-12 md:py-20 md:px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16">
+        {/* Main Blog Article Area */}
+        <div className="lg:col-span-8">
+          <BlogPostClient post={post} slug={params.slug} />
+        </div>
+
+        {/* Sidebar: Editor's Picks */}
+        <div className="lg:col-span-4 pt-4 lg:pt-16">
+          <EditorsPicks currentSlug={params.slug} />
+        </div>
+      </div>
+    </div>
   );
 }
