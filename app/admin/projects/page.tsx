@@ -1,6 +1,21 @@
 "use client";
 import { supabase } from "@/app/lib/supabase";
 import { useState, useEffect, useRef } from "react";
+import {
+  Plus,
+  X,
+  Upload,
+  Image as ImageIcon,
+  ExternalLink,
+  GripVertical,
+  Pencil,
+  Trash2,
+  Loader2,
+  CheckCircle2,
+  Clock,
+  Search,
+  ChevronDown,
+} from "lucide-react";
 
 type Project = {
   id: string;
@@ -15,21 +30,94 @@ type Project = {
   order_index: number;
 };
 
-const categories = ["Landing Page", "Web App", "Frontend Dev", "Design", "Portfolio", "E-commerce"];
+const categories = [
+  "Landing Page",
+  "Web App",
+  "Frontend Dev",
+  "Design",
+  "Portfolio",
+  "E-commerce",
+];
 
 const emptyForm = {
-  title: "", category: "", description: "",
-  tags: "", live_url: "", image_url: "", status: "Draft" as "Published" | "Draft",
+  title: "",
+  category: "",
+  description: "",
+  tags: "",
+  live_url: "",
+  image_url: "",
+  status: "Draft" as "Published" | "Draft",
 };
 
-const inputClass = "w-full px-3.5 py-2.5 rounded-[10px] border border-navy/15 bg-offwhite text-sm text-navy font-body outline-none focus:border-blue transition-colors";
-const labelClass = "block text-[11px] font-semibold text-navy/60 uppercase tracking-wider mb-1.5";
-const pillClass = (active: boolean) =>
-  `px-3.5 py-2 rounded-[10px] text-xs font-semibold font-body border transition-all duration-200 ${
-    active
-      ? "bg-navy border-navy text-white"
-      : "bg-offwhite border-navy/15 text-navy/50 hover:border-navy/30 hover:text-navy/70"
-  }`;
+const inputClass =
+  "w-full px-4 py-3 rounded-xl border border-navy/15 bg-offwhite text-sm text-navy font-body outline-none focus:border-blue focus:bg-white transition-all shadow-xs";
+const labelClass =
+  "block text-xs font-bold text-navy/70 uppercase tracking-wider mb-2";
+
+// Custom Dropdown Component to eliminate native select
+function CustomSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Select Option",
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  options: string[];
+  placeholder?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`${inputClass} flex items-center justify-between text-left cursor-pointer`}
+      >
+        <span className={value ? "text-navy" : "text-navy/40"}>
+          {value || placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-navy/50 transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-navy/15 rounded-xl shadow-lg max-h-56 overflow-y-auto py-1">
+          {options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => {
+                onChange(opt);
+                setOpen(false);
+              }}
+              className={`w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-navy/5 ${
+                value === opt ? "font-bold text-blue bg-blue/5" : "text-navy"
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -41,16 +129,19 @@ export default function ProjectsPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filter, setFilter] = useState<"All" | "Published" | "Draft">("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // ── Drag state ────────────────────────────────────────────────────────────
+  // Drag state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [reordering, setReordering] = useState(false);
-  const dragNode = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => { fetchProjects(); }, []);
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   async function fetchProjects() {
     setLoading(true);
@@ -58,7 +149,6 @@ export default function ProjectsPage() {
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      // CHANGED: order by order_index so drag order is respected
       .order("order_index", { ascending: true });
     if (error) setError(error.message);
     else setProjects(data ?? []);
@@ -92,7 +182,10 @@ export default function ProjectsPage() {
       image_url = urlData.publicUrl;
     }
 
-    const tagArray = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+    const tagArray = form.tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
 
     const payload = {
       title: form.title,
@@ -105,10 +198,17 @@ export default function ProjectsPage() {
     };
 
     if (editId) {
-      const { error } = await supabase.from("projects").update(payload).eq("id", editId).select();
+      const { error } = await supabase
+        .from("projects")
+        .update(payload)
+        .eq("id", editId)
+        .select();
       if (error) setError(error.message);
     } else {
-      const { error } = await supabase.from("projects").insert(payload).select();
+      const { error } = await supabase
+        .from("projects")
+        .insert(payload)
+        .select();
       if (error) setError(error.message);
     }
 
@@ -123,8 +223,13 @@ export default function ProjectsPage() {
 
   function handleEdit(p: Project) {
     setForm({
-      title: p.title, category: p.category, description: p.description,
-      tags: p.tags.join(", "), live_url: p.live_url, image_url: p.image_url, status: p.status,
+      title: p.title,
+      category: p.category,
+      description: p.description,
+      tags: p.tags.join(", "),
+      live_url: p.live_url,
+      image_url: p.image_url,
+      status: p.status,
     });
     setImagePreview(p.image_url || null);
     setEditId(p.id);
@@ -157,15 +262,10 @@ export default function ProjectsPage() {
     setForm((f) => ({ ...f, image_url: "" }));
   }
 
-  // ── Drag handlers ─────────────────────────────────────────────────────────
-
+  // Drag handlers specifically targeting isolated card
   function handleDragStart(e: React.DragEvent<HTMLDivElement>, index: number) {
     setDragIndex(index);
-    dragNode.current = e.currentTarget;
-    // Slight delay so the ghost image renders before we apply opacity
-    setTimeout(() => {
-      if (dragNode.current) dragNode.current.style.opacity = "0.4";
-    }, 0);
+    e.dataTransfer.effectAllowed = "move";
   }
 
   function handleDragEnter(index: number) {
@@ -174,163 +274,234 @@ export default function ProjectsPage() {
   }
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault(); // required to allow drop
+    e.preventDefault();
   }
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>, dropIndex: number) {
     e.preventDefault();
     if (dragIndex === null || dragIndex === dropIndex) return;
 
-    // Reorder locally first for instant feedback
     const reordered = [...projects];
     const [moved] = reordered.splice(dragIndex, 1);
     reordered.splice(dropIndex, 0, moved);
     setProjects(reordered);
 
-    // Persist new order to Supabase
     saveOrder(reordered);
   }
 
   function handleDragEnd() {
-    if (dragNode.current) dragNode.current.style.opacity = "1";
-    dragNode.current = null;
     setDragIndex(null);
     setDragOverIndex(null);
   }
 
-  // CHANGED: writes order_index for every project so homepage fetch reflects new order
   async function saveOrder(ordered: Project[]) {
     setReordering(true);
     const updates = ordered.map((p, i) =>
-      supabase.from("projects").update({ order_index: i }).eq("id", p.id)
+      supabase.from("projects").update({ order_index: i }).eq("id", p.id),
     );
     await Promise.all(updates);
     setReordering(false);
   }
 
-  const filtered = projects.filter((p) => filter === "All" || p.status === filter);
-  const previewTags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+  const filtered = projects.filter((p) => {
+    const matchesFilter = filter === "All" || p.status === filter;
+    const matchesCategory =
+      selectedCategory === "All" || p.category === selectedCategory;
+    const matchesSearch =
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesFilter && matchesCategory && matchesSearch;
+  });
+
+  const previewTags = form.tags
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
   const hasPreview = form.title || form.category || imagePreview;
 
   return (
-    <div className="font-body max-w-[1100px]">
-
+    <div className="font-body w-full max-w-6xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 mb-7 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between border-b border-navy/10 pb-5">
         <div>
-          <h2 className="font-display font-bold text-2xl text-navy">Projects</h2>
-          <p className="text-navy/50 text-sm mt-1">
-            {projects.length} total · {projects.filter((p) => p.status === "Published").length} published
+          <h1 className="font-display font-bold text-2xl sm:text-3xl text-navy tracking-tight">
+            Projects Dashboard
+          </h1>
+          <p className="text-navy/60 text-xs sm:text-sm mt-0.5">
+            Manage your portfolio showcase items and control display sequence.
           </p>
         </div>
         <button
-          onClick={() => { setShowForm(!showForm); setEditId(null); setForm(emptyForm); setImageFile(null); setImagePreview(null); }}
-          className="flex items-center justify-center gap-2 bg-navy hover:bg-blue text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors duration-200 w-full sm:w-auto"
+          onClick={() => {
+            setShowForm(!showForm);
+            setEditId(null);
+            setForm(emptyForm);
+            setImageFile(null);
+            setImagePreview(null);
+          }}
+          className="flex items-center justify-center gap-2 bg-navy hover:bg-blue text-white text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-xl transition-all shadow-xs w-full sm:w-auto"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          {showForm && !editId ? "Cancel" : "Add Project"}
+          {showForm && !editId ? (
+            <>
+              <X className="w-4 h-4" />
+              Cancel
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4" />
+              Add Project
+            </>
+          )}
         </button>
       </div>
 
       {error && (
-        <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-500">{error}</div>
+        <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-xs sm:text-sm text-red-600 flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-400 hover:text-red-600"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       )}
 
-      {/* Form */}
+      {/* Form Section */}
       {showForm && (
-        <div className="bg-white rounded-2xl p-5 sm:p-7 border border-navy/10 shadow-md mb-7">
-          <h3 className="font-display font-semibold text-lg text-navy mb-6">
-            {editId ? "Edit Project" : "Upload New Project"}
-          </h3>
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-navy/10 shadow-lg mb-8 transition-all">
+          <div className="flex items-center justify-between mb-5 pb-3 border-b border-navy/10">
+            <h2 className="font-display font-bold text-lg text-navy">
+              {editId ? "Edit Project Details" : "Add New Project"}
+            </h2>
+            <button
+              onClick={() => {
+                setShowForm(false);
+                setEditId(null);
+              }}
+              className="p-1 rounded-lg hover:bg-navy/5 text-navy/50"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-          <div className="flex flex-col lg:flex-row gap-7">
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-              <div className="col-span-1 sm:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7 space-y-4">
+              <div>
                 <label className={labelClass}>Project Title *</label>
-                <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. BrandKit Agency Site" className={inputClass} />
+                <input
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder="e.g. Heart of Gold Jewels E-commerce"
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Category *</label>
+                  <CustomSelect
+                    value={form.category}
+                    onChange={(val) => setForm({ ...form, category: val })}
+                    options={categories}
+                    placeholder="Select category"
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Publishing Status</label>
+                  <CustomSelect
+                    value={form.status}
+                    onChange={(val) =>
+                      setForm({
+                        ...form,
+                        status: val as "Published" | "Draft",
+                      })
+                    }
+                    options={["Draft", "Published"]}
+                  />
+                </div>
               </div>
 
               <div>
-                <label className={labelClass}>Category *</label>
-                <div className="flex flex-wrap gap-2 sm:hidden">
-                  {categories.map((c) => (
-                    <button key={c} type="button" onClick={() => setForm({ ...form, category: c })} className={pillClass(form.category === c)}>
-                      {c}
-                    </button>
-                  ))}
-                </div>
-                <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={`${inputClass} hidden sm:block`}>
-                  <option value="">Select category</option>
-                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>Status</label>
-                <div className="flex gap-2 sm:hidden">
-                  {(["Draft", "Published"] as const).map((s) => (
-                    <button key={s} type="button" onClick={() => setForm({ ...form, status: s })} className={pillClass(form.status === s)}>
-                      {s}
-                    </button>
-                  ))}
-                </div>
-                <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as "Published" | "Draft" })} className={`${inputClass} hidden sm:block`}>
-                  <option value="Draft">Draft</option>
-                  <option value="Published">Published</option>
-                </select>
-              </div>
-
-              <div className="col-span-1 sm:col-span-2">
                 <label className={labelClass}>Description</label>
-                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description..." rows={3} className={`${inputClass} resize-y`} />
+                <textarea
+                  value={form.description}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
+                  placeholder="Brief summary of the architecture and delivered business value..."
+                  rows={3}
+                  className={`${inputClass} resize-y`}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Tags (Comma Separated)</label>
+                  <input
+                    value={form.tags}
+                    onChange={(e) => setForm({ ...form, tags: e.target.value })}
+                    placeholder="Next.js, TypeScript, Tailwind"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Live Preview URL</label>
+                  <input
+                    value={form.live_url}
+                    onChange={(e) =>
+                      setForm({ ...form, live_url: e.target.value })
+                    }
+                    placeholder="https://example.com"
+                    className={inputClass}
+                  />
+                </div>
               </div>
 
               <div>
-                <label className={labelClass}>Tags (comma-separated)</label>
-                <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="Next.js, Tailwind, Framer Motion" className={inputClass} />
-              </div>
-
-              <div>
-                <label className={labelClass}>Live URL</label>
-                <input value={form.live_url} onChange={(e) => setForm({ ...form, live_url: e.target.value })} placeholder="https://yourproject.com" className={inputClass} />
-              </div>
-
-              <div className="col-span-1 sm:col-span-2">
                 <label className={labelClass}>Cover Image</label>
                 {!imagePreview ? (
-                  <label className="flex flex-col items-center justify-center w-full h-36 rounded-[10px] border-2 border-dashed border-navy/20 bg-offwhite hover:border-blue hover:bg-blue/[0.03] transition-all duration-200 cursor-pointer group">
-                    <div className="flex flex-col items-center gap-2 pointer-events-none">
-                      <div className="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center group-hover:bg-blue/20 transition-colors">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4a8fe2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                          <polyline points="17 8 12 3 7 8" />
-                          <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                      </div>
-                      <p className="text-sm font-medium text-navy/50 group-hover:text-blue transition-colors">Click to upload image</p>
-                      <p className="text-[11px] text-navy/30">PNG, JPG, WEBP up to 10MB</p>
+                  <label className="flex flex-col items-center justify-center w-full h-36 rounded-xl border-2 border-dashed border-navy/20 bg-offwhite hover:border-blue hover:bg-blue/5 transition-all cursor-pointer group">
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <Upload className="w-5 h-5 text-navy/50 group-hover:text-blue" />
+                      <p className="text-xs font-semibold text-navy/70 group-hover:text-blue">
+                        Upload thumbnail
+                      </p>
+                      <p className="text-[10px] text-navy/40">
+                        PNG, JPG, or WEBP
+                      </p>
                     </div>
-                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
                   </label>
                 ) : (
-                  <div className="relative w-full h-36 rounded-[10px] overflow-hidden border border-navy/10 group">
-                    <img src={imagePreview} alt="Cover preview" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-navy/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                      <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-navy text-xs font-semibold cursor-pointer hover:bg-offwhite transition-colors">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
+                  <div className="relative w-full h-36 rounded-xl overflow-hidden border border-navy/15 group">
+                    <img
+                      src={imagePreview}
+                      alt="Cover preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <label className="px-3 py-1.5 rounded-lg bg-white text-navy text-xs font-bold cursor-pointer hover:bg-offwhite transition-colors">
                         Replace
-                        <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
                       </label>
-                      <button type="button" onClick={clearImage} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
-                        </svg>
+                      <button
+                        type="button"
+                        onClick={clearImage}
+                        className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors"
+                      >
                         Remove
                       </button>
                     </div>
@@ -339,257 +510,292 @@ export default function ProjectsPage() {
               </div>
             </div>
 
-            {/* Card preview */}
-            <div className="lg:w-72 shrink-0">
-              <p className={labelClass}>Card Preview</p>
-              {hasPreview ? (
-                <div className="bg-white border border-navy/10 rounded-2xl overflow-hidden flex flex-col shadow-sm">
-                  <div className="relative h-40 w-full bg-navy/5 overflow-hidden">
-                    {imagePreview ? (
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="1.5" opacity="0.2">
-                          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                          <polyline points="21 15 16 10 5 21"/>
-                        </svg>
-                      </div>
-                    )}
-                    {form.category && (
-                      <span className="absolute top-2.5 left-2.5 text-[10px] font-medium uppercase tracking-widest px-2.5 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
-                        {form.category}
-                      </span>
-                    )}
+            {/* Preview Section */}
+            <div className="lg:col-span-5 flex flex-col">
+              <label className={labelClass}>Live Display Preview</label>
+              <div className="flex-1 bg-offwhite/50 border border-navy/10 rounded-xl p-3 flex flex-col justify-center">
+                {hasPreview ? (
+                  <div className="bg-white border border-navy/10 rounded-xl overflow-hidden shadow-xs flex flex-col">
+                    <div className="relative h-36 w-full bg-navy/5 overflow-hidden">
+                      {imagePreview ? (
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-navy/30">
+                          <ImageIcon className="w-8 h-8" />
+                        </div>
+                      )}
+                      {form.category && (
+                        <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-navy text-white">
+                          {form.category}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-4 flex flex-col flex-1">
+                      <h3 className="font-display text-sm font-bold text-navy mb-1">
+                        {form.title || "Project Title"}
+                      </h3>
+                      <p className="text-navy/60 text-xs line-clamp-2 mb-3">
+                        {form.description || "Description preview..."}
+                      </p>
+                      {previewTags.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {previewTags.map((t) => (
+                            <span
+                              key={t}
+                              className="text-[10px] bg-navy/5 text-navy/70 px-2 py-0.5 rounded-md"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col flex-1 p-4">
-                    <h3 className="font-display text-base font-semibold text-navy mb-1.5 leading-snug">
-                      {form.title || <span className="text-navy/25">Project title</span>}
-                    </h3>
-                    <p className="font-body text-navy/50 text-xs leading-relaxed flex-1">
-                      {form.description || <span className="text-navy/25">Your description will appear here...</span>}
-                    </p>
-                    {previewTags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3">
-                        {previewTags.slice(0, 4).map((t) => (
-                          <span key={t} className="text-[10px] font-medium border border-navy/15 text-navy/50 px-2.5 py-0.5 rounded-full">{t}</span>
-                        ))}
-                      </div>
-                    )}
-                    {form.live_url && (
-                      <div className="flex items-center gap-1 mt-3 pt-3 border-t border-navy/10 text-[11px] text-navy/40">
-                        View project
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
-                        </svg>
-                      </div>
-                    )}
+                ) : (
+                  <div className="py-8 px-4 text-center text-navy/40 text-xs">
+                    Fill out fields to view live card preview.
                   </div>
-                </div>
-              ) : (
-                <div className="h-64 rounded-2xl border-2 border-dashed border-navy/10 flex flex-col items-center justify-center gap-2 text-center px-4">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#112369" strokeWidth="1.5" opacity="0.2">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                  </svg>
-                  <p className="text-[12px] text-navy/25 leading-relaxed">Fill in the form to<br />see a card preview</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-6">
+          <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-navy/10">
             <button
-              onClick={handleSubmit}
-              disabled={saving}
-              className="bg-navy hover:bg-blue disabled:opacity-50 text-white text-sm font-semibold px-7 py-2.5 rounded-xl transition-colors w-full sm:w-auto"
-            >
-              {saving ? "Saving..." : editId ? "Save Changes" : "Upload Project"}
-            </button>
-            <button
-              onClick={() => { setShowForm(false); setEditId(null); setForm(emptyForm); setImageFile(null); setImagePreview(null); }}
-              className="border border-navy/15 text-navy/50 text-sm px-5 py-2.5 rounded-xl hover:border-navy/30 transition-colors w-full sm:w-auto"
+              type="button"
+              onClick={() => {
+                setShowForm(false);
+                setEditId(null);
+                setForm(emptyForm);
+                setImageFile(null);
+                setImagePreview(null);
+              }}
+              className="px-4 py-2 rounded-xl border border-navy/20 text-navy/70 text-xs font-semibold hover:bg-navy/5 transition-colors"
             >
               Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={saving}
+              className="flex items-center justify-center gap-2 bg-navy hover:bg-blue disabled:opacity-50 text-white text-xs font-semibold px-6 py-2 rounded-xl transition-colors shadow-xs"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Saving...
+                </>
+              ) : editId ? (
+                "Save Changes"
+              ) : (
+                "Upload Project"
+              )}
             </button>
           </div>
         </div>
       )}
 
-      {/* Filter tabs */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex gap-2">
+      {/* Controls Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6 bg-white p-2.5 rounded-2xl border border-navy/10 shadow-xs">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-navy/40" />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search projects or tags..."
+            className="w-full pl-9 pr-3 py-2 rounded-xl bg-offwhite border border-navy/10 text-xs text-navy outline-none focus:border-blue"
+          />
+        </div>
+
+        <div className="w-full sm:w-48">
+          <CustomSelect
+            value={selectedCategory === "All" ? "" : selectedCategory}
+            onChange={(val) => setSelectedCategory(val)}
+            options={["All", ...categories]}
+            placeholder="All Categories"
+          />
+        </div>
+
+        <div className="flex items-center bg-offwhite p-1 rounded-xl border border-navy/10 shrink-0">
           {(["All", "Published", "Draft"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
-                filter === f ? "bg-navy text-white" : "bg-white text-navy/50 border border-navy/10 hover:border-navy/25"
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                filter === f
+                  ? "bg-white text-navy shadow-xs"
+                  : "text-navy/50 hover:text-navy"
               }`}
             >
               {f}
             </button>
           ))}
         </div>
-
-        {/* CHANGED: reordering indicator */}
-        {reordering && (
-          <span className="flex items-center gap-1.5 text-[12px] text-navy/40">
-            <svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-            Saving order...
-          </span>
-        )}
       </div>
 
-      {/* CHANGED: drag hint */}
-      {filtered.length > 1 && (
-        <p className="text-[11px] text-navy/30 mb-3 flex items-center gap-1.5">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/>
-            <circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
-          </svg>
-          Drag rows to reorder — changes reflect on the homepage instantly
-        </p>
+      {reordering && (
+        <span className="flex items-center gap-2 text-xs font-medium text-navy/60 bg-navy/5 px-3 py-1 rounded-lg border border-navy/10 mb-4 w-fit">
+          <Loader2 className="w-3 h-3 animate-spin text-blue" />
+          Updating order...
+        </span>
       )}
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-navy/[0.07] shadow-sm overflow-hidden">
-        <div className="hidden md:grid grid-cols-[28px_2fr_1fr_1fr_120px_100px] px-6 py-3.5 bg-navy/[0.03] border-b border-navy/[0.07]">
-          {["", "Project", "Category", "Date", "Status", "Actions"].map((h) => (
-            <span key={h} className="text-[11px] font-semibold text-navy/40 uppercase tracking-wider">{h}</span>
-          ))}
+      {/* Sleek, Streamlined Cards Grid */}
+      {loading ? (
+        <div className="flex items-center justify-center py-16 gap-3 text-navy/50 text-xs bg-white rounded-2xl border border-navy/10">
+          <Loader2 className="w-4 h-4 animate-spin text-blue" />
+          Loading projects...
         </div>
-
-        {loading ? (
-          <div className="flex items-center justify-center py-16 gap-2 text-navy/40 text-sm">
-            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-            Loading projects...
-          </div>
-        ) : filtered.length === 0 ? (
-          <p className="text-center py-12 text-navy/35 text-sm">No projects found.</p>
-        ) : (
-          filtered.map((p, i) => (
+      ) : filtered.length === 0 ? (
+        <div className="py-16 text-center bg-white rounded-2xl border border-navy/10 text-navy/40 text-xs">
+          No matching projects found.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((p, i) => (
             <div
               key={p.id}
-              // CHANGED: drag-and-drop event handlers on each row
               draggable
               onDragStart={(e) => handleDragStart(e, i)}
               onDragEnter={() => handleDragEnter(i)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, i)}
               onDragEnd={handleDragEnd}
-              className={`transition-all duration-150 ${i < filtered.length - 1 ? "border-b border-navy/[0.06]" : ""} ${
-                dragOverIndex === i ? "bg-blue/[0.04] border-t-2 border-t-blue/40" : ""
+              className={`group bg-white rounded-2xl border border-navy/10 overflow-hidden shadow-xs hover:border-navy/30 transition-all flex flex-col justify-between ${
+                dragIndex === i
+                  ? "opacity-40 scale-95 border-dashed border-blue"
+                  : dragOverIndex === i
+                    ? "border-2 border-blue bg-blue/5"
+                    : ""
               }`}
             >
-              {/* Desktop row */}
-              <div className="hidden md:grid grid-cols-[28px_2fr_1fr_1fr_120px_100px] px-6 py-4 items-center hover:bg-navy/[0.02] transition-colors cursor-grab active:cursor-grabbing">
-                {/* CHANGED: drag handle icon */}
-                <div className="text-navy/20 hover:text-navy/40 transition-colors">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/>
-                    <circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-navy">{p.title}</p>
-                  <div className="flex gap-1.5 mt-1.5 flex-wrap">
-                    {p.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
-                    ))}
+              <div>
+                {/* Header Image & Drag Handle */}
+                <div className="relative h-36 w-full bg-navy/5 border-b border-navy/10 overflow-hidden">
+                  {p.image_url ? (
+                    <img
+                      src={p.image_url}
+                      alt={p.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-navy/20">
+                      <ImageIcon className="w-7 h-7" />
+                    </div>
+                  )}
+
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-navy/90 text-white backdrop-blur-xs">
+                      {p.category}
+                    </span>
+                    <div className="pointer-events-auto p-1 rounded-md bg-white/90 backdrop-blur-xs text-navy/50 cursor-grab active:cursor-grabbing hover:text-navy shadow-xs">
+                      <GripVertical className="w-3.5 h-3.5" />
+                    </div>
                   </div>
                 </div>
-                <p className="text-[13px] text-navy/55">{p.category}</p>
-                <p className="text-[13px] text-navy/40">
-                  {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                </p>
-                <span className={`inline-flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full w-fit ${
-                  p.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Published" ? "bg-green-500" : "bg-red-400"}`} />
-                  {p.status}
-                </span>
-                <div className="flex gap-2">
-                  <button onClick={() => handleEdit(p)} className="w-8 h-8 rounded-lg bg-blue/[0.08] hover:bg-blue/[0.18] text-blue flex items-center justify-center transition-colors">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                  </button>
-                  {deleteConfirm === p.id ? (
-                    <button onClick={() => handleDelete(p.id)} className="h-8 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold">Confirm</button>
-                  ) : (
-                    <button onClick={() => setDeleteConfirm(p.id)} className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
-                      </svg>
-                    </button>
+
+                {/* Card Content */}
+                <div className="p-3.5 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-display font-bold text-sm text-navy truncate">
+                      {p.title}
+                    </h3>
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 ${
+                        p.status === "Published"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-amber-50 text-amber-700"
+                      }`}
+                    >
+                      {p.status === "Published" ? (
+                        <CheckCircle2 className="w-2.5 h-2.5" />
+                      ) : (
+                        <Clock className="w-2.5 h-2.5" />
+                      )}
+                      {p.status}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-navy/60 line-clamp-2 leading-snug">
+                    {p.description || "No description provided."}
+                  </p>
+
+                  {p.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {p.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[10px] bg-navy/5 text-navy/70 px-2 py-0.5 rounded-md font-medium"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Mobile card */}
-              <div className="md:hidden px-5 py-4 hover:bg-navy/[0.02] transition-colors cursor-grab active:cursor-grabbing">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    {/* CHANGED: drag handle on mobile too */}
-                    <div className="text-navy/20 mt-1 shrink-0">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="9" cy="19" r="1" fill="currentColor"/>
-                        <circle cx="15" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-navy truncate">{p.title}</p>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <p className="text-[12px] text-navy/50">{p.category}</p>
-                        <span className="text-navy/20">·</span>
-                        <p className="text-[12px] text-navy/40">
-                          {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                        </p>
-                      </div>
-                      <div className="flex gap-1.5 mt-2 flex-wrap">
-                        {p.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-blue/[0.08] text-blue font-medium">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2.5 shrink-0">
-                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-                      p.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Published" ? "bg-green-500" : "bg-red-400"}`} />
-                      {p.status}
-                    </span>
-                    <div className="flex gap-2">
-                      <button onClick={() => handleEdit(p)} className="w-8 h-8 rounded-lg bg-blue/[0.08] hover:bg-blue/[0.18] text-blue flex items-center justify-center transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
+              {/* Minimal Card Footer */}
+              <div className="px-3.5 py-2.5 bg-offwhite/40 border-t border-navy/10 flex items-center justify-between">
+                <div>
+                  {p.live_url ? (
+                    <a
+                      href={p.live_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue hover:underline"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      Visit Site
+                    </a>
+                  ) : (
+                    <span className="text-[10px] text-navy/40">No link</span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleEdit(p)}
+                    className="p-1 rounded-md text-navy/60 hover:text-blue hover:bg-blue/10 transition-colors"
+                    title="Edit Project"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+
+                  {deleteConfirm === p.id ? (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="px-1.5 py-0.5 rounded-md bg-red-600 text-white text-[10px] font-bold"
+                      >
+                        Delete
                       </button>
-                      {deleteConfirm === p.id ? (
-                        <button onClick={() => handleDelete(p.id)} className="h-8 px-2.5 rounded-lg bg-red-500 text-white text-xs font-semibold">Confirm</button>
-                      ) : (
-                        <button onClick={() => setDeleteConfirm(p.id)} className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-colors">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" />
-                          </svg>
-                        </button>
-                      )}
+                      <button
+                        onClick={() => setDeleteConfirm(null)}
+                        className="p-0.5 text-navy/40 hover:text-navy"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </div>
-                  </div>
+                  ) : (
+                    <button
+                      onClick={() => setDeleteConfirm(p.id)}
+                      className="p-1 rounded-md text-navy/60 hover:text-red-600 hover:bg-red-50 transition-colors"
+                      title="Delete Project"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
-
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
