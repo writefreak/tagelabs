@@ -148,7 +148,7 @@ export default function RecentBlogs() {
 
   return (
     <section
-      id="blog"
+      id="blogs"
       className="py-16 bg-white border-y border-t-gray-100 md:py-28 px-6 md:px-16"
     >
       <div className="max-w-6xl mx-auto">
