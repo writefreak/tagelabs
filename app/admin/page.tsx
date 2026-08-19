@@ -260,7 +260,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="font-body max-w-[1200px] mx-auto min-h-screen bg-white px-2 py-4 sm:px-6 md:p-8">
+    <div className="font-body max-w-[1200px] mx-auto min-h-screen bg-white px-2 md:px-6">
       {/* Header */}
       <div className="mb-4 sm:mb-6 md:mb-8 px-1 sm:px-0">
         <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl text-navy">
@@ -277,7 +277,7 @@ export default function AdminDashboard() {
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-navy/[0.07] shadow-2xs hover:shadow-md transition-all duration-200 block"
+            className="bg-white shadow-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-navy/[0.07] shadow-2xs hover:shadow-md transition-all duration-200 block"
           >
             <div
               className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl ${stat.iconBg} ${stat.iconColor} flex items-center justify-center mb-2 sm:mb-3`}
@@ -309,7 +309,7 @@ export default function AdminDashboard() {
       {/* Responsive Two Columns for Blogs & Projects */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Recent Blogs */}
-        <div className="bg-white pt-4 md:p-3.5 flex flex-col justify-between">
+        <div className="bg-white shadow-sm border border-navy/10 p-3 rounded-2xl pt-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3 sm:mb-5">
               <div>
@@ -383,7 +383,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Projects */}
-        <div className="bg-white pt-4 md:p-3.5 flex flex-col justify-between">
+        <div className="bg-white shadow-sm pt-4 border border-navy/10 p-3 rounded-2xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3 sm:mb-5">
               <div>
