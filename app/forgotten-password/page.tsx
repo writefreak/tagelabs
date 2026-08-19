@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "../lib/supabase";
+import { ChevronLeft } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="mmd:in-h-screen h-[700px] bg-offwhite flex items-center justify-center px-4 font-body">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 font-body">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center py-5">
           <div className="h-10 w-20">
@@ -41,12 +42,26 @@ export default function ForgotPasswordPage() {
           {sent ? (
             <div className="flex flex-col items-center gap-3 text-center">
               <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#22c55e"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <p className="text-navy font-semibold text-sm">Check your email</p>
-              <p className="text-navy/50 text-sm">We sent a reset link to <span className="text-navy font-medium">{email}</span></p>
+              <p className="text-navy font-semibold text-sm">
+                Check your email
+              </p>
+              <p className="text-navy/50 text-sm">
+                We sent a reset link to{" "}
+                <span className="text-navy font-medium">{email}</span>
+              </p>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
@@ -55,9 +70,14 @@ export default function ForgotPasswordPage() {
                   {error}
                 </div>
               )}
-              <p className="text-navy/50 text-sm">Enter your email and we'll send you a link to reset your password.</p>
+              <p className="text-navy/50 text-sm">
+                Enter your email and we'll send you a link to reset your
+                password.
+              </p>
               <div>
-                <label className="block text-[11px] font-semibold text-navy/60 uppercase tracking-wider mb-1.5">Email</label>
+                <label className="block text-[11px] font-semibold text-navy/60 uppercase tracking-wider mb-1.5">
+                  Email
+                </label>
                 <input
                   type="email"
                   value={email}
@@ -78,9 +98,14 @@ export default function ForgotPasswordPage() {
           )}
         </div>
 
-        <p className="text-center text-sm text-navy/40 mt-5">
-          <Link href="/login" className="text-blue hover:underline font-medium">← Back to login</Link>
-        </p>
+        <div className="flex items-center justify-center gap-1.5 mt-4 text-sm text-navy/50">
+          <Link
+            href="/login"
+            className="text-blue flex items-center hover:underline font-medium"
+          >
+            <ChevronLeft className="w-4 h-4" /> Back to login
+          </Link>
+        </div>
       </div>
     </div>
   );
