@@ -40,7 +40,7 @@ export default function BlogPostClient({
       <section className="py-24 px-4 md:px-6 bg-white">
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-16 h-16 rounded-2xl bg-navy/5 border border-navy/10 flex items-center justify-center mb-6 mx-auto">
-            <span className="text-2xl text-navy">✦</span>
+            {/* <span className="text-2xl text-navy">✦</span> */}
           </div>
           <h1 className="font-display text-2xl font-semibold text-navy mb-3">
             We couldn't find that post.
@@ -61,7 +61,7 @@ export default function BlogPostClient({
   }
 
   return (
-    <article className="py-8 md:py-16 px-4 md:px-6 bg-white">
+    <article className="py-10 md:py-16 px-4 md:px-6 bg-white">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
