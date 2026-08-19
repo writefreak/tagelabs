@@ -41,7 +41,7 @@ type Project = {
 const FALLBACK_BLOG_IMAGE =
   "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=300&q=80";
 
-/* Recharts Smooth Area Component */
+/* Fixed Mobile-Safe Area Component */
 function ProjectsChart({ projects }: { projects: Project[] }) {
   const chartData = useMemo(() => {
     const monthsMap = new Map<
@@ -72,36 +72,36 @@ function ProjectsChart({ projects }: { projects: Project[] }) {
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-navy/10 shadow-2xs mb-6 sm:mb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <div>
-          <h3 className="font-display font-semibold text-base text-navy flex items-center gap-2">
+          <h3 className="font-display font-semibold text-sm sm:text-base text-navy flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-blue shrink-0" />
             Project Growth & Velocity
           </h3>
-          <p className="text-xs text-navy/40 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-navy/40 mt-0.5">
             Real-time project additions over the last 6 months
           </p>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 text-xs font-medium text-navy/60">
+        <div className="flex items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-medium text-navy/60">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue inline-block" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-blue inline-block" />
             <span>Total Projects</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500 inline-block" />
             <span>Published</span>
           </div>
         </div>
       </div>
 
-      {/* Recharts Smooth Area */}
-      <div className="h-60 sm:h-72 w-full">
+      {/* Explicit Height Container so Recharts Never Collapses to 0px */}
+      <div className="w-full h-[220px] sm:h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
           >
             <defs>
               <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
@@ -123,13 +123,13 @@ function ProjectsChart({ projects }: { projects: Project[] }) {
               dataKey="month"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#0B192C", fontSize: 12, opacity: 0.5 }}
-              dy={8}
+              tick={{ fill: "#0B192C", fontSize: 11, opacity: 0.5 }}
+              dy={6}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#0B192C", fontSize: 12, opacity: 0.5 }}
+              tick={{ fill: "#0B192C", fontSize: 11, opacity: 0.5 }}
               allowDecimals={false}
             />
             <Tooltip
@@ -138,7 +138,7 @@ function ProjectsChart({ projects }: { projects: Project[] }) {
                 borderColor: "#0B192C",
                 borderRadius: "8px",
                 color: "#fff",
-                fontSize: "12px",
+                fontSize: "11px",
               }}
               itemStyle={{ color: "#fff" }}
             />
@@ -146,7 +146,7 @@ function ProjectsChart({ projects }: { projects: Project[] }) {
               type="monotone"
               dataKey="Total"
               stroke="#2563EB"
-              strokeWidth={2.5}
+              strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorTotal)"
             />
@@ -154,7 +154,7 @@ function ProjectsChart({ projects }: { projects: Project[] }) {
               type="monotone"
               dataKey="Published"
               stroke="#10B981"
-              strokeWidth={2.5}
+              strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorPublished)"
             />
@@ -164,7 +164,6 @@ function ProjectsChart({ projects }: { projects: Project[] }) {
     </div>
   );
 }
-
 export default function AdminDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
