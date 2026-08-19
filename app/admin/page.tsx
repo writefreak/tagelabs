@@ -2,7 +2,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
-import { FolderKanban, FileText, Mail, Users, Loader2 } from "lucide-react";
+import {
+  FolderKanban,
+  FileText,
+  Mail,
+  Users,
+  Loader2,
+  ChevronRight,
+} from "lucide-react";
 
 type BlogPost = {
   id: string;
@@ -166,7 +173,7 @@ export default function AdminDashboard() {
       {/* Responsive Two Columns for Blogs & Projects */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Recent Blogs */}
-        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-6 border border-navy/10 shadow-2xs flex flex-col justify-between">
+        <div className="bg-white pt-4 md:p-3.5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3 sm:mb-5">
               <div>
@@ -179,9 +186,10 @@ export default function AdminDashboard() {
               </div>
               <Link
                 href="/admin/blogs"
-                className="text-xs text-blue font-medium hover:underline shrink-0"
+                className="text-xs flex items-center gap-1 text-blue font-medium hover:underline shrink-0"
               >
-                View all →
+                View all
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
 
@@ -239,7 +247,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Projects */}
-        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-6 border border-navy/10 shadow-2xs flex flex-col justify-between">
+        <div className="bg-white  pt-4 md:p-3.5  flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3 sm:mb-5">
               <div>
@@ -252,9 +260,10 @@ export default function AdminDashboard() {
               </div>
               <Link
                 href="/admin/projects"
-                className="text-xs text-blue font-medium hover:underline shrink-0"
+                className="text-xs flex items-center gap-1 text-blue font-medium hover:underline shrink-0"
               >
-                View all →
+                View all
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
 
