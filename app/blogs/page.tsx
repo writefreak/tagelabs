@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, ArrowUpRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
 
@@ -48,8 +48,8 @@ function formatDate(dateStr: string) {
   });
 }
 
-// ── Landscape Card Component ──────────────────────────────────────────────
-function LandscapeBlogCard({
+// ── Modern Split Card Component ──────────────────────────────────────
+function ModernBlogCard({
   post,
   imageSrc,
 }: {
@@ -58,33 +58,38 @@ function LandscapeBlogCard({
 }) {
   return (
     <Link href={`/blogs/${post.slug}`} className="block h-full group">
-      <article className="h-full flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-navy/10 bg-white shadow-sm hover:shadow-md transition-all duration-300">
-        {/* Card Image */}
-        <div className="relative sm:w-2/5 aspect-[16/10] sm:aspect-auto overflow-hidden shrink-0">
-          <img
-            src={imageSrc}
-            alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        </div>
+      <article className="h-full flex flex-col justify-between rounded-2xl border border-navy/10 bg-white p-3.5 shadow-sm hover:shadow-xl hover:border-navy/20 transition-all duration-300">
+        <div className="space-y-4">
+          {/* Card Top Image Container */}
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-navy/5">
+            <img
+              src={imageSrc}
+              alt={post.title}
+              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            />
+            {/* <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm text-navy">
+              <ArrowUpRight size={16} />
+            </div> */}
+          </div>
 
-        {/* Card Body */}
-        <div className="p-4 sm:p-5 sm:w-3/5 flex flex-col justify-between flex-1 gap-3">
-          <div className="space-y-1.5">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-display text-sm md:text-base font-semibold text-navy leading-snug line-clamp-2 group-hover:text-navy/80 transition-colors">
-                {post.title}
-              </h3>
-            </div>
+          {/* Text Content */}
+          <div className="px-1 space-y-2">
+            <h3 className="font-display text-base sm:text-lg font-semibold text-navy leading-snug line-clamp-2 group-hover:text-navy/80 transition-colors">
+              {post.title}
+            </h3>
 
-            <p className="text-xs text-navy/60 font-body line-clamp-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-navy/60 font-body line-clamp-2 leading-relaxed">
               {post.excerpt || "Read the full post to learn more."}
             </p>
           </div>
+        </div>
 
-          <div className="pt-2 border-t border-navy/5 flex items-center justify-between text-[11px] text-navy/40 font-medium">
-            <span>{formatDate(post.created_at)}</span>
-          </div>
+        {/* Card Footer */}
+        <div className="mt-4 pt-3 px-1 border-t border-navy/5 flex items-center justify-between text-[11px] text-navy/40 font-medium">
+          <span>{formatDate(post.created_at)}</span>
+          {/* <span className="text-navy font-semibold text-xs group-hover:translate-x-0.5 transition-transform">
+            Read article 
+          </span> */}
         </div>
       </article>
     </Link>
@@ -148,11 +153,11 @@ export default function BlogArchivePage() {
 
         {/* Skeleton Loader */}
         {loading && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-44 rounded-2xl animate-pulse bg-navy/10 w-full"
+                className="h-80 rounded-2xl animate-pulse bg-navy/10 w-full"
               />
             ))}
           </div>
@@ -179,10 +184,10 @@ export default function BlogArchivePage() {
           </motion.div>
         )}
 
-        {/* Blog Post Landscape Grid (3-Columns) */}
+        {/* Modern Blog Post Grid */}
         {!loading && posts.length > 0 && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {visiblePosts.map((post, i) => {
                 const imageSrc =
                   post.cover_image_url ||
@@ -197,7 +202,7 @@ export default function BlogArchivePage() {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-40px" }}
                   >
-                    <LandscapeBlogCard post={post} imageSrc={imageSrc} />
+                    <ModernBlogCard post={post} imageSrc={imageSrc} />
                   </motion.div>
                 );
               })}
