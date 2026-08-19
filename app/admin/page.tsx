@@ -2,27 +2,64 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
+import { FolderKanban, FileText, Mail, Users, Loader2 } from "lucide-react";
 
-type Contact = { id: string; name: string; email: string; subject: string; read: boolean; created_at: string; };
-type Project = { id: string; title: string; category: string; status: "Published" | "Draft"; created_at: string; };
+type BlogPost = {
+  id: string;
+  title: string;
+  cover_image_url?: string | null;
+  published: boolean;
+  created_at: string;
+};
+
+type Project = {
+  id: string;
+  title: string;
+  category: string;
+  status: "Published" | "Draft";
+  image_url?: string | null;
+  created_at: string;
+};
+
+const FALLBACK_BLOG_IMAGE =
+  "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=300&q=80";
 
 export default function AdminDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [cvOrders, setCvOrders] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAll() {
-      const [{ data: p }, { data: c }, { count: users }, { count: orders }] = await Promise.all([
-        supabase.from("projects").select("id, title, category, status, created_at").order("created_at", { ascending: false }),
-        supabase.from("contacts").select("id, name, email, subject, read, created_at").order("created_at", { ascending: false }),
+      const [
+        { data: p },
+        { data: b },
+        { count: unreadMsgs },
+        { count: users },
+        { count: orders },
+      ] = await Promise.all([
+        supabase
+          .from("projects")
+          .select("id, title, category, status, image_url, created_at")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("blog_posts")
+          .select("id, title, cover_image_url, published, created_at")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("contacts")
+          .select("*", { count: "exact", head: true })
+          .eq("read", false),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("cv_orders").select("*", { count: "exact", head: true }),
       ]);
+
       setProjects(p ?? []);
-      setContacts(c ?? []);
+      setBlogs(b ?? []);
+      setUnreadCount(unreadMsgs ?? 0);
       setUserCount(users ?? 0);
       setCvOrders(orders ?? 0);
       setLoading(false);
@@ -30,22 +67,19 @@ export default function AdminDashboard() {
     fetchAll();
   }, []);
 
-  const published = projects.filter((p) => p.status === "Published").length;
-  const unread = contacts.filter((c) => !c.read).length;
+  const publishedProjects = projects.filter(
+    (p) => p.status === "Published",
+  ).length;
 
   const stats = [
     {
       label: "Total Projects",
       value: projects.length,
-      change: `${published} published`,
+      change: `${publishedProjects} published`,
       href: "/admin/projects",
       iconBg: "bg-blue/10",
       iconColor: "text-blue",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      ),
+      icon: <FolderKanban className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       label: "CV Orders",
@@ -54,29 +88,16 @@ export default function AdminDashboard() {
       href: "/admin/cv-orders",
       iconBg: "bg-blue/10",
       iconColor: "text-blue",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="16" y1="13" x2="8" y2="13" />
-          <line x1="16" y1="17" x2="8" y2="17" />
-          <polyline points="10 9 9 9 8 9" />
-        </svg>
-      ),
+      icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       label: "Unread Messages",
-      value: unread,
-      change: unread > 0 ? "Needs attention" : "All caught up ✓",
+      value: unreadCount,
+      change: unreadCount > 0 ? "Needs attention" : "All caught up ✓",
       href: "/admin/contacts",
       iconBg: "bg-red-100",
       iconColor: "text-red-400",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-          <polyline points="22,6 12,13 2,6" />
-        </svg>
-      ),
+      icon: <Mail className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
     {
       label: "Admin Users",
@@ -85,123 +106,213 @@ export default function AdminDashboard() {
       href: "/admin/users",
       iconBg: "bg-green-100",
       iconColor: "text-green-500",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      ),
+      icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
   ];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 gap-2 text-navy/40 text-sm">
-        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-        </svg>
+      <div className="flex items-center justify-center h-64 gap-2 text-navy/40 text-sm min-h-screen bg-white">
+        <Loader2 className="w-4 h-4 animate-spin" />
         Loading dashboard...
       </div>
     );
   }
 
   return (
-    <div className="font-body max-w-[1100px]">
-      <div className="mb-8">
-        <h2 className="font-display font-bold text-2xl text-navy">Dashboard</h2>
-        <p className="text-navy/50 text-sm mt-1">Here's what's happening with TageLabs today.</p>
+    <div className="font-body max-w-[1200px] mx-auto min-h-screen bg-white px-2 py-4 sm:px-6 md:p-8">
+      {/* Header */}
+      <div className="mb-4 sm:mb-6 md:mb-8 px-1 sm:px-0">
+        <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl text-navy">
+          Dashboard
+        </h2>
+        <p className="text-navy/50 text-xs sm:text-sm mt-0.5">
+          Here's what's happening with TageLabs today.
+        </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
+      {/* Stats Cards Grid: Strictly 2 columns on mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-5 sm:mb-6 md:mb-9">
         {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-white rounded-2xl p-6 border border-navy/[0.07] shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 block"
+            className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-navy/[0.07] shadow-2xs hover:shadow-md transition-all duration-200 block"
           >
-            <div className={`w-10 h-10 rounded-xl ${stat.iconBg} ${stat.iconColor} flex items-center justify-center mb-4`}>
+            <div
+              className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl ${stat.iconBg} ${stat.iconColor} flex items-center justify-center mb-2 sm:mb-3`}
+            >
               {stat.icon}
             </div>
-            <p className="font-display font-bold text-[32px] text-navy leading-none">{stat.value}</p>
-            <p className="text-navy/50 text-[13px] mt-1.5">{stat.label}</p>
-            <p className={`text-xs mt-2.5 font-medium ${
-              stat.label === "Unread Messages" && unread > 0 ? "text-red-400" : "text-navy/40"
-            }`}>
+            <p className="font-display font-bold text-xl sm:text-2xl md:text-[32px] text-navy leading-none">
+              {stat.value}
+            </p>
+            <p className="text-navy/60 text-[11px] sm:text-[13px] font-medium mt-1.5 truncate">
+              {stat.label}
+            </p>
+            <p
+              className={`text-[10px] sm:text-xs mt-1 sm:mt-2 font-medium truncate ${
+                stat.label === "Unread Messages" && unreadCount > 0
+                  ? "text-red-400"
+                  : "text-navy/40"
+              }`}
+            >
               {stat.change}
             </p>
           </Link>
         ))}
       </div>
 
-      {/* Two columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Recent contacts */}
-        <div className="bg-white rounded-2xl p-6 border border-navy/[0.07] shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="font-display font-semibold text-base text-navy">Recent Contacts</h3>
-            <Link href="/admin/contacts" className="text-xs text-blue font-medium hover:underline">View all →</Link>
-          </div>
-          <div className="flex flex-col gap-3">
-            {contacts.slice(0, 4).map((c) => (
-              <div
-                key={c.id}
-                className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
-                  c.read ? "border-transparent bg-transparent" : "border-blue/10 bg-blue/[0.04]"
-                }`}
-              >
-                <div className="w-9 h-9 rounded-full bg-navy flex items-center justify-center shrink-0">
-                  <span className="text-white text-[13px] font-semibold">{c.name.charAt(0)}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-[13px] font-semibold text-navy truncate">{c.name}</p>
-                    {!c.read && <span className="w-1.5 h-1.5 rounded-full bg-blue shrink-0" />}
-                  </div>
-                  <p className="text-xs text-navy/45 mt-0.5 truncate">{c.subject}</p>
-                </div>
-                <span className="text-[11px] text-navy/35 shrink-0">
-                  {new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                </span>
+      {/* Responsive Two Columns for Blogs & Projects */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Recent Blogs */}
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-6 border border-navy/10 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3 sm:mb-5">
+              <div>
+                <h3 className="font-display font-semibold text-sm sm:text-base text-navy">
+                  Recent Blogs
+                </h3>
+                <p className="text-[10px] sm:text-xs text-navy/40">
+                  Latest editorial posts and insights
+                </p>
               </div>
-            ))}
-            {contacts.length === 0 && (
-              <p className="text-sm text-navy/35 text-center py-6">No submissions yet.</p>
-            )}
+              <Link
+                href="/admin/blogs"
+                className="text-xs text-blue font-medium hover:underline shrink-0"
+              >
+                View all →
+              </Link>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:gap-3">
+              {blogs.slice(0, 4).map((b) => {
+                const blogImg = b.cover_image_url || FALLBACK_BLOG_IMAGE;
+                return (
+                  <div
+                    key={b.id}
+                    className="flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-navy/5 hover:border-navy/15 bg-white transition-all duration-200"
+                  >
+                    <div className="relative w-9 h-9 sm:w-12 sm:h-12 rounded-md sm:rounded-lg overflow-hidden bg-navy/5 shrink-0">
+                      <img
+                        src={blogImg}
+                        alt={b.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex-1 min-w-0 pr-1">
+                      <p className="text-xs sm:text-[13px] font-semibold text-navy truncate leading-snug">
+                        {b.title}
+                      </p>
+                      <p className="text-[10px] sm:text-[11px] text-navy/40 mt-0.5">
+                        {new Date(b.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+
+                    <div className="shrink-0">
+                      <span
+                        className={`text-[9px] sm:text-[11px] font-semibold px-2 py-0.5 sm:py-1 rounded-full ${
+                          b.published
+                            ? "bg-emerald-50 text-emerald-600 border border-emerald-200/50"
+                            : "bg-amber-50 text-amber-600 border border-amber-200/50"
+                        }`}
+                      >
+                        {b.published ? "Published" : "Draft"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {blogs.length === 0 && (
+                <p className="text-xs sm:text-sm text-navy/35 text-center py-6">
+                  No blogs published yet.
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Recent projects */}
-        <div className="bg-white rounded-2xl p-6 border border-navy/[0.07] shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="font-display font-semibold text-base text-navy">Recent Projects</h3>
-            <Link href="/admin/projects" className="text-xs text-blue font-medium hover:underline">View all →</Link>
-          </div>
-          <div className="flex flex-col gap-2.5">
-            {projects.slice(0, 4).map((p) => (
-              <div key={p.id} className="flex items-center gap-3 p-3 rounded-xl bg-navy/[0.02] border border-navy/[0.06]">
-                <div className="w-9 h-9 rounded-xl bg-blue/10 flex items-center justify-center shrink-0 text-blue text-base">✦</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold text-navy truncate">{p.title}</p>
-                  <p className="text-xs text-navy/45 mt-0.5">{p.category}</p>
-                </div>
-                <div className="flex flex-col items-end gap-1 shrink-0">
-                  <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
-                    p.status === "Published" ? "bg-green-100 text-green-600" : "bg-red-50 text-red-400"
-                  }`}>
-                    {p.status}
-                  </span>
-                  <span className="text-[11px] text-navy/35">
-                    {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                  </span>
-                </div>
+        {/* Recent Projects */}
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-6 border border-navy/10 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3 sm:mb-5">
+              <div>
+                <h3 className="font-display font-semibold text-sm sm:text-base text-navy">
+                  Recent Projects
+                </h3>
+                <p className="text-[10px] sm:text-xs text-navy/40">
+                  Portfolio builds and updates
+                </p>
               </div>
-            ))}
-            {projects.length === 0 && (
-              <p className="text-sm text-navy/35 text-center py-6">No projects yet.</p>
-            )}
+              <Link
+                href="/admin/projects"
+                className="text-xs text-blue font-medium hover:underline shrink-0"
+              >
+                View all →
+              </Link>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:gap-3">
+              {projects.slice(0, 4).map((p) => (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-2.5 sm:gap-3.5 p-2 sm:p-3 rounded-lg sm:rounded-xl border border-navy/5 hover:border-navy/15 bg-white transition-all duration-200"
+                >
+                  <div className="relative w-9 h-9 sm:w-12 sm:h-12 rounded-md sm:rounded-lg overflow-hidden bg-navy/5 shrink-0 flex items-center justify-center">
+                    {p.image_url ? (
+                      <img
+                        src={p.image_url}
+                        alt={p.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-blue/10 text-blue font-semibold flex items-center justify-center text-xs">
+                        ✦
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0 pr-1">
+                    <p className="text-xs sm:text-[13px] font-semibold text-navy truncate leading-snug">
+                      {p.title}
+                    </p>
+                    <p className="text-[10px] sm:text-[11px] text-navy/40 mt-0.5 truncate">
+                      {p.category}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-0.5 shrink-0">
+                    <span
+                      className={`text-[9px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                        p.status === "Published"
+                          ? "bg-emerald-50 text-emerald-600 border border-emerald-200/50"
+                          : "bg-red-50 text-red-500 border border-red-200/50"
+                      }`}
+                    >
+                      {p.status}
+                    </span>
+                    <span className="text-[9px] sm:text-[11px] text-navy/35">
+                      {new Date(p.created_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              {projects.length === 0 && (
+                <p className="text-xs sm:text-sm text-navy/35 text-center py-6">
+                  No projects added yet.
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

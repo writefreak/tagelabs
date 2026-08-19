@@ -313,7 +313,7 @@ export default function AdminLayout({
   );
 
   return (
-    <div className="min-h-screen flex bg-offwhite font-body">
+    <div className="min-h-screen flex bg-white font-body">
       <aside
         className={`hidden md:flex flex-col bg-navy min-h-screen fixed top-0 shrink-0 overflow-hidden transition-all duration-300 ${collapsed ? "w-[72px]" : "w-60"}`}
       >
