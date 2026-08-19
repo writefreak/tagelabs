@@ -34,10 +34,11 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-tage.png",
+        url: "https://tagelabs.vercel.app/og-tage.png",
         width: 1200,
         height: 630,
         alt: "TageLabs",
+        type: "image/png",
       },
     ],
   },
@@ -45,8 +46,14 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TageLabs",
     description: "Transforming businesses with scalable digital solutions.",
-    images: ["/og-tage.png"],
+    images: ["https://tagelabs.vercel.app/og-tage.png"],
   },
+  // twitter: {
+  //   card: "summary_large_image",
+  //   title: "TageLabs",
+  //   description: "Transforming businesses with scalable digital solutions.",
+  //   images: ["/og-tage.png"],
+  // },
   icons: {
     icon: "/icon.png",
     apple: "/tagelabs.png",
