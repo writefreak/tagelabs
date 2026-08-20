@@ -1,8 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "../lib/supabase";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -15,12 +16,17 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
+    const targetEmail = email.trim().toLowerCase();
 
-    if (error) {
-      setError(error.message);
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      targetEmail,
+      {
+        redirectTo: `${window.location.origin}/reset-password`,
+      },
+    );
+
+    if (resetError) {
+      setError(resetError.message);
       setLoading(false);
     } else {
       setSent(true);
@@ -90,9 +96,16 @@ export default function ForgotPasswordPage() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full bg-navy hover:bg-blue disabled:opacity-50 text-white font-semibold text-sm py-2.5 rounded-xl transition-colors duration-200 mt-1"
+                className="w-full bg-navy hover:bg-blue disabled:opacity-50 text-white font-semibold text-sm py-2.5 rounded-xl transition-colors duration-200 mt-1 flex items-center justify-center gap-2"
               >
-                {loading ? "Sending..." : "Send reset link"}
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send reset link"
+                )}
               </button>
             </div>
           )}

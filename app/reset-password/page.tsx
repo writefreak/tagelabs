@@ -16,7 +16,6 @@ export default function ResetPasswordPage() {
   const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
-    // Listen for Supabase parsing the recovery hash in the URL
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -25,7 +24,6 @@ export default function ResetPasswordPage() {
       }
     });
 
-    // Fallback check if session is already established
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setSessionReady(true);
     });
@@ -51,7 +49,7 @@ export default function ResetPasswordPage() {
 
     if (!sessionReady) {
       setError(
-        "Auth session is still initializing. Please try again in a moment.",
+        "Recovery session not ready. Try clicking the email link again.",
       );
       return;
     }
@@ -59,20 +57,42 @@ export default function ResetPasswordPage() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.updateUser({
+    const { error: updateError } = await supabase.auth.updateUser({
       password: password,
     });
 
-    if (error) {
-      setError(error.message);
+    if (updateError) {
+      setError(updateError.message);
       setLoading(false);
-    } else {
-      setUpdated(true);
-      setLoading(false);
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
+      return;
     }
+
+    // Ensure profile row exists in public.profiles table
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!existingProfile) {
+        await supabase.from("profiles").insert({
+          id: user.id,
+          email: user.email,
+          role: "admin",
+        });
+      }
+    }
+
+    await supabase.auth.signOut();
+    setUpdated(true);
+    setLoading(false);
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000);
   }
 
   return (
