@@ -321,7 +321,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <Link
-                href="/admin/blogs"
+                href="/admin/blog"
                 className="text-xs flex items-center gap-1 text-blue font-medium hover:underline shrink-0"
               >
                 View all

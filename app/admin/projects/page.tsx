@@ -320,7 +320,7 @@ export default function ProjectsPage() {
   const hasPreview = form.title || form.category || imagePreview;
 
   return (
-    <div className="font-body w-full max-w-6xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
+    <div className="font-body w-full max-w-6xl mx-auto px-2 md:px-8 py-4 sm:py-8">
       {/* Header */}
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between border-b border-navy/10 pb-5">
         <div>
