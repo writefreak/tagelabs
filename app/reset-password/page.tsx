@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
@@ -13,6 +13,25 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [updated, setUpdated] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    // Listen for Supabase parsing the recovery hash in the URL
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session) {
+        setSessionReady(true);
+      }
+    });
+
+    // Fallback check if session is already established
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setSessionReady(true);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   async function handleSubmit() {
     if (!password || !confirmPassword) {
@@ -27,6 +46,13 @@ export default function ResetPasswordPage() {
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (!sessionReady) {
+      setError(
+        "Auth session is still initializing. Please try again in a moment.",
+      );
       return;
     }
 
