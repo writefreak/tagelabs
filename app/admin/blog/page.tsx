@@ -80,7 +80,7 @@ export default function BlogAdminPage() {
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between border-b border-navy/10 pb-5">
         <div>
           <h1 className="font-display font-bold text-2xl sm:text-3xl text-navy tracking-tight">
-            Blog
+            Manage Our Blogs Here
           </h1>
           <p className="text-navy/50 text-xs sm:text-sm mt-0.5">
             {posts.length} total · {posts.filter((p) => p.published).length}{" "}
