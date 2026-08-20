@@ -16,6 +16,7 @@ export default function LayoutShell({
     pathname?.startsWith("/login") ||
     pathname?.startsWith("/signup") ||
     pathname?.startsWith("/forgotten-password") ||
+    pathname?.startsWith("/reset-password") ||
     pathname?.startsWith("/not-found");
 
   return (
