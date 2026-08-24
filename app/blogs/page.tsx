@@ -68,9 +68,27 @@ function FeaturedPostBanner({
   setSearchQuery: (q: string) => void;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMultiLine, setIsMultiLine] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   const activePost = featuredPosts[activeIndex] || featuredPosts[0];
   const bgImage = activePost?.cover_image_url || FALLBACK_IMAGES[0];
+
+  // Check if the title spans 2 or more lines on the current screen size
+  useEffect(() => {
+    const checkLines = () => {
+      if (titleRef.current) {
+        const style = window.getComputedStyle(titleRef.current);
+        const lineHeight = parseFloat(style.lineHeight) || 28; // Fallback line-height estimate
+        const lines = Math.round(titleRef.current.offsetHeight / lineHeight);
+        setIsMultiLine(lines >= 2);
+      }
+    };
+
+    checkLines();
+    window.addEventListener("resize", checkLines);
+    return () => window.removeEventListener("resize", checkLines);
+  }, [activePost]);
 
   const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % featuredPosts.length);
@@ -83,7 +101,7 @@ function FeaturedPostBanner({
   };
 
   return (
-    <div className="relative w-full h-[400px] md:h-[600px] flex flex-col justify-between overflow-hidden bg-black text-white pb-12 md:pt-20 px-4 sm:px-8 md:px-16">
+    <div className="relative w-full h-[468px] md:h-[600px] flex flex-col justify-between overflow-hidden bg-black text-white pb-12 md:pt-20 px-4 sm:px-8 md:px-16">
       {/* Background Image */}
       <AnimatePresence mode="wait">
         {activePost && (
@@ -100,8 +118,8 @@ function FeaturedPostBanner({
         )}
       </AnimatePresence>
 
-      {/* Horizontal Gradient Overlay: Dark on left for text legibility, clear on right to expose full image */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 to-transparent z-0" />
+      {/* Horizontal Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/95 to-transparent z-0" />
 
       {/* Top Bar: Back Button */}
       <div className="relative pt-10 md:pt-4 z-10 w-full max-w-7xl mx-auto flex items-center justify-between">
@@ -109,7 +127,7 @@ function FeaturedPostBanner({
           href="/"
           className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/80 hover:text-white bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 transition-all"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={14} />
           Back to home
         </Link>
       </div>
@@ -119,17 +137,21 @@ function FeaturedPostBanner({
         <div className="relative z-10 w-full max-w-7xl mx-auto my-auto pt-8 pb-4">
           <div className="max-w-xl sm:max-w-2xl md:max-w-3xl space-y-4 sm:space-y-6">
             <Link href={`/blogs/${activePost.slug}`} className="block group">
-              <h1 className="font-display text-2xl md:text-[50px] max-w-xl  font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors line-clamp-3">
+              <h1
+                ref={titleRef}
+                className="font-display text-2xl md:text-[50px] max-w-sm md:max-w-xl font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors line-clamp-3"
+              >
                 {activePost.title}
               </h1>
             </Link>
 
-            {/* <p className="text-xs sm:text-base text-white/80 font-body leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-3">
-              {activePost.excerpt ||
-                "Read this highlighted post to discover valuable perspectives."}
-            </p> */}
-
-            {/* Read Button */}
+            {/* Rendered only on mobile when title enters 2+ lines */}
+            {isMultiLine && (
+              <p className="block md:hidden text-xs text-white/80 font-body leading-relaxed line-clamp-1">
+                {activePost.excerpt ||
+                  "Read this highlighted post to discover valuable perspectives."}
+              </p>
+            )}
 
             {/* Embedded Searchbar */}
             <div className="pt-2 w-full max-w-md">
@@ -175,18 +197,18 @@ function FeaturedPostBanner({
           <button
             type="button"
             onClick={handlePrev}
-            className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white flex items-center justify-center transition-all active:scale-95"
+            className="w-8 md:w-10 h-8 md:h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white flex items-center justify-center transition-all active:scale-95"
             aria-label="Previous featured post"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={14} />
           </button>
           <button
             type="button"
             onClick={handleNext}
-            className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white flex items-center justify-center transition-all active:scale-95"
+            className="w-8 md:w-10 h-8 md:h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white flex items-center justify-center transition-all active:scale-95"
             aria-label="Next featured post"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={14} />
           </button>
         </div>
       )}
