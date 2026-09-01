@@ -34,7 +34,7 @@ export default function AdminTeamPage() {
   return (
     <div className="min-h-screen py-8 sm:px-6 ">
       <div className="mx-auto max-w-6xl">
-        <h1 className="font-display text-xl md:text-2xl font-semibold text-navy sm:text-3xl">
+        <h1 className="font-display text-2xl md:text-3xl font-semibold text-navy sm:text-3xl">
           Manage The Team
         </h1>
         <p className="mt-1 font-body text-xs md:text-sm text-navy/50">

@@ -71,7 +71,7 @@ export default function TeamList({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {members.map((member) => (
         <article key={member.id} className="group relative w-full">
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-neutral-900">
