@@ -101,7 +101,7 @@ function FeaturedPostBanner({
   };
 
   return (
-    <div className="relative w-full h-[468px] md:h-[600px] flex flex-col justify-between overflow-hidden bg-black text-white pb-12 md:pt-20 px-4 sm:px-8 md:px-16">
+    <div className="relative w-full h-[500px] md:h-[600px] flex flex-col justify-between overflow-hidden bg-black text-white pb-12 md:pt-20 px-4 sm:px-8 md:px-16">
       {/* Background Image */}
       <AnimatePresence mode="wait">
         {activePost && (
@@ -139,13 +139,12 @@ function FeaturedPostBanner({
             <Link href={`/blogs/${activePost.slug}`} className="block group">
               <h1
                 ref={titleRef}
-                className="font-display text-2xl md:text-[50px] max-w-sm md:max-w-xl font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors line-clamp-3"
+                className="font-display text-2xl md:text-[50px] max-w-xs md:max-w-xl font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors line-clamp-3"
               >
                 {activePost.title}
               </h1>
             </Link>
 
-            {/* Rendered only on mobile when title enters 2+ lines */}
             {isMultiLine && (
               <p className="block md:hidden text-xs text-white/80 font-body leading-relaxed line-clamp-1">
                 {activePost.excerpt ||
@@ -153,7 +152,6 @@ function FeaturedPostBanner({
               </p>
             )}
 
-            {/* Embedded Searchbar */}
             <div className="pt-2 w-full max-w-md">
               <div className="relative flex items-center w-full rounded-full bg-black/50 backdrop-blur-md border border-white/20 px-4 py-2.5 text-white shadow-inner focus-within:border-white/50 focus-within:bg-black/70 transition-all">
                 <Search size={16} className="text-white/70 mr-2 shrink-0" />

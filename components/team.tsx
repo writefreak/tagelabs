@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import TeamCard from "./ui/team-card";
 
@@ -16,14 +17,10 @@ const team: TeamMember[] = [
     title: "Founder & Lead Developer",
     image: "/tage.png",
   },
-  {
-    name: "Meshack Douglas",
-    title: "Frontend Dev/Growth Lead",
-    image: "/doug.png",
-  },
+
   {
     name: "Asonye Samuel",
-    title: "Strategy/Client Partnership",
+    title: "Co-Founder & Client Partnerships Lead",
     image: "/sammy.png",
   },
 ];
@@ -47,9 +44,10 @@ export default function TeamSection() {
   function scrollTo(index: number) {
     const el = scrollRef.current;
     if (!el) return;
+    const clamped = Math.max(0, Math.min(team.length - 1, index));
     const cardWidth = el.scrollWidth / team.length;
-    el.scrollTo({ left: cardWidth * index, behavior: "smooth" });
-    setScrollPage(index);
+    el.scrollTo({ left: cardWidth * clamped, behavior: "smooth" });
+    setScrollPage(clamped);
   }
 
   return (
@@ -66,7 +64,7 @@ export default function TeamSection() {
             transition={{ duration: 0.55 }}
             className="font-display text-2xl font-semibold leading-tight text-primary sm:text-5xl"
           >
-            Meet Our Elite Team
+            Meet The Founders
           </motion.h2>
 
           <motion.p
@@ -83,7 +81,7 @@ export default function TeamSection() {
 
         <div
           ref={scrollRef}
-          className="flex mx-auto gap-4 pt-10 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth md:grid md:grid-cols-3 md:gap- md:overflow-visible md:max-w-5xl"
+          className="flex gap-4 pt-10 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth mx-auto md:justify-center md:gap-8 md:overflow-visible md:max-w-5xl"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {team.map((member, i) => (
@@ -93,7 +91,7 @@ export default function TeamSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.06 }}
-              className="w-[60vw] md:w-[24vw] shrink-0 snap-start sm:w-auto sm:shrink"
+              className="w-full shrink-0 snap-start sm:w-auto sm:shrink md:w-[24vw]"
             >
               <TeamCard member={member} />
             </motion.div>
@@ -101,19 +99,24 @@ export default function TeamSection() {
         </div>
 
         {team.length > 1 && (
-          <div className="flex items-center justify-center gap-2 pt-5 md:hidden">
-            {team.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => scrollTo(i)}
-                aria-label={`Go to member ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  i === scrollPage
-                    ? "w-5 h-1.5 bg-navy"
-                    : "w-1.5 h-1.5 bg-navy/20"
-                }`}
-              />
-            ))}
+          <div className="flex items-center justify-center gap-4 pt-5 md:hidden">
+            <button
+              onClick={() => scrollTo(scrollPage - 1)}
+              disabled={scrollPage === 0}
+              aria-label="Previous member"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-navy text-offwhite transition-opacity disabled:opacity-30"
+            >
+              <ChevronLeft size={14} />
+            </button>
+
+            <button
+              onClick={() => scrollTo(scrollPage + 1)}
+              disabled={scrollPage === team.length - 1}
+              aria-label="Next member"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-navy text-offwhite transition-opacity disabled:opacity-30"
+            >
+              <ChevronRight size={14} />
+            </button>
           </div>
         )}
       </div>
