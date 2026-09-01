@@ -125,7 +125,7 @@ function FeaturedPostBanner({
       <div className="relative pt-10 md:pt-4 z-10 w-full max-w-7xl mx-auto flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/80 hover:text-white bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 transition-all"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/80 hover:text-white bg-black/40 backdrop-blur-md px-4 py-2 transition-all"
         >
           <ArrowLeft size={14} />
           Back to home
@@ -139,14 +139,14 @@ function FeaturedPostBanner({
             <Link href={`/blogs/${activePost.slug}`} className="block group">
               <h1
                 ref={titleRef}
-                className="font-display text-2xl md:text-[50px] max-w-xs md:max-w-xl font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors line-clamp-3"
+                className="font-display text-2xl md:text-[50px] max-w-xs md:max-w-xl font-bold text-white leading-tight tracking-tight group-hover:text-white/90 transition-colors line-clamp-2 md:line-clamp-3"
               >
                 {activePost.title}
               </h1>
             </Link>
 
             {isMultiLine && (
-              <p className="block md:hidden text-xs text-white/80 font-body leading-relaxed line-clamp-1">
+              <p className="md:hidden text-xs text-white/80 font-body leading-relaxed line-clamp-3">
                 {activePost.excerpt ||
                   "Read this highlighted post to discover valuable perspectives."}
               </p>
@@ -173,11 +173,11 @@ function FeaturedPostBanner({
                 )}
               </div>
               <div className="pt-4">
-                <Link
-                  href={`/blogs/${activePost.slug}`}
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-navy font-semibold text-xs sm:text-sm shadow-xl hover:bg-white/90 transition-all transform hover:-translate-y-0.5"
-                >
-                  Read Article
+                <Link href={`/blogs/${activePost.slug}`}>
+                  <button className="flex w-30 px-4 py-2.5 md:w-44 items-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium md:px-8 md:py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm">
+                    Read Article
+                    <ChevronRight size={16} className="ml-2" />
+                  </button>
                 </Link>
               </div>
             </div>
@@ -304,148 +304,169 @@ export default function BlogArchivePage() {
 
   return (
     <div className="w-full bg-white min-h-screen">
-      {/* 1. Fullscreen Hero Banner */}
-      {!loading && featuredPosts.length > 0 && (
-        <FeaturedPostBanner
-          featuredPosts={featuredPosts}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-      )}
-
-      {/* Main Grid Container */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        {/* Search Bar Fallback when no featured posts exist */}
-        {!loading && featuredPosts.length === 0 && (
-          <div className="mb-8 pt-12">
-            <Link
-              href="/"
-              className="inline-flex pb-6 items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
-            >
-              <ArrowLeft size={14} />
-              Back to home
-            </Link>
-            <div className="relative max-w-md">
-              <div className="relative flex items-center w-full rounded-xl bg-navy/5 border border-navy/10 px-3.5 py-2.5 text-navy">
-                <Search size={16} className="text-navy/50 mr-2 shrink-0" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search blog posts..."
-                  className="w-full bg-transparent text-xs sm:text-sm text-navy placeholder-navy/40 outline-none"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="p-1 rounded-full text-navy/50 hover:text-navy transition-colors ml-1"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
+      {loading ? (
+        /* Full Page Skeleton Loader */
+        <div>
+          {/* Skeleton Hero Banner */}
+          <div className="w-full h-[500px] md:h-[600px] bg-white animate-pulse flex flex-col justify-between p-8 md:p-16">
+            <div className="w-32 h-8 bg-navy/20 rounded-full" />
+            <div className="max-w-xl space-y-4 my-auto">
+              <div className="h-10 bg-navy/20 rounded-lg w-3/4" />
+              <div className="h-6 bg-navy/20 rounded-lg w-1/2" />
+              <div className="h-10 bg-navy/20 rounded-full w-full max-w-md pt-4" />
             </div>
           </div>
-        )}
 
-        {/* 2. Page Section Title */}
-        <motion.div
-          ref={scrollRef}
-          className="pb-8 sm:pb-12"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <h2 className="font-jet text-2xl sm:text-3xl md:text-5xl font-semibold text-navy leading-tight">
-            Our Thoughts, Worth Sharing
-          </h2>
-        </motion.div>
+          {/* Skeleton Content Grid */}
+          <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            {/* Skeleton Section Title */}
+            <div className="h-10 bg-navy/10 rounded-lg w-64 mb-8 animate-pulse" />
 
-        {/* Skeleton Loader */}
-        {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-12">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="h-80 rounded-2xl animate-pulse bg-navy/10 w-full"
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && filteredPosts.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center justify-center py-24 text-center"
-          >
-            <div className="w-20 h-20 rounded-full bg-blue/10 flex items-center justify-center mb-6">
-              <span className="text-3xl">✦</span>
-            </div>
-            <h3 className="font-display text-2xl font-semibold text-navy mb-3">
-              {searchQuery
-                ? "No matching posts found."
-                : "Something's brewing."}
-            </h3>
-            <p className="font-body text-navy/50 text-sm max-w-xs leading-relaxed">
-              {searchQuery
-                ? "Try searching for another keyword or clear your query."
-                : "Posts are being prepared with care. Check back soon — good writing takes time."}
-            </p>
-          </motion.div>
-        )}
-
-        {/* Modern Blog Post Grid */}
-        {!loading && filteredPosts.length > 0 && (
-          <>
+            {/* Skeleton Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visiblePosts.map((post, i) => {
-                const imageSrc =
-                  post.cover_image_url ||
-                  FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
-
-                return (
-                  <motion.div
-                    key={post.id}
-                    custom={i}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-40px" }}
-                  >
-                    <ModernBlogCard post={post} imageSrc={imageSrc} />
-                  </motion.div>
-                );
-              })}
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="h-80 rounded-2xl animate-pulse bg-navy/10 w-full"
+                />
+              ))}
             </div>
+          </section>
+        </div>
+      ) : (
+        <>
+          {/* 1. Fullscreen Hero Banner */}
+          {featuredPosts.length > 0 && (
+            <FeaturedPostBanner
+              featuredPosts={featuredPosts}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+          )}
 
-            {/* Pagination Controls */}
-            <div className="mt-12 flex justify-center items-center">
-              {hasMore ? (
-                <button
-                  onClick={handleSeeMore}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-navy/20 bg-white text-navy font-medium text-sm hover:border-navy hover:bg-navy/5 transition-all duration-200"
+          {/* Main Grid Container */}
+          <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            {/* Search Bar Fallback when no featured posts exist */}
+            {featuredPosts.length === 0 && (
+              <div className="mb-8 pt-12">
+                <Link
+                  href="/"
+                  className="inline-flex pb-6 items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
                 >
-                  See More
-                  <ChevronDown size={16} />
-                </button>
-              ) : visibleCount > INITIAL_VISIBLE_COUNT ? (
-                <button
-                  onClick={handleSeeLess}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-navy/20 bg-white text-navy font-medium text-sm hover:border-navy hover:bg-navy/5 transition-all duration-200"
-                >
-                  See Less
-                  <ChevronUp size={16} />
-                </button>
-              ) : null}
-            </div>
-          </>
-        )}
-      </section>
+                  <ArrowLeft size={14} />
+                  Back to home
+                </Link>
+                <div className="relative max-w-md">
+                  <div className="relative flex items-center w-full rounded-xl bg-navy/5 border border-navy/10 px-3.5 py-2.5 text-navy">
+                    <Search size={16} className="text-navy/50 mr-2 shrink-0" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search blog posts..."
+                      className="w-full bg-transparent text-xs sm:text-sm text-navy placeholder-navy/40 outline-none"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery("")}
+                        className="p-1 rounded-full text-navy/50 hover:text-navy transition-colors ml-1"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 2. Page Section Title */}
+            <motion.div
+              ref={scrollRef}
+              className="pb-8 sm:pb-12"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h2 className="font-jet text-2xl sm:text-3xl md:text-5xl font-semibold text-navy leading-tight">
+                Our Thoughts, Worth Sharing
+              </h2>
+            </motion.div>
+
+            {/* Empty State */}
+            {filteredPosts.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="flex flex-col items-center justify-center py-24 text-center"
+              >
+                <div className="w-20 h-20 rounded-full bg-blue/10 flex items-center justify-center mb-6">
+                  <span className="text-3xl">✦</span>
+                </div>
+                <h3 className="font-display text-2xl font-semibold text-navy mb-3">
+                  {searchQuery
+                    ? "No matching posts found."
+                    : "Something's brewing."}
+                </h3>
+                <p className="font-body text-navy/50 text-sm max-w-xs leading-relaxed">
+                  {searchQuery
+                    ? "Try searching for another keyword or clear your query."
+                    : "Posts are being prepared with care. Check back soon — good writing takes time."}
+                </p>
+              </motion.div>
+            )}
+
+            {/* Modern Blog Post Grid */}
+            {filteredPosts.length > 0 && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {visiblePosts.map((post, i) => {
+                    const imageSrc =
+                      post.cover_image_url ||
+                      FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+
+                    return (
+                      <motion.div
+                        key={post.id}
+                        custom={i}
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-40px" }}
+                      >
+                        <ModernBlogCard post={post} imageSrc={imageSrc} />
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="mt-12 flex justify-center items-center">
+                  {hasMore ? (
+                    <button
+                      onClick={handleSeeMore}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-navy/20 bg-white text-navy font-medium text-sm hover:border-navy hover:bg-navy/5 transition-all duration-200"
+                    >
+                      See More
+                      <ChevronDown size={16} />
+                    </button>
+                  ) : visibleCount > INITIAL_VISIBLE_COUNT ? (
+                    <button
+                      onClick={handleSeeLess}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-navy/20 bg-white text-navy font-medium text-sm hover:border-navy hover:bg-navy/5 transition-all duration-200"
+                    >
+                      See Less
+                      <ChevronUp size={16} />
+                    </button>
+                  ) : null}
+                </div>
+              </>
+            )}
+          </section>
+        </>
+      )}
     </div>
   );
 }
