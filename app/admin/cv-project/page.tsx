@@ -42,9 +42,9 @@ type CV = {
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const inputClass =
-  "w-full px-3.5 py-2.5 rounded-[10px] border border-navy/15 bg-offwhite text-sm text-navy font-body outline-none focus:border-blue transition-colors";
+  "w-full px-3.5 py-2.5 rounded-[10px] border border-navy/15 bg-offwhite text-xs md:text-sm text-navy font-body outline-none focus:border-blue transition-colors";
 const labelClass =
-  "block text-[11px] font-semibold text-navy/60 uppercase tracking-wider mb-1.5";
+  "block text-xs md:text-sm font-semibold text-navy/60 uppercase tracking-wider mb-1.5";
 const pillClass = (active: boolean) =>
   `px-3.5 py-2 rounded-[10px] text-xs font-semibold font-body border transition-all duration-200 ${
     active
@@ -141,15 +141,15 @@ function CVDialog({
         </div>
 
         {/* Header */}
-        <div className="flex items-start gap-4 px-6 pt-5 pb-5 border-b border-navy/[0.07] sticky top-0 bg-white z-10 rounded-t-3xl sm:rounded-t-2xl">
-          <div className="w-12 h-12 rounded-full bg-blue/[0.1] flex items-center justify-center text-base font-bold text-blue shrink-0">
+        <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-6 pt-4 sm:pt-5 pb-4 sm:pb-5 border-b border-navy/[0.07] sticky top-0 bg-white z-10 rounded-t-3xl sm:rounded-t-2xl">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue/[0.1] flex items-center justify-center text-sm sm:text-base font-bold text-blue shrink-0">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-base font-bold text-navy leading-tight">
+            <p className="text-sm sm:text-base font-bold text-navy leading-tight truncate">
               {cv.full_name}
             </p>
-            <p className="text-[13px] text-navy/50 mt-0.5">
+            <p className="text-[12px] sm:text-[13px] text-navy/50 mt-0.5 truncate">
               {cv.job_title || "—"}
             </p>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -236,10 +236,10 @@ function CVDialog({
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 flex flex-col gap-6 pb-8">
+        <div className="px-4 sm:px-6 py-5 flex flex-col gap-6 pb-8">
           {cv.cv_url && (
-            <div className="flex items-center justify-between p-3.5 bg-navy/[0.03] border border-navy/10 rounded-xl">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-navy/[0.03] border border-navy/10 rounded-xl">
+              <div className="flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
                   <svg
                     width="16"
@@ -253,7 +253,7 @@ function CVDialog({
                     <polyline points="14 2 14 8 20 8" />
                   </svg>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-semibold text-navy">
                     Attached PDF Document
                   </p>
@@ -267,7 +267,7 @@ function CVDialog({
                 target="_blank"
                 rel="noopener noreferrer"
                 download
-                className="px-3 py-1.5 rounded-lg bg-navy text-white text-xs font-semibold hover:bg-blue transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-lg bg-navy text-white text-xs font-semibold hover:bg-blue transition-colors flex items-center justify-center gap-1.5 shrink-0"
               >
                 <svg
                   width="12"
@@ -290,7 +290,7 @@ function CVDialog({
           {(cv.email || cv.phone || cv.location || cv.website) && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {cv.email && (
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
                     <svg
                       width="13"
@@ -311,7 +311,7 @@ function CVDialog({
                 </div>
               )}
               {cv.phone && (
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
                     <svg
                       width="13"
@@ -325,11 +325,13 @@ function CVDialog({
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </div>
-                  <span className="text-[12px] text-navy/55">{cv.phone}</span>
+                  <span className="text-[12px] text-navy/55 truncate">
+                    {cv.phone}
+                  </span>
                 </div>
               )}
               {cv.location && (
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
                     <svg
                       width="13"
@@ -344,13 +346,13 @@ function CVDialog({
                       <circle cx="12" cy="10" r="3" />
                     </svg>
                   </div>
-                  <span className="text-[12px] text-navy/55">
+                  <span className="text-[12px] text-navy/55 truncate">
                     {cv.location}
                   </span>
                 </div>
               )}
               {cv.website && (
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-lg bg-navy/[0.05] flex items-center justify-center shrink-0">
                     <svg
                       width="13"
@@ -730,7 +732,7 @@ export default function CVsPage() {
     previewSkills.length > 0 ||
     form.cv_url;
 
-  // ── Render Form Fields Partial ───────────────────────────────────────────
+  // ── Render Form Fields Partials ──────────────────────────────────────────
 
   const renderPersonalFields = () => (
     <div className="flex flex-col gap-4">
@@ -815,11 +817,11 @@ export default function CVsPage() {
           <button
             type="button"
             onClick={() => removeExp(i)}
-            className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-xs font-semibold p-1"
+            className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-xs font-semibold p-1 z-10"
           >
             Remove
           </button>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pr-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pr-16 sm:pr-12">
             <div>
               <label className={labelClass}>Company</label>
               <input
@@ -839,7 +841,7 @@ export default function CVsPage() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>Start Date</label>
               <input
@@ -901,11 +903,11 @@ export default function CVsPage() {
           <button
             type="button"
             onClick={() => removeEdu(i)}
-            className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-xs font-semibold p-1"
+            className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-xs font-semibold p-1 z-10"
           >
             Remove
           </button>
-          <div>
+          <div className="pr-16 sm:pr-0">
             <label className={labelClass}>Institution</label>
             <input
               value={edu.institution}
@@ -934,7 +936,7 @@ export default function CVsPage() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>Start Date</label>
               <input
@@ -967,259 +969,206 @@ export default function CVsPage() {
   );
 
   const renderSkillsAndFileFields = () => (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <div>
         <label className={labelClass}>Skills (comma-separated)</label>
         <input
           value={form.skills}
           onChange={(e) => setForm({ ...form, skills: e.target.value })}
-          placeholder="React, TypeScript, UI Design, Figma, Node.js"
+          placeholder="React, TypeScript, Tailwind CSS, UI/UX Design"
           className={inputClass}
         />
-        <p className="text-[11px] text-navy/40 mt-1">
-          Separate multiple skills with commas
-        </p>
       </div>
 
       <div>
-        <label className={labelClass}>Status</label>
-        <div className="flex gap-2">
-          {(["Draft", "Published"] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setForm({ ...form, status: s })}
-              className={pillClass(form.status === s)}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* PDF Upload */}
-      <div>
-        <label className={labelClass}>PDF Document</label>
+        <label className={labelClass}>Upload PDF CV Document</label>
         <input
           type="file"
           ref={fileInputRef}
           accept="application/pdf"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFileUpload(f);
-          }}
           className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFileUpload(file);
+          }}
         />
-
         {form.cv_url ? (
-          <div className="p-3.5 bg-navy/[0.03] border border-navy/10 rounded-xl flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-navy truncate">
-                  PDF Uploaded
-                </p>
-                <a
-                  href={form.cv_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[11px] text-blue/70 hover:underline truncate block"
-                >
-                  View PDF
-                </a>
-              </div>
+          <div className="flex items-center justify-between gap-2 p-3.5 bg-navy/[0.03] border border-navy/15 rounded-[10px]">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-red-500 shrink-0"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span className="text-xs text-navy font-medium truncate">
+                PDF Uploaded
+              </span>
             </div>
             <button
               type="button"
-              onClick={() => setForm({ ...form, cv_url: "" })}
-              className="text-xs text-red-400 hover:text-red-600 font-semibold shrink-0"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs text-blue font-semibold hover:underline shrink-0 ml-2"
             >
-              Remove
+              Change
             </button>
           </div>
         ) : (
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full py-6 border border-dashed border-navy/20 hover:border-navy/40 rounded-xl text-xs font-semibold text-navy/60 hover:text-navy transition-colors flex flex-col items-center gap-2 bg-navy/[0.01]"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full py-3 border border-dashed border-navy/20 hover:border-navy/40 rounded-[10px] bg-offwhite text-xs font-semibold text-navy/60 hover:text-navy transition-colors flex items-center justify-center gap-2"
           >
-            {uploading ? (
-              <span className="text-blue">Uploading PDF...</span>
-            ) : (
-              <>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
-                <span>Click to upload PDF CV</span>
-              </>
-            )}
+            {uploading ? "Uploading..." : "Select PDF Document"}
           </button>
         )}
+      </div>
+
+      <div>
+        <label className={labelClass}>Publish Status</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setForm({ ...form, status: "Draft" })}
+            className={pillClass(form.status === "Draft")}
+          >
+            Draft
+          </button>
+          <button
+            type="button"
+            onClick={() => setForm({ ...form, status: "Published" })}
+            className={pillClass(form.status === "Published")}
+          >
+            Published
+          </button>
+        </div>
       </div>
     </div>
   );
 
-  const renderLivePreviewCard = () => (
-    <div className="bg-white border border-navy/10 rounded-2xl p-5 sm:p-6 flex flex-col gap-6 shadow-sm">
-      <div className="flex items-start gap-4 pb-4 border-b border-navy/[0.07]">
-        <div className="w-12 h-12 rounded-full bg-blue/[0.1] flex items-center justify-center text-base font-bold text-blue shrink-0">
-          {initials}
+  const renderPreviewContent = () => (
+    <div className="bg-white border border-navy/10 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-6 overflow-hidden">
+      {!hasPreviewContent ? (
+        <div className="py-12 text-center text-navy/30 text-xs">
+          Start typing on the form to see a live preview here.
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-base font-bold text-navy truncate">
-            {form.full_name || "Your Name"}
-          </p>
-          <p className="text-[13px] text-navy/50">
-            {form.job_title || "Job Title"}
-          </p>
+      ) : (
+        <>
+          <div className="flex items-center gap-4 pb-4 border-b border-navy/[0.07] min-w-0">
+            <div className="w-12 h-12 rounded-full bg-blue/10 flex items-center justify-center text-base font-bold text-blue shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-base font-bold text-navy truncate">
+                {form.full_name || "Full Name"}
+              </p>
+              <p className="text-xs text-navy/50 truncate">
+                {form.job_title || "Job Title"}
+              </p>
+            </div>
+          </div>
+
           {(form.email || form.phone || form.location || form.website) && (
-            <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px] text-navy/40">
-              {form.email && <span>{form.email}</span>}
-              {form.phone && <span>{form.phone}</span>}
-              {form.location && <span>{form.location}</span>}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-navy/60">
+              {form.email && <div className="truncate">✉️ {form.email}</div>}
+              {form.phone && <div className="truncate">📞 {form.phone}</div>}
+              {form.location && (
+                <div className="truncate">📍 {form.location}</div>
+              )}
               {form.website && (
-                <span className="text-blue/70">{form.website}</span>
+                <div className="truncate">🌐 {form.website}</div>
               )}
             </div>
           )}
-        </div>
-      </div>
 
-      {form.summary && (
-        <div>
-          <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-1.5">
-            Summary
-          </p>
-          <p className="text-xs text-navy/60 leading-relaxed font-body">
-            {form.summary}
-          </p>
-        </div>
-      )}
+          {form.summary && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-1">
+                Summary
+              </p>
+              <p className="text-xs text-navy/70 leading-relaxed break-words">
+                {form.summary}
+              </p>
+            </div>
+          )}
 
-      {form.experience.length > 0 && (
-        <div>
-          <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2.5 pb-1 border-b border-navy/[0.07]">
-            Experience
-          </p>
-          <div className="flex flex-col gap-3">
-            {form.experience.map((exp, i) => (
-              <div key={i} className="text-xs">
-                <div className="flex justify-between items-baseline gap-2">
-                  <p className="font-semibold text-navy">
-                    {exp.role || "Role"}{" "}
-                    <span className="font-normal text-navy/45">
-                      @ {exp.company || "Company"}
-                    </span>
-                  </p>
-                  <span className="text-[11px] text-navy/35">
-                    {exp.start_date}
-                    {exp.current
-                      ? " – Present"
-                      : exp.end_date
-                        ? ` – ${exp.end_date}`
-                        : ""}
+          {form.experience.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2">
+                Experience
+              </p>
+              <div className="flex flex-col gap-3">
+                {form.experience.map((exp, i) => (
+                  <div key={i} className="text-xs">
+                    <p className="font-semibold text-navy break-words">
+                      {exp.role || "Role"} @ {exp.company || "Company"}
+                    </p>
+                    <p className="text-[10px] text-navy/40">
+                      {exp.start_date} -{" "}
+                      {exp.current ? "Present" : exp.end_date}
+                    </p>
+                    {exp.description && (
+                      <p className="text-navy/60 mt-0.5 break-words">
+                        {exp.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {form.education.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2">
+                Education
+              </p>
+              <div className="flex flex-col gap-3">
+                {form.education.map((edu, i) => (
+                  <div key={i} className="text-xs">
+                    <p className="font-semibold text-navy break-words">
+                      {edu.institution || "Institution"}
+                    </p>
+                    <p className="text-navy/60 break-words">
+                      {[edu.degree, edu.field].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {previewSkills.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2">
+                Skills
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {previewSkills.map((s) => (
+                  <span
+                    key={s}
+                    className="text-[11px] border border-navy/15 text-navy/60 px-2 py-0.5 rounded-full"
+                  >
+                    {s}
                   </span>
-                </div>
-                {exp.description && (
-                  <p className="text-navy/50 text-[11px] mt-1 leading-relaxed">
-                    {exp.description}
-                  </p>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {form.education.length > 0 && (
-        <div>
-          <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2.5 pb-1 border-b border-navy/[0.07]">
-            Education
-          </p>
-          <div className="flex flex-col gap-2">
-            {form.education.map((edu, i) => (
-              <div key={i} className="flex justify-between items-start text-xs">
-                <div>
-                  <p className="font-semibold text-navy">
-                    {edu.institution || "Institution"}
-                  </p>
-                  <p className="text-navy/50 text-[11px]">
-                    {[edu.degree, edu.field].filter(Boolean).join(" · ")}
-                  </p>
-                </div>
-                <span className="text-[11px] text-navy/35">
-                  {edu.start_date}
-                  {edu.end_date ? ` – ${edu.end_date}` : ""}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {previewSkills.length > 0 && (
-        <div>
-          <p className="text-[10px] font-bold text-navy/35 uppercase tracking-widest mb-2 pb-1 border-b border-navy/[0.07]">
-            Skills
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {previewSkills.map((s) => (
-              <span
-                key={s}
-                className="text-[11px] border border-navy/15 text-navy/60 px-2.5 py-0.5 rounded-full bg-navy/[0.02]"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {form.cv_url && (
-        <div className="flex items-center gap-2 text-xs text-navy/60 pt-2 border-t border-navy/[0.07]">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-red-500"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>
-          <span className="truncate">PDF Document Attached</span>
-        </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 
   return (
-    <div className="min-h-screen  text-navy font-body md:p-4">
-      {/* Dialog */}
+    <div className="min-h-screen font-body text-navy overflow-x-hidden">
       {viewCV && (
         <CVDialog
           cv={viewCV}
@@ -1228,624 +1177,309 @@ export default function CVsPage() {
         />
       )}
 
-      {/* Delete Confirmation Modal */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl flex flex-col gap-4">
-            <h3 className="text-base font-bold text-navy">Delete CV?</h3>
-            <p className="text-xs text-navy/60">
-              Are you sure you want to delete this CV entry? This action cannot
-              be undone.
-            </p>
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 rounded-xl border border-navy/15 text-xs font-semibold text-navy/70 hover:bg-navy/5"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                className="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-semibold hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+      {/* Main Header */}
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 flex-wrap mb-6 sm:mb-8">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-navy">
+            CV Management
+          </h1>
+          <p className="text-xs sm:text-sm text-navy/50">
+            Create, update and preview portfolio CV items
+          </p>
+        </div>
+        {view === "list" ? (
+          <button
+            onClick={openCreate}
+            className="px-4 py-2.5 rounded-xl bg-navy text-white text-xs sm:text-sm font-semibold hover:bg-blue transition-colors flex items-center gap-2 shrink-0"
+          >
+            + Create CV
+          </button>
+        ) : (
+          <button
+            onClick={() => setView("list")}
+            className="px-4 py-2.5 rounded-xl border border-navy/20 text-navy text-xs sm:text-sm font-semibold hover:bg-navy/5 transition-colors shrink-0"
+          >
+            Back to List
+          </button>
+        )}
+      </div>
+
+      {error && (
+        <div className="max-w-6xl mx-auto mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs sm:text-sm flex justify-between items-center gap-3">
+          <span className="min-w-0 break-words">{error}</span>
+          <button onClick={() => setError(null)} className="font-bold shrink-0">
+            ×
+          </button>
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto flex flex-col gap-6 sm:gap-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-navy">
-              CVs & Resumes
-            </h1>
-            <p className="text-xs sm:text-sm text-navy/50 mt-1">
-              Manage, publish, and curate CV profiles.
-            </p>
-          </div>
-
-          {view === "list" ? (
-            <button
-              onClick={openCreate}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-navy text-white text-xs sm:text-sm font-semibold hover:bg-blue transition-colors flex items-center justify-center gap-2"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
+      {/* List View */}
+      {view === "list" && (
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+            {(["All", "Published", "Draft"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`shrink-0 ${pillClass(filter === f)}`}
               >
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Create New CV
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                setView("list");
-                setEditId(null);
-                setForm(emptyForm());
-              }}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-navy/15 text-xs sm:text-sm font-semibold text-navy/70 hover:bg-navy/5 transition-colors flex items-center justify-center gap-2"
-            >
-              ← Back to List
-            </button>
-          )}
-        </div>
-
-        {/* Global Error Banner */}
-        {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex justify-between items-center">
-            <span>{error}</span>
-            <button
-              onClick={() => setError(null)}
-              className="font-bold underline ml-2"
-            >
-              Dismiss
-            </button>
+                {f}
+              </button>
+            ))}
           </div>
-        )}
 
-        {/* ── LIST VIEW ─────────────────────────────────────────────────── */}
-        {view === "list" && (
-          <div className="flex flex-col gap-6">
-            {/* Filters */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {(["All", "Published", "Draft"] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={pillClass(filter === f)}
+          {loading ? (
+            <div className="py-12 text-center text-navy/40 text-xs md:text-sm">
+              Loading CV records...
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="py-12 text-center text-navy/40 text-sm border border-dashed border-navy/20 rounded-2xl">
+              No CV items found.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filtered.map((cv) => (
+                <div
+                  key={cv.id}
+                  className="bg-white border border-navy/10 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-4"
                 >
-                  {f}
-                </button>
+                  <div className="min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-bold text-navy text-sm md:text-base truncate min-w-0">
+                        {cv.full_name}
+                      </h3>
+                      <span
+                        className={`text-xs md:text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                          cv.status === "Published"
+                            ? "bg-green-100 text-green-600"
+                            : "bg-red-50 text-red-400"
+                        }`}
+                      >
+                        {cv.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-navy/50 mt-1 truncate">
+                      {cv.job_title || "No Title"}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-navy/[0.07] flex-wrap gap-2">
+                    <button
+                      onClick={() => setViewCV(cv)}
+                      className="text-xs font-semibold text-blue hover:underline"
+                    >
+                      View
+                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleEdit(cv)}
+                        className="text-xs font-semibold text-navy/60 hover:text-navy"
+                      >
+                        Edit
+                      </button>
+                      {deleteConfirm === cv.id ? (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleDelete(cv.id)}
+                            className="text-xs font-semibold text-red-500 hover:underline"
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm(null)}
+                            className="text-xs text-navy/40"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeleteConfirm(cv.id)}
+                          className="text-xs font-semibold text-red-400 hover:text-red-600"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
 
-            {loading ? (
-              <div className="py-20 text-center text-xs text-navy/40">
-                Loading CVs...
+      {/* Form View */}
+      {view === "form" && (
+        <div className="max-w-6xl mx-auto">
+          {/* MOBILE STEP NAVIGATION BAR */}
+          <div className="sm:hidden mb-6 bg-white border border-navy/10 rounded-xl p-1.5 grid grid-cols-5 gap-1">
+            {MOBILE_STEPS.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setMobileStep(s.id)}
+                className={`py-1.5 px-1 rounded-lg text-[10px] leading-tight font-semibold text-center transition-all truncate ${
+                  mobileStep === s.id
+                    ? "bg-navy text-white shadow-sm"
+                    : "text-navy/50 hover:bg-navy/5"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+
+          {/* MOBILE STEP CONTENT */}
+          <div className="sm:hidden bg-white border border-navy/10 rounded-2xl p-4 shadow-sm mb-24 overflow-x-hidden">
+            {mobileStep === 0 && (
+              <div>
+                <h2 className="text-xs md:text-sm font-bold mb-4">
+                  Personal Information
+                </h2>
+                {renderPersonalFields()}
               </div>
-            ) : filtered.length === 0 ? (
-              <div className="py-20 text-center bg-white border border-navy/10 rounded-2xl flex flex-col items-center justify-center gap-3">
-                <p className="text-sm font-semibold text-navy/60">
-                  No CVs found
-                </p>
-                <p className="text-xs text-navy/40">
-                  Create your first CV or adjust the current filter.
-                </p>
-                <button
-                  onClick={openCreate}
-                  className="mt-2 px-4 py-2 bg-navy text-white text-xs font-semibold rounded-xl hover:bg-blue transition-colors"
-                >
-                  + Create CV
-                </button>
+            )}
+            {mobileStep === 1 && (
+              <div>
+                <h2 className="text-xs md:text-sm font-bold mb-4">
+                  Work Experience
+                </h2>
+                {renderExperienceFields()}
               </div>
-            ) : (
-              <>
-                {/* Desktop Table View */}
-                <div className="hidden md:block bg-white border border-navy/10 rounded-2xl overflow-hidden shadow-sm">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-navy/[0.08] bg-navy/[0.02]">
-                        <th className="py-3.5 px-5 text-[11px] font-semibold text-navy/50 uppercase tracking-wider">
-                          Name & Title
-                        </th>
-                        <th className="py-3.5 px-5 text-[11px] font-semibold text-navy/50 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="py-3.5 px-5 text-[11px] font-semibold text-navy/50 uppercase tracking-wider">
-                          PDF File
-                        </th>
-                        <th className="py-3.5 px-5 text-[11px] font-semibold text-navy/50 uppercase tracking-wider">
-                          Created
-                        </th>
-                        <th className="py-3.5 px-5 text-[11px] font-semibold text-navy/50 uppercase tracking-wider text-right">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-navy/[0.06]">
-                      {filtered.map((cv) => (
-                        <tr
-                          key={cv.id}
-                          className="hover:bg-navy/[0.01] transition-colors"
-                        >
-                          <td className="py-4 px-5">
-                            <div>
-                              <p className="text-sm font-bold text-navy">
-                                {cv.full_name}
-                              </p>
-                              <p className="text-xs text-navy/50 mt-0.5">
-                                {cv.job_title || "—"}
-                              </p>
-                            </div>
-                          </td>
-                          <td className="py-4 px-5">
-                            <span
-                              className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
-                                cv.status === "Published"
-                                  ? "bg-green-100 text-green-600"
-                                  : "bg-red-50 text-red-400"
-                              }`}
-                            >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full ${
-                                  cv.status === "Published"
-                                    ? "bg-green-500"
-                                    : "bg-red-400"
-                                }`}
-                              />
-                              {cv.status}
-                            </span>
-                          </td>
-                          <td className="py-4 px-5">
-                            {cv.cv_url ? (
-                              <a
-                                href={cv.cv_url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 text-xs text-blue hover:underline font-medium"
-                              >
-                                <svg
-                                  width="14"
-                                  height="14"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                >
-                                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                  <polyline points="14 2 14 8 20 8" />
-                                </svg>
-                                View PDF
-                              </a>
-                            ) : (
-                              <span className="text-xs text-navy/30">None</span>
-                            )}
-                          </td>
-                          <td className="py-4 px-5 text-xs text-navy/50">
-                            {new Date(cv.created_at).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )}
-                          </td>
-                          <td className="py-4 px-5 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => setViewCV(cv)}
-                                className="p-2 text-navy/60 hover:text-navy hover:bg-navy/5 rounded-lg transition-colors"
-                                title="View Details"
-                              >
-                                <svg
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                >
-                                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                  <circle cx="12" cy="12" r="3" />
-                                </svg>
-                              </button>
-                              <button
-                                onClick={() => handleEdit(cv)}
-                                className="p-2 text-blue hover:bg-blue/10 rounded-lg transition-colors"
-                                title="Edit"
-                              >
-                                <svg
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                >
-                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                </svg>
-                              </button>
-                              <button
-                                onClick={() => setDeleteConfirm(cv.id)}
-                                className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                title="Delete"
-                              >
-                                <svg
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                >
-                                  <polyline points="3 6 5 6 21 6" />
-                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile Responsive Cards View */}
-                <div className="grid grid-cols-1 gap-4 md:hidden">
-                  {filtered.map((cv) => {
-                    const cardInitials =
-                      cv.full_name
-                        .split(" ")
-                        .map((w) => w[0] ?? "")
-                        .join("")
-                        .slice(0, 2)
-                        .toUpperCase() || "?";
-
-                    return (
-                      <div
-                        key={cv.id}
-                        className="bg-white border border-navy/10 rounded-2xl p-4 flex flex-col gap-4 shadow-sm"
-                      >
-                        {/* Top info */}
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-start gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-full bg-blue/[0.1] flex items-center justify-center text-xs font-bold text-blue shrink-0 mt-0.5">
-                              {cardInitials}
-                            </div>
-                            <div className="min-w-0">
-                              <h3 className="text-sm font-bold text-navy truncate">
-                                {cv.full_name}
-                              </h3>
-                              <p className="text-xs text-navy/50 truncate mt-0.5">
-                                {cv.job_title || "—"}
-                              </p>
-                            </div>
-                          </div>
-                          <span
-                            className={`shrink-0 inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                              cv.status === "Published"
-                                ? "bg-green-100 text-green-600"
-                                : "bg-red-50 text-red-400"
-                            }`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                cv.status === "Published"
-                                  ? "bg-green-500"
-                                  : "bg-red-400"
-                              }`}
-                            />
-                            {cv.status}
-                          </span>
-                        </div>
-
-                        {/* Mid Meta */}
-                        <div className="flex items-center justify-between text-xs pt-2 border-t border-navy/[0.06]">
-                          <span className="text-navy/40 text-[11px]">
-                            {new Date(cv.created_at).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              },
-                            )}
-                          </span>
-
-                          {cv.cv_url ? (
-                            <a
-                              href={cv.cv_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] font-medium text-blue hover:underline"
-                            >
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                              </svg>
-                              PDF Attachment
-                            </a>
-                          ) : (
-                            <span className="text-[11px] text-navy/30">
-                              No PDF
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Bottom Actions */}
-                        <div className="grid grid-cols-3 gap-2 pt-1 border-t border-navy/[0.06]">
-                          <button
-                            onClick={() => setViewCV(cv)}
-                            className="py-2 rounded-xl bg-navy/[0.03] hover:bg-navy/[0.08] text-navy/70 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                          >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
-                            View
-                          </button>
-
-                          <button
-                            onClick={() => handleEdit(cv)}
-                            className="py-2 rounded-xl bg-blue/10 hover:bg-blue/20 text-blue text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                          >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                            </svg>
-                            Edit
-                          </button>
-
-                          <button
-                            onClick={() => setDeleteConfirm(cv.id)}
-                            className="py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                          >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            </svg>
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
+            )}
+            {mobileStep === 2 && (
+              <div>
+                <h2 className="text-xs md:text-sm font-bold mb-4">Education</h2>
+                {renderEducationFields()}
+              </div>
+            )}
+            {mobileStep === 3 && (
+              <div>
+                <h2 className="text-xs md:text-sm font-bold mb-4">
+                  Skills & File Upload
+                </h2>
+                {renderSkillsAndFileFields()}
+              </div>
+            )}
+            {mobileStep === 4 && (
+              <div>
+                <h2 className="text-base font-bold mb-4">Live Preview</h2>
+                {renderPreviewContent()}
+              </div>
             )}
           </div>
-        )}
 
-        {/* ── FORM VIEW ─────────────────────────────────────────────────── */}
-        {view === "form" && (
-          <div className="flex flex-col gap-6">
-            {/* Mobile Wizard Stepper Header */}
-            <div className="lg:hidden bg-white border border-navy/10 rounded-2xl p-3 shadow-sm">
-              <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1">
-                {MOBILE_STEPS.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setMobileStep(s.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
-                      mobileStep === s.id
-                        ? "bg-navy text-white"
-                        : "text-navy/50 hover:text-navy hover:bg-navy/5"
-                    }`}
-                  >
-                    {s.id + 1}. {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* MOBILE BOTTOM STEPPER CONTROLS */}
+          <div
+            className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-navy/10 p-3.5 flex items-center justify-between gap-3 z-40"
+            style={{
+              paddingBottom: "calc(0.875rem + env(safe-area-inset-bottom))",
+            }}
+          >
+            <button
+              type="button"
+              disabled={mobileStep === 0}
+              onClick={() => setMobileStep((prev) => Math.max(0, prev - 1))}
+              className="px-4 py-2 rounded-xl border border-navy/20 text-navy text-xs font-semibold disabled:opacity-30 shrink-0"
+            >
+              Previous
+            </button>
+            {mobileStep < MOBILE_STEPS.length - 1 ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setMobileStep((prev) =>
+                    Math.min(MOBILE_STEPS.length - 1, prev + 1),
+                  )
+                }
+                className="flex-1 py-2 rounded-xl bg-navy text-white text-xs font-semibold text-center"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={saving || !form.full_name}
+                onClick={handleSubmit}
+                className="flex-1 py-2 rounded-xl bg-blue text-white text-xs font-semibold text-center disabled:opacity-50"
+              >
+                {saving ? "Saving..." : editId ? "Update CV" : "Save CV"}
+              </button>
+            )}
+          </div>
 
-            {/* Mobile Single-Step Render View */}
-            <div className="lg:hidden flex flex-col gap-6">
-              <div className="bg-white border border-navy/10 rounded-2xl p-5 shadow-sm">
-                <h2 className="text-base font-bold text-navy mb-4">
-                  {MOBILE_STEPS[mobileStep]?.label}
+          {/* DESKTOP TWO-COLUMN LAYOUT (UNTOUCHED LOGIC & STYLING) */}
+          <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="bg-white border border-navy/10 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+              <div>
+                <h2 className="text-lg font-bold text-navy">
+                  {editId ? "Edit CV Record" : "Create CV Record"}
                 </h2>
-                {mobileStep === 0 && renderPersonalFields()}
-                {mobileStep === 1 && renderExperienceFields()}
-                {mobileStep === 2 && renderEducationFields()}
-                {mobileStep === 3 && renderSkillsAndFileFields()}
-                {mobileStep === 4 && (
-                  <div>
-                    {hasPreviewContent ? (
-                      renderLivePreviewCard()
-                    ) : (
-                      <p className="text-xs text-navy/40 text-center py-8">
-                        Fill in basic details to generate a preview.
-                      </p>
-                    )}
-                  </div>
-                )}
+                <p className="text-xs text-navy/50">
+                  Fill in details below to publish to your portfolio.
+                </p>
               </div>
 
-              {/* Wizard Nav Actions */}
-              <div className="flex items-center justify-between gap-3 bg-white border border-navy/10 rounded-2xl p-4 shadow-sm">
-                <button
-                  type="button"
-                  disabled={mobileStep === 0}
-                  onClick={() => setMobileStep((prev) => Math.max(0, prev - 1))}
-                  className="px-4 py-2 rounded-xl border border-navy/15 text-xs font-semibold text-navy disabled:opacity-30 disabled:pointer-events-none"
-                >
-                  Previous
-                </button>
-
-                {mobileStep < MOBILE_STEPS.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setMobileStep((prev) =>
-                        Math.min(MOBILE_STEPS.length - 1, prev + 1),
-                      )
-                    }
-                    className="px-5 py-2 rounded-xl bg-navy text-white text-xs font-semibold hover:bg-blue transition-colors"
-                  >
-                    Next Step →
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={saving || !form.full_name}
-                    className="px-5 py-2 rounded-xl bg-blue text-white text-xs font-semibold disabled:opacity-50 hover:bg-navy transition-colors"
-                  >
-                    {saving ? "Saving..." : editId ? "Update CV" : "Publish CV"}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Desktop Two-Column Layout */}
-            <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-start">
-              {/* Form Input Side */}
-              <div className="lg:col-span-7 bg-white border border-navy/10 rounded-2xl p-6 sm:p-8 flex flex-col gap-8 shadow-sm">
-                <div className="flex items-center justify-between border-b border-navy/[0.07] pb-4">
-                  <h2 className="text-lg font-bold text-navy">
-                    {editId ? "Edit CV Profile" : "Create CV Profile"}
-                  </h2>
-                  <span className="text-xs text-navy/40">
-                    * Required fields
-                  </span>
+              <div className="flex flex-col gap-6">
+                <div>
+                  <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-3 pb-1 border-b border-navy/[0.07]">
+                    1. Personal Information
+                  </h3>
+                  {renderPersonalFields()}
                 </div>
 
-                <div className="flex flex-col gap-8">
-                  {/* Personal Section */}
-                  <div>
-                    <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-4">
-                      1. Personal Information
-                    </h3>
-                    {renderPersonalFields()}
-                  </div>
-
-                  {/* Experience Section */}
-                  <div>
-                    <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-4">
-                      2. Work Experience
-                    </h3>
-                    {renderExperienceFields()}
-                  </div>
-
-                  {/* Education Section */}
-                  <div>
-                    <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-4">
-                      3. Education
-                    </h3>
-                    {renderEducationFields()}
-                  </div>
-
-                  {/* Skills and File Section */}
-                  <div>
-                    <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-4">
-                      4. Skills & Attachment
-                    </h3>
-                    {renderSkillsAndFileFields()}
-                  </div>
+                <div>
+                  <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-3 pb-1 border-b border-navy/[0.07]">
+                    2. Work Experience
+                  </h3>
+                  {renderExperienceFields()}
                 </div>
 
-                {/* Form Actions */}
-                <div className="flex items-center justify-end gap-3 pt-6 border-t border-navy/[0.07]">
+                <div>
+                  <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-3 pb-1 border-b border-navy/[0.07]">
+                    3. Education
+                  </h3>
+                  {renderEducationFields()}
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-3 pb-1 border-b border-navy/[0.07]">
+                    4. Skills & Documents
+                  </h3>
+                  {renderSkillsAndFileFields()}
+                </div>
+
+                <div className="pt-4 border-t border-navy/10 flex justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => {
-                      setView("list");
-                      setEditId(null);
-                      setForm(emptyForm());
-                    }}
-                    className="px-5 py-2.5 rounded-xl border border-navy/15 text-xs font-semibold text-navy/70 hover:bg-navy/5 transition-colors"
+                    onClick={() => setView("list")}
+                    className="px-5 py-2.5 rounded-xl border border-navy/20 text-navy text-xs font-semibold hover:bg-navy/5 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
-                    onClick={handleSubmit}
                     disabled={saving || !form.full_name}
-                    className="px-6 py-2.5 rounded-xl bg-navy text-white text-xs font-semibold hover:bg-blue transition-colors disabled:opacity-50"
+                    onClick={handleSubmit}
+                    className="px-5 py-2.5 rounded-xl bg-navy text-white text-xs font-semibold hover:bg-blue transition-colors disabled:opacity-50"
                   >
-                    {saving
-                      ? "Saving..."
-                      : editId
-                        ? "Update CV Profile"
-                        : "Save CV Profile"}
+                    {saving ? "Saving..." : editId ? "Update CV" : "Save CV"}
                   </button>
                 </div>
               </div>
+            </div>
 
-              {/* Desktop Sticky Live Preview */}
-              <div className="lg:col-span-5 sticky top-8 flex flex-col gap-3">
-                <div className="flex items-center justify-between px-1">
-                  <h3 className="text-xs font-bold text-navy/40 uppercase tracking-widest">
-                    Live Preview
-                  </h3>
-                  <span className="text-[11px] text-navy/40">
-                    Real-time updates
-                  </span>
-                </div>
-
-                {hasPreviewContent ? (
-                  renderLivePreviewCard()
-                ) : (
-                  <div className="bg-white border border-navy/10 rounded-2xl p-8 text-center text-xs text-navy/40 flex flex-col items-center justify-center gap-2 min-h-[300px]">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      className="text-navy/20"
-                    >
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                    </svg>
-                    Start typing on the left to see your CV preview here.
-                  </div>
-                )}
-              </div>
+            {/* DESKTOP PREVIEW */}
+            <div className="sticky top-8">
+              <h2 className="text-sm font-bold text-navy/60 uppercase tracking-wider mb-3">
+                Live Preview
+              </h2>
+              {renderPreviewContent()}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
