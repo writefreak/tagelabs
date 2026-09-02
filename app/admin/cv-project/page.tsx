@@ -1218,7 +1218,7 @@ export default function CVsPage() {
   );
 
   return (
-    <div className="min-h-screen  text-navy font-body p-4">
+    <div className="min-h-screen  text-navy font-body md:p-4">
       {/* Dialog */}
       {viewCV && (
         <CVDialog
