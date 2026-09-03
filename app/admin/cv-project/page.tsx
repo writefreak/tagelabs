@@ -1,5 +1,6 @@
 "use client";
 import { supabase } from "@/app/lib/supabase";
+import { Check, Download, Eye, Pencil, Trash2, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────
@@ -1264,42 +1265,117 @@ export default function CVsPage() {
                   </div>
 
                   <div className="flex items-center justify-between pt-4 border-t border-navy/[0.07] flex-wrap gap-2">
-                    <button
-                      onClick={() => setViewCV(cv)}
-                      className="text-xs font-semibold text-blue hover:underline"
-                    >
-                      View
-                    </button>
-                    <div className="flex items-center gap-3">
+                    {/* MOBILE: icon circles */}
+                    <div className="flex sm:hidden items-center justify-between w-full gap-2">
                       <button
-                        onClick={() => handleEdit(cv)}
-                        className="text-xs font-semibold text-navy/60 hover:text-navy"
+                        onClick={() => setViewCV(cv)}
+                        className="w-8 h-8 rounded-full bg-blue/[0.1] text-blue flex items-center justify-center shrink-0"
+                        title="View"
                       >
-                        Edit
+                        <Eye size={14} strokeWidth={2} />
                       </button>
-                      {deleteConfirm === cv.id ? (
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => handleDelete(cv.id)}
-                            className="text-xs font-semibold text-red-500 hover:underline"
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            onClick={() => setDeleteConfirm(null)}
-                            className="text-xs text-navy/40"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
+
+                      <div className="flex items-center gap-2">
                         <button
-                          onClick={() => setDeleteConfirm(cv.id)}
-                          className="text-xs font-semibold text-red-400 hover:text-red-600"
+                          onClick={() => handleEdit(cv)}
+                          className="w-8 h-8 rounded-full bg-navy/[0.06] text-navy/60 flex items-center justify-center shrink-0"
+                          title="Edit"
                         >
-                          Delete
+                          <Pencil size={14} strokeWidth={2} />
                         </button>
-                      )}
+
+                        {cv.cv_url && (
+                          <a
+                            href={cv.cv_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                            className="w-8 h-8 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center shrink-0"
+                            title="Download"
+                          >
+                            <Download size={14} strokeWidth={2} />
+                          </a>
+                        )}
+
+                        {deleteConfirm === cv.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleDelete(cv.id)}
+                              className="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center shrink-0"
+                              title="Confirm delete"
+                            >
+                              <Check size={14} strokeWidth={2.5} />
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirm(null)}
+                              className="w-8 h-8 rounded-full bg-navy/[0.06] text-navy/40 flex items-center justify-center shrink-0"
+                              title="Cancel"
+                            >
+                              <X size={14} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirm(cv.id)}
+                            className="w-8 h-8 rounded-full bg-red-400/10 text-red-400 flex items-center justify-center shrink-0"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} strokeWidth={2} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* DESKTOP: existing text buttons, unchanged */}
+                    <div className="hidden sm:flex items-center justify-between w-full gap-2">
+                      <button
+                        onClick={() => setViewCV(cv)}
+                        className="text-xs font-semibold text-blue hover:underline"
+                      >
+                        View
+                      </button>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleEdit(cv)}
+                          className="text-xs font-semibold text-navy/60 hover:text-navy"
+                        >
+                          Edit
+                        </button>
+                        {cv.cv_url && (
+                          <a
+                            href={cv.cv_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                            className="text-xs font-semibold text-green-600 hover:underline"
+                          >
+                            Download
+                          </a>
+                        )}
+                        {deleteConfirm === cv.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleDelete(cv.id)}
+                              className="text-xs font-semibold text-red-500 hover:underline"
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirm(null)}
+                              className="text-xs text-navy/40"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirm(cv.id)}
+                            className="text-xs font-semibold text-red-400 hover:text-red-600"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
