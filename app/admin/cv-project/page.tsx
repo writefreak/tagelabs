@@ -1266,7 +1266,7 @@ export default function CVsPage() {
 
                   <div className="flex items-center justify-between pt-4 border-t border-navy/[0.07] flex-wrap gap-2">
                     {/* MOBILE: icon circles */}
-                    <div className="flex sm:hidden items-center justify-between w-full gap-2">
+                    <div className="flex items-center justify-between w-full gap-2">
                       <button
                         onClick={() => setViewCV(cv)}
                         className="w-8 h-8 rounded-full bg-blue/[0.1] text-blue flex items-center justify-center shrink-0"
@@ -1321,58 +1321,6 @@ export default function CVsPage() {
                             title="Delete"
                           >
                             <Trash2 size={14} strokeWidth={2} />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* DESKTOP: existing text buttons, unchanged */}
-                    <div className="hidden sm:flex items-center justify-between w-full gap-2">
-                      <button
-                        onClick={() => setViewCV(cv)}
-                        className="text-xs font-semibold text-blue hover:underline"
-                      >
-                        View
-                      </button>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => handleEdit(cv)}
-                          className="text-xs font-semibold text-navy/60 hover:text-navy"
-                        >
-                          Edit
-                        </button>
-                        {cv.cv_url && (
-                          <a
-                            href={cv.cv_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download
-                            className="text-xs font-semibold text-green-600 hover:underline"
-                          >
-                            Download
-                          </a>
-                        )}
-                        {deleteConfirm === cv.id ? (
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => handleDelete(cv.id)}
-                              className="text-xs font-semibold text-red-500 hover:underline"
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              onClick={() => setDeleteConfirm(null)}
-                              className="text-xs text-navy/40"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setDeleteConfirm(cv.id)}
-                            className="text-xs font-semibold text-red-400 hover:text-red-600"
-                          >
-                            Delete
                           </button>
                         )}
                       </div>
