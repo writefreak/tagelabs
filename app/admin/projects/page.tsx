@@ -675,20 +675,20 @@ export default function ProjectsPage() {
             >
               <div>
                 {/* Header Image & Drag Handle */}
-                <div className="relative h-36 w-full bg-navy/5 border-b border-navy/10 overflow-hidden">
+                <div className="relative aspect-[16/8] p-2 w-full rounded-2xl overflow-hidden">
                   {p.image_url ? (
                     <img
                       src={p.image_url}
                       alt={p.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                      className="h-full w-full rounded-xl object-cover group-hover:scale-105 transition-transform duration-200"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-navy/20">
+                    <div className="flex h-full w-full items-center justify-center rounded-xl bg-navy/5 text-navy/20">
                       <ImageIcon className="w-7 h-7" />
                     </div>
                   )}
 
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-navy/90 text-white backdrop-blur-xs">
                       {p.category}
                     </span>
