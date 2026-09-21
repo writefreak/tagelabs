@@ -1419,7 +1419,7 @@ export default function CVsPage() {
                 }
                 className="flex-1 py-2 rounded-xl bg-navy text-white text-xs font-semibold text-center"
               >
-                Next
+                Next please
               </button>
             ) : (
               <button

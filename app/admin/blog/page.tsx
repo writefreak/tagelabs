@@ -153,19 +153,20 @@ export default function BlogAdminPage() {
           {filtered.map((post) => (
             <div
               key={post.id}
-              className="group bg-white rounded-2xl border border-navy/10 overflow-hidden shadow-xs hover:border-navy/30 transition-all flex flex-col justify-between"
+              className="group flex flex-col justify-between w-full shadow-xs border bg-white border-navy/10 rounded-2xl overflow-hidden transition-all duration-300"
             >
               <div>
-                {/* Cover Image Container */}
-                <div className="relative w-full h-40 bg-navy/[0.04] border-b border-navy/10 overflow-hidden">
+                {/* Cover Image Box */}
+                <div className="relative aspect-[16/8] p-2 w-full rounded-2xl overflow-hidden">
                   {post.cover_image_url ? (
                     <img
                       src={post.cover_image_url}
                       alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      draggable={false}
+                      className="h-full w-full rounded-xl object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-1 text-navy/25">
+                    <div className="flex h-full w-full items-center justify-center gap-1 rounded-xl bg-navy/[0.04] text-navy/25">
                       <ImageIcon className="w-6 h-6" />
                       <span className="text-[10px] font-medium">
                         No cover image
@@ -174,7 +175,7 @@ export default function BlogAdminPage() {
                   )}
 
                   {/* Status Badges Overlay */}
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
                     <span
                       className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md shadow-xs ${
                         post.published
@@ -199,21 +200,17 @@ export default function BlogAdminPage() {
                   </div>
                 </div>
 
-                {/* Main Content */}
-                <div className="p-4 space-y-2">
+                {/* Content Below Image */}
+                <div className="flex flex-col gap-1 p-4">
                   <Link
                     href={`/admin/blog/${post.id}`}
-                    className="font-display font-bold text-sm sm:text-base text-navy hover:text-blue transition-colors line-clamp-1 block"
+                    className="font-display text-base font-bold text-navy leading-snug transition-colors group-hover:text-blue line-clamp-1 truncate"
                   >
                     {post.title}
                   </Link>
 
                   <p className="text-[12px] text-navy/45 font-mono truncate">
                     /{post.slug}
-                  </p>
-
-                  <p className="text-xs text-navy/60 line-clamp-2 leading-snug pt-1">
-                    {post.excerpt || "No excerpt provided."}
                   </p>
                 </div>
               </div>
