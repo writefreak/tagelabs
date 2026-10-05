@@ -19,6 +19,7 @@ export default function LayoutShell({
     pathname?.startsWith("/reset-password") ||
     pathname?.startsWith("/team") ||
     pathname?.startsWith("/not-found");
+  pathname?.startsWith("/templates");
 
   return (
     <>
