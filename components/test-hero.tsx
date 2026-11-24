@@ -86,7 +86,7 @@ export default function TestHero() {
         variants={container}
         initial="hidden"
         animate="visible"
-        className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pb-16 pt-32 md:grid-cols-2 md:gap-10 md:px-14 md:pb-20 md:pt-28"
+        className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pb-16 pt-32 md:grid-cols-2 md:gap-10 md:px-14 md:pt-24"
       >
         <div className="contents md:flex md:flex-col">
           <div className="order-1 flex flex-col gap-4">
@@ -108,7 +108,7 @@ export default function TestHero() {
 
           <motion.div
             variants={item}
-            className="order-3 flex flex-col gap-3 sm:flex-row sm:items-center md:pt-10"
+            className="order-3 flex flex-col gap-3 sm:flex-row sm:items-center md:pt-5"
           >
             <a
               href={WHATSAPP_URL}
@@ -119,13 +119,13 @@ export default function TestHero() {
               Start a project
               <ArrowRight size={14} />
             </a>
-            <button
+            {/* <button
               type="button"
               onClick={handleBrandStoryDownload}
               className="flex items-center justify-center rounded-2xl border border-navy/20 bg-white px-8 py-4 text-sm font-medium text-navy transition-colors duration-200 hover:border-blue hover:text-blue"
             >
               Our Brand Story
-            </button>
+            </button> */}
           </motion.div>
         </div>
 
@@ -145,7 +145,7 @@ export default function TestHero() {
         </motion.div> */}
         <motion.div
           variants={imageReveal}
-          className="relative order-2 h-[340px] overflow-hidden rounded-3xl sm:h-[440px] md:order-none md:h-[560px]"
+          className="relative order-2 h-[340px] overflow-hidden rounded-3xl sm:h-[440px] md:order-none md:h-[520px]"
         >
           <motion.video
             src="/typev.mp4"

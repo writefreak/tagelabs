@@ -1,36 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useInView,
-  animate,
-} from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { motion, useInView, animate } from "framer-motion";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
-// TODO: replace with TageLabs' real numbers
 const STATS = [
-  { value: 3, suffix: "+", label: "Years", desc: "building since 2023" },
-  {
-    value: 20,
-    suffix: "+",
-    label: "Projects Shipped",
-    desc: "landing pages, sites, portfolios",
-  },
-  {
-    value: 15,
-    suffix: "+",
-    label: "Clients",
-    desc: "across web and design work",
-  },
-  {
-    value: 3,
-    suffix: "",
-    label: "Team Members",
-    desc: "hands-on with every build",
-  },
+  { value: 20, suffix: "+", label: "PROJECTS SHIPPED" },
+  { value: 15, suffix: "+", label: "HAPPY CLIENTS" },
 ];
 
 const WHATSAPP_NUMBER = "2349041281560";
@@ -52,7 +28,7 @@ function Counter({
   delay?: number;
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -69,7 +45,7 @@ function Counter({
   return (
     <p
       ref={ref}
-      className="font-jet font-extrabold text-3xl text-navy md:text-4xl"
+      className="font-display text-4xl font-semibold tracking-tight text-neutral-950 sm:text-5xl"
     >
       {count.toLocaleString()}
       {suffix}
@@ -77,130 +53,161 @@ function Counter({
   );
 }
 
-function StatGrid() {
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {STATS.map((stat, i) => (
-        <motion.div
-          key={stat.label}
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}
-          className="flex flex-col "
-        >
-          <Counter
-            target={stat.value}
-            suffix={stat.suffix}
-            delay={0.1 + i * 0.1}
-          />
-          <p className="mt-1 font-sans text-xs md:text-sm text-navy/60">
-            {stat.label}
-          </p>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
-function ParallaxImage({ className }: { className: string }) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start end", "end start"],
-  });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-
-  return (
-    <motion.div
-      ref={wrapperRef}
-      initial={{ opacity: 0, scale: 0.96 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={className}
-    >
-      <motion.img
-        src="/type.png"
-        alt="TageLabs studio"
-        style={{ y: imageY }}
-        className="absolute left-0 -top-[15%] h-[130%] w-full object-cover"
-      />
-    </motion.div>
-  );
-}
-
 export default function About() {
   return (
     <section
       id="about"
-      className="bg-white px-6 py-20 sm:py-24 lg:px-10 lg:py-36 border-t border-t-gray-100"
+      className="overflow-hidden bg-[#0037FF] px-6 py-20 text-white sm:px-10 sm:py-28 lg:py-32"
     >
-      <div className="mx-auto max-w-6xl gap-16 lg:grid lg:grid-cols-2 md:items-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.55, delay: 0.05 }}
-          className="py-3 font-display md:hidden text-3xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
-        >
-          About Tagelabs
-        </motion.h2>
-        <div className="h-1 w-12 md:hidden  bg-blue" />
-
-        <ParallaxImage className="relative hidden md:block aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
-
-        <div className="flex flex-col md:gap-12">
-          <div className="flex flex-col gap-4">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.55, delay: 0.05 }}
-              className="mt-3 font-display hidden md:block text-3xl md:text-5xl md:max-w-full max-w-xs font-semibold leading-tight text-navy"
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
+        {/* Left Column */}
+        <div className="flex flex-col items-start lg:col-span-5">
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.45 }}
+            className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/95"
+          >
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 12 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
             >
-              About Tagelabs
-            </motion.h2>
+              <path
+                d="M6 0L7.35 4.65L12 6L7.35 7.35L6 12L4.65 7.35L0 6L4.65 4.65L6 0Z"
+                fill="currentColor"
+              />
+            </svg>
+            <span>OUR STUDIO</span>
+          </motion.div>
 
-            <div className="h-1 w-14 md:w-20 hidden md:block bg-blue" />
+          {/* Main Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.06 }}
+            className="mt-4 font-display text-5xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.25rem]"
+          >
+            About Us
+          </motion.h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.55, delay: 0.15 }}
-              className="font-sans pt-5 text-xs md:text-sm leading-relaxed text-navy/60 md:max-w-xl"
+          {/* Left Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.12 }}
+            className="mt-5 max-w-md font-sans text-base leading-relaxed text-white/85 sm:text-[17px]"
+          >
+            From strategy to execution, we bring the technical depth and design
+            clarity to build digital products that last.
+          </motion.p>
+
+          {/* Split Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.18 }}
+            className="mt-9"
+          >
+            <button
+              onClick={() =>
+                window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
+              }
+              className="group inline-flex items-stretch gap-[2px] text-sm font-medium text-neutral-950 focus:outline-none"
             >
-              We work with startups launching their first digital product, job
-              seekers and creatives who need a CV/portfolio that reflects the
-              pure quality of their work and businesses that want a website
-              experience their users will remember. Whether the need is a single
-              landing page, a portfolio or an entire digital revamp, TageLabs
-              meets you where you are, thinks with you, and builds for the long
-              game.
-            </motion.p>
-          </div>
-          <div className="md:hidden py-6">
-            <div className="pb-6">
-              <ParallaxImage className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-sm" />
-            </div>
-            {/* <StatGrid /> */}
-          </div>
-
-          <div className="flex md:items-end">
-            <div className="flex md:items-end">
-              <button
-                onClick={() =>
-                  window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
-                }
-                className="inline-flex gap-2 items-center justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-xs md:text-sm"
-              >
+              <span className="flex items-center bg-white px-7 py-4 transition-colors duration-200 group-hover:bg-neutral-100">
                 Start a project
-                <ArrowRight size={14} />
-              </button>
+              </span>
+              <span className="flex items-center justify-center bg-white px-4 py-4 text-neutral-600 transition-all duration-200 group-hover:bg-neutral-100 group-hover:text-neutral-950">
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5"
+                />
+              </span>
+            </button>
+          </motion.div>
+        </div>
+
+        {/* Right Feature Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 24, rotate: 0 }}
+          whileInView={{ opacity: 1, y: 0, rotate: 0.6 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="lg:col-span-7"
+        >
+          <div className="grid grid-cols-1 overflow-hidden bg-white p-3 text-neutral-950 shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4">
+            {/* Card Text & Metrics Column */}
+            <div className="flex flex-col justify-between p-4 sm:p-6 md:col-span-6">
+              <div>
+                <h3 className="font-display text-2xl font-medium tracking-tight text-neutral-950 sm:text-3xl">
+                  TageLabs Studio
+                </h3>
+                <p className="mt-3.5 font-sans text-sm leading-relaxed text-neutral-500 sm:text-[15px]">
+                  We work with startups launching their first digital product,
+                  creatives who need a portfolio that reflects the pure quality
+                  of their work, and businesses that want a web experience users
+                  remember.
+                </p>
+              </div>
+
+              <div className="mt-8 border-t border-neutral-200 pt-7">
+                {/* Octagon Action Icon */}
+                <button
+                  onClick={() =>
+                    window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
+                  }
+                  aria-label="Start a project with TageLabs"
+                  className="group flex h-11 w-11 items-center justify-center bg-[#0037FF] text-white transition-transform duration-200 hover:scale-105"
+                  style={{
+                    clipPath:
+                      "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
+                  }}
+                >
+                  <ArrowUpRight
+                    size={18}
+                    className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </button>
+
+                {/* Two-Column Stats */}
+                <div className="mt-8 grid grid-cols-2 gap-6">
+                  {STATS.map((stat, i) => (
+                    <div key={stat.label} className="flex flex-col">
+                      <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
+                        {stat.label}
+                      </span>
+                      <div className="mt-2">
+                        <Counter
+                          target={stat.value}
+                          suffix={stat.suffix}
+                          delay={0.15 + i * 0.12}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Card Right Image Column */}
+            <div className="relative min-h-[300px] overflow-hidden bg-neutral-100 sm:min-h-[360px] md:col-span-6 md:min-h-[430px]">
+              <img
+                src="/type.png"
+                alt="TageLabs studio workspace"
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
