@@ -23,6 +23,15 @@ const item = {
   },
 };
 
+const imageReveal = {
+  hidden: { opacity: 0, x: 40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
 const WHATSAPP_NUMBER = "2349041281560";
 const WHATSAPP_MESSAGE =
   "Hi TageLabs, I'd like to start a project with you. Can we talk?";
@@ -37,9 +46,9 @@ export default function TestHero() {
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end start"],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-40%", "40%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
 
   async function handleBrandStoryDownload() {
     try {
@@ -62,41 +71,35 @@ export default function TestHero() {
     <section
       ref={sectionRef}
       id="top"
-      className="relative overflow-hidden md:flex h-[600px] md:h-screen md:items-center"
+      className="relative overflow-hidden md:flex md:min-h-screen md:items-center"
     >
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        {/* solid navy overlay sits above the image */}
-        <div className="absolute inset-0 z-10 bg-black/70" />
-        <motion.img
-          src="/tagebg.png"
-          alt="TageLabs Digital Solutions"
-          loading="eager"
-          decoding="sync"
-          fetchPriority="high"
-          style={{ y: imageY }}
-          className="h-full w-full object-cover absolute  left-0"
+      <div className="absolute inset-0">
+        <img
+          src="/bg.jpg"
+          alt=""
+          className="h-full w-full object-cover opacity-20"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-white/10" />
       </div>
 
       <motion.div
         variants={container}
         initial="hidden"
         animate="visible"
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-36  md:px-14 md:pt-28 md:pb-20"
+        className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pb-16 pt-32 md:grid-cols-2 md:gap-10 md:px-14 md:pb-20 md:pt-28"
       >
-        <div className="max-w-4xl md:max-w-2xl">
-          <div className="flex flex-col  gap-3">
+        <div className="contents md:flex md:flex-col">
+          <div className="order-1 flex flex-col gap-4">
             <motion.h1
               variants={item}
-              className="font-jet text-left text-[38px] font-extrabold leading-[1.05] tracking-tight text-white md:text-6xl md:font-semibold md:leading-[1.08]"
+              className="font-jet text-left text-[38px] leading-[1.05] tracking-tight text-navy md:text-5xl font-semibold md:leading-[1.08] lg:text-6xl"
             >
-              Transforming <br className="md:hidden" /> Brands With{" "}
-              <br className="md:hidden" /> Scalable Digital Solutions
+              Transforming Brands With Scalable Digital Solutions
             </motion.h1>
 
             <motion.p
               variants={item}
-              className="text-xs text-left leading-relaxed text-neutral-300 md:mt-0 md:max-w-sm md:w-full w-64 md:text-sm font-sans"
+              className="max-w-sm text-left font-sans text-sm leading-relaxed text-navy/70"
             >
               At Tagelabs, we design, build, and scale digital experiences that
               turn ambitious ideas into measurable business growth.
@@ -105,25 +108,57 @@ export default function TestHero() {
 
           <motion.div
             variants={item}
-            className=" flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-8 md:pt-10 "
+            className="order-3 flex flex-col gap-3 sm:flex-row sm:items-center md:pt-10"
           >
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex gap-2 items-center md:w-44 w-[210px] md:items-center md:justify-center bg-navy text-white font-medium px-8 py-4 rounded-2xl hover:bg-blue transition-colors duration-200 text-sm"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-navy px-8 py-4 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue"
             >
               Start a project
               <ArrowRight size={14} />
             </a>
             <button
+              type="button"
               onClick={handleBrandStoryDownload}
-              className="flex md:w-44 w-48 md:items-center md:justify-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium px-8 py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm"
+              className="flex items-center justify-center rounded-2xl border border-navy/20 bg-white px-8 py-4 text-sm font-medium text-navy transition-colors duration-200 hover:border-blue hover:text-blue"
             >
               Our Brand Story
             </button>
           </motion.div>
         </div>
+
+        {/* <motion.div
+          variants={imageReveal}
+          className="relative h-[340px] overflow-hidden rounded-3xl sm:h-[440px] md:h-[560px]"
+        >
+          <motion.img
+            src="/type.png"
+            alt="TageLabs Digital Solutions"
+            loading="eager"
+            decoding="sync"
+            fetchPriority="high"
+            style={{ y: imageY }}
+            className="absolute inset-x-0 -top-[10%] h-[120%] w-full object-cover"
+          />
+        </motion.div> */}
+        <motion.div
+          variants={imageReveal}
+          className="relative order-2 h-[340px] overflow-hidden rounded-3xl sm:h-[440px] md:order-none md:h-[560px]"
+        >
+          <motion.video
+            src="/typev.mp4"
+            poster="/type.png"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            style={{ y: imageY }}
+            className="absolute inset-x-0 -top-[10%] h-[120%] w-full object-cover"
+          />
+        </motion.div>
       </motion.div>
     </section>
   );

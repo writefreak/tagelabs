@@ -11,6 +11,8 @@
 @theme {
   --font-jet: var(--font-jet);
   --font-lato: var(--font-lato), sans-serif;
+  --font-bricolage: var(--font-bricolage), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
 }
 * {
   box-sizing: border-box;

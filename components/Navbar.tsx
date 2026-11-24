@@ -1,168 +1,193 @@
 "use client";
+
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const links = ["About", "Services", "Work", "Reviews", "Blogs", "Contact"];
 
-const linkListVariants = {
-  visible: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-  },
+const listVariants: Variants = {
   hidden: {
     transition: { staggerChildren: 0.04, staggerDirection: -1 },
   },
+  visible: {
+    transition: { staggerChildren: 0.08, delayChildren: 0.2 },
+  },
 };
 
-const linkItemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+const itemVariants: Variants = {
+  hidden: { opacity: 0, x: 24 },
+  visible: { opacity: 1, x: 0 },
 };
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const pendingAction = useRef<(() => void) | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
+  const close = useCallback(() => setOpen(false), []);
+
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [mobileOpen]);
+  }, [open]);
 
-  const scrollToSection = (id: string) => {
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, close]);
+
+  const goToSection = (id: string) => {
     const sectionId = id.toLowerCase();
 
-    if (pathname === "/") {
-      document
-        .getElementById(sectionId)
-        ?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      router.push(`/#${sectionId}`);
-    }
+    pendingAction.current = () => {
+      if (pathname === "/") {
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        router.push(`/#${sectionId}`);
+      }
+    };
+
+    close();
   };
 
   const goToCvOrder = () => {
-    setMobileOpen(false);
-    router.push("/cv-order");
+    pendingAction.current = () => router.push("/cv-order");
+    close();
+  };
+
+  const runPendingAction = () => {
+    pendingAction.current?.();
+    pendingAction.current = null;
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[80] flex items-center justify-center gap-3 px-4 pt-5 md:px-14 md:pt-7 2xl:px-24 transition-opacity duration-300">
-      {/* Desktop pill nav */}
-      <div className="hidden md:flex border border-navy/10 bg-offwhite backdrop-blur-md shadow-md max-w-8xl p-2 px-2 rounded-2xl items-center justify-between">
-        <Link href="/" className="h-10 md:pr-4">
+    <>
+      {/* <div className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pt-5 md:px-14 md:pt-7 2xl:px-24"> */}
+      <div className="absolute top-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pt-5 md:px-14 md:pt-7 2xl:px-24">
+        <Link href="/" className="h-12 w-32 md:h-14 md:w-36">
           <img
             src="/tagelabslogo.png"
             alt="TageLabs"
-            className="object-contain h-full w-full"
+            className="h-full w-auto object-contain"
           />
         </Link>
 
-        <div className="flex items-center gap-10">
-          <div className="flex gap-8 2xl:gap-10 justify-between">
-            {links.map((link) => (
-              <div key={link} className="group relative">
-                <a
-                  href={`#${link.toLowerCase()}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection(link);
-                  }}
-                  className="font-sans text-sm text-navy/70 hover:text-navy relative after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:bg-blue after:scale-x-0 after:opacity-0 group-hover:after:opacity-100 group-hover:after:scale-x-100 after:transition-all after:duration-300 cursor-pointer transition-colors duration-200"
-                >
-                  {link}
-                </a>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <button
-              onClick={goToCvOrder}
-              className="rounded-2xl py-3 px-3 text-white text-xs font-medium bg-navy hover:bg-blue hover:-translate-y-1 transition-all duration-500"
-            >
-              Preorder a Modern CV
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile bar */}
-      <div className="relative z-[90] flex md:hidden w-full items-center justify-between border border-navy/10 bg-offwhite/80 backdrop-blur-md shadow-md p-2 pl-3 rounded-2xl">
-        <Link href="/" className="h-9">
-          <img
-            src="/tagelabslogo.png"
-            alt="TageLabs"
-            className="object-contain h-full w-full"
-          />
-        </Link>
-
-        <button
-          aria-label="Toggle menu"
-          onClick={() => setMobileOpen((prev) => !prev)}
-          className="h-10 w-10 flex items-center justify-center rounded-full text-navy transition-colors duration-200"
+        <motion.button
+          type="button"
+          aria-label="Open menu"
+          aria-expanded={open}
+          onClick={() => setOpen(true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex h-12 w-12 items-center justify-center rounded-xl border bg-offwhite text-navy transition-colors duration-200 hover:text-blue"
         >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
+          <Menu size={20} />
+        </motion.button>
       </div>
 
-      {/* Full-screen mobile sheet */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            key="nav-sheet"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 32 }}
-            className="fixed inset-0 z-[70] bg-offwhite flex flex-col items-center justify-center gap-8 px-6 md:hidden"
-          >
+      <AnimatePresence onExitComplete={runPendingAction}>
+        {open && (
+          <>
             <motion.div
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              variants={linkListVariants}
-              className="flex flex-col items-center gap-8"
-            >
-              {links.map((link) => (
-                <motion.div
-                  key={link}
-                  variants={linkItemVariants}
-                  transition={{ duration: 0.3 }}
-                >
-                  <a
-                    href={`#${link.toLowerCase()}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setMobileOpen(false);
-                      scrollToSection(link);
-                    }}
-                    className="font-display text-2xl font-medium text-neutral-600 hover:text-blue cursor-pointer transition-colors duration-200"
-                  >
-                    {link}
-                  </a>
-                </motion.div>
-              ))}
+              key="nav-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={close}
+              aria-hidden="true"
+              className="fixed inset-0 z-[70] bg-navy/40 backdrop-blur-sm"
+            />
 
-              <motion.div
-                variants={linkItemVariants}
-                transition={{ duration: 0.3 }}
-              >
-                <button
-                  onClick={goToCvOrder}
-                  className="rounded-2xl py-3 px-6 text-white text-xs md:text-sm font-medium bg-navy hover:bg-blue hover:-translate-y-1 transition-all duration-500"
+            <motion.aside
+              key="nav-sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site navigation"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 32 }}
+              className="fixed inset-y-0 right-0 z-[80] flex w-full flex-col bg-offwhite px-8 py-6 shadow-2xl md:max-w-md"
+            >
+              <div className="flex items-center justify-between">
+                {/* <img
+                  src="/tagelabslogo.png"
+                  alt="TageLabs"
+                  className="h-10 w-auto object-contain"
+                /> */}
+
+                <motion.button
+                  type="button"
+                  aria-label="Close menu"
+                  onClick={close}
+                  whileHover={{ rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-navy transition-colors duration-200 hover:text-blue"
                 >
-                  Preorder a Modern CV
-                </button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
+                  <X size={22} />
+                </motion.button>
+              </div>
+
+              <motion.nav
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={listVariants}
+                className="flex flex-1 flex-col justify-center items-center gap-6"
+              >
+                {links.map((link) => (
+                  <motion.div
+                    key={link}
+                    variants={itemVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <a
+                      href={`#${link.toLowerCase()}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        goToSection(link);
+                      }}
+                      className="inline-block text-center cursor-pointer text-3xl font-medium text-navy/70 transition-all duration-200 hover:translate-x-2 hover:text-blue"
+                    >
+                      {link}
+                    </a>
+                  </motion.div>
+                ))}
+
+                <motion.div
+                  variants={itemVariants}
+                  transition={{ duration: 0.3 }}
+                  className="pt-4"
+                >
+                  <button
+                    type="button"
+                    onClick={goToCvOrder}
+                    className="rounded-2xl bg-navy px-6 py-3 text-sm font-medium text-white transition-all duration-500 hover:-translate-y-1 hover:bg-blue"
+                  >
+                    Preorder a Modern CV
+                  </button>
+                </motion.div>
+              </motion.nav>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
