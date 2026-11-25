@@ -41,53 +41,32 @@ const fadeUp: Variants = {
 const RECENT_COUNT = 6;
 const PAGE_SIZE = 4;
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
-
 // ── Blog card (same structure as Work's ProjectCard) ────────────────────────
 function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
   return (
     <Link href={`/blogs/${post.slug}`}>
-      <article className="group relative overflow-hidden rounded-2xl aspect-[3/4] w-full">
+      <article className="group relative h-80 w-full overflow-hidden rounded-2xl shadow-md">
         <img
           src={imageSrc}
           alt={post.title}
-          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-          <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-2">
-            <div className="flex items-end justify-between">
-              <div className="min-w-0 flex-1 pr-2">
-                <h3 className="font-display text-sm font-semibold text-white leading-snug truncate">
-                  {post.title}
-                </h3>
-              </div>
-              <div className="shrink-0 w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
-                <ArrowUpRight size={13} color="white" />
-              </div>
-            </div>
-
-            <div className=" flex flex-col gap-2">
-              <span className="text-[10px] text-white/55 font-medium truncate min-w-0">
-                {post.excerpt || "Read the post"}
-              </span>
-              {/* <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap"> */}
-              {/* {formatDate(post.created_at)} */}
-              {/* </span> */}
-            </div>
+        <div className="absolute inset-0 flex flex-col justify-end">
+          <div className="bg-black/60 p-6 flex flex-col gap-2 md:gap-3 text-white backdrop-blur-sm">
+            <h3 className="font-display text-[17px] md:text-sm line-clamp-1 font-bold text-white leading-snug">
+              {post.title}
+            </h3>
+            <p className="text-xs font-sans text-white/80 line-clamp-2">
+              {post.excerpt || "Read the post"}
+            </p>
           </div>
         </div>
       </article>
     </Link>
   );
 }
-
 // ── Main component ──────────────────────────────────────────────────────────
 export default function RecentBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -149,11 +128,11 @@ export default function RecentBlogs() {
   return (
     <section
       id="blogs"
-      className="py-16 bg-white border-y border-t-gray-100 md:py-28 px-6 md:px-16"
+      className="border-y border-t-gray-100 bg-white px-6 py-16 md:px-16 md:py-28"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="mx-auto max-w-6xl">
         <motion.div
-          className="pb-7 md:pb-14 flex items-end justify-between gap-4 flex-wrap"
+          className="flex flex-wrap items-end justify-between gap-4 pb-7 md:pb-14"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -165,7 +144,7 @@ export default function RecentBlogs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55 }}
-              className="font-display text-2xl md:text-5xl font-semibold text-navy  leading-tight"
+              className="font-display text-4xl font-semibold leading-tight text-navy md:text-5xl"
             >
               Our Timeless Thoughts
             </motion.h2>
@@ -174,7 +153,7 @@ export default function RecentBlogs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "" }}
               transition={{ duration: 0.55 }}
-              className="max-w-sm font-body text-xs md:text-base leading-relaxed text-neutral-600"
+              className="max-w-sm font-sans text-xs leading-relaxed text-neutral-600 md:text-sm"
             >
               Click each card to explore a thoughtful curation of topics and
               interesting updates from us
@@ -182,7 +161,7 @@ export default function RecentBlogs() {
           </div>
           <Link
             href="/blogs"
-            className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-navy/50 hover:text-navy transition-colors"
+            className="hidden items-center gap-1.5 text-sm font-medium text-navy/50 transition-colors hover:text-navy sm:flex"
           >
             View all posts
             <ArrowUpRight size={14} />
@@ -191,11 +170,11 @@ export default function RecentBlogs() {
 
         {/* Loading skeleton */}
         {loading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="rounded-2xl overflow-hidden animate-pulse bg-navy/10 aspect-[2/3]"
+                className="aspect-[2/3] animate-pulse overflow-hidden rounded-2xl bg-navy/10"
               />
             ))}
           </div>
@@ -209,13 +188,13 @@ export default function RecentBlogs() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col items-center justify-center py-24 text-center"
           >
-            <div className="w-20 h-20 rounded-full bg-blue/10 flex items-center justify-center mb-6">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue/10">
               <span className="text-3xl">✦</span>
             </div>
-            <h3 className="font-display text-2xl font-semibold text-navy mb-3">
+            <h3 className="mb-3 font-display text-2xl font-semibold text-navy">
               Something's brewing.
             </h3>
-            <p className="font-body text-navy/50 text-sm max-w-xs leading-relaxed">
+            <p className="max-w-xs font-body text-sm leading-relaxed text-navy/50">
               Posts are being prepared with care. Check back soon — good writing
               takes time.
             </p>
@@ -228,7 +207,7 @@ export default function RecentBlogs() {
             <div className="sm:hidden">
               <div
                 ref={mobileScrollRef}
-                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
+                className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
                 {posts.map((post, i) => {
@@ -238,8 +217,7 @@ export default function RecentBlogs() {
                   return (
                     <div
                       key={post.id}
-                      className="shrink-0 snap-center"
-                      style={{ width: "60vw" }}
+                      className="w-[60vw] shrink-0 snap-center"
                     >
                       <BlogCard post={post} imageSrc={imageSrc} />
                     </div>
@@ -250,7 +228,7 @@ export default function RecentBlogs() {
               <div className="flex justify-center pt-6 sm:hidden">
                 <Link
                   href="/blogs"
-                  className="flex items-center gap-1.5 text-xs font-medium text-navy/50 hover:text-navy transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-medium text-navy/50 transition-colors hover:text-navy"
                 >
                   View all posts
                   <ArrowUpRight size={14} />
@@ -266,8 +244,8 @@ export default function RecentBlogs() {
                       aria-label={`Go to post ${i + 1}`}
                       className={`rounded-full transition-all duration-300 ${
                         i === mobileScrollPage
-                          ? "w-5 h-1.5 bg-navy"
-                          : "w-1.5 h-1.5 bg-navy/20"
+                          ? "h-1.5 w-5 bg-navy"
+                          : "h-1.5 w-1.5 bg-navy/20"
                       }`}
                     />
                   ))}
@@ -278,7 +256,7 @@ export default function RecentBlogs() {
             {/* ── DESKTOP: 4-column portrait grid ── */}
             <div
               ref={desktopScrollRef}
-              className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4"
+              className="hidden grid-cols-2 gap-4 sm:grid md:grid-cols-4"
             >
               {paginated.map((post, i) => {
                 const globalIndex = page * PAGE_SIZE + i;
@@ -303,12 +281,12 @@ export default function RecentBlogs() {
 
             {/* Pagination (desktop only) */}
             {showPagination && (
-              <div className="hidden sm:flex items-center justify-center gap-2 mt-10">
+              <div className="mt-10 hidden items-center justify-center gap-2 sm:flex">
                 <button
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 0}
                   aria-label="Previous page"
-                  className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-navy/10 text-navy/40 transition-all duration-200 hover:border-navy/30 hover:text-navy disabled:cursor-not-allowed disabled:opacity-20"
                 >
                   <svg
                     width="14"
@@ -331,8 +309,8 @@ export default function RecentBlogs() {
                     aria-label={`Page ${i + 1}`}
                     className={`rounded-full transition-all duration-300 ${
                       i === page
-                        ? "w-6 h-2 bg-navy"
-                        : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
+                        ? "h-2 w-6 bg-navy"
+                        : "h-2 w-2 bg-navy/20 hover:bg-navy/40"
                     }`}
                   />
                 ))}
@@ -341,7 +319,7 @@ export default function RecentBlogs() {
                   onClick={() => handlePageChange(page + 1)}
                   disabled={page === totalPages - 1}
                   aria-label="Next page"
-                  className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-navy/10 text-navy/40 transition-all duration-200 hover:border-navy/30 hover:text-navy disabled:cursor-not-allowed disabled:opacity-20"
                 >
                   <svg
                     width="14"

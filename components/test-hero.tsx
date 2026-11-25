@@ -142,7 +142,7 @@ export default function TestHero() {
         >
           <motion.video
             src="/typev.mp4"
-            poster="/type.png"
+            poster="/typev.mp4"
             autoPlay
             muted
             loop

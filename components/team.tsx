@@ -76,7 +76,7 @@ export default function TeamSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.55 }}
-            className="font-display text-2xl font-semibold leading-tight text-primary sm:text-5xl"
+            className="font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl"
           >
             Meet The Founders
           </motion.h2>
@@ -86,7 +86,7 @@ export default function TeamSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.55 }}
-            className="max-w-lg text-center font-body text-xs leading-relaxed text-neutral-600 md:text-base"
+            className="max-w-lg md:text-center font-sans text-xs leading-relaxed text-neutral-600 md:text-base"
           >
             We're a result-driven team focused on fostering growth, and client
             partnership through excellent project delivery
