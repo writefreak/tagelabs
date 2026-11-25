@@ -1,12 +1,60 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, animate } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  motion,
+  MotionValue,
+  useInView,
+  useScroll,
+  useSpring,
+  useTransform,
+  animate,
+} from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
-const STATS = [
-  { value: 20, suffix: "+", label: "PROJECTS SHIPPED" },
-  { value: 15, suffix: "+", label: "HAPPY CLIENTS" },
+interface AboutCardData {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  stats?: { value: number; suffix: string; label: string }[];
+}
+
+const ABOUT_CARDS: AboutCardData[] = [
+  {
+    id: "studio",
+    title: "Who We Are",
+    description:
+      "We work with startups launching their first digital product, creatives who need a portfolio that reflects the pure quality of their work, and businesses that want a web experience users remember.",
+    image: "/type.png",
+    imageAlt: "TageLabs studio workspace",
+    stats: [
+      { value: 20, suffix: "+", label: "PROJECTS SHIPPED" },
+      { value: 15, suffix: "+", label: "HAPPY CLIENTS" },
+    ],
+  },
+  {
+    id: "mission",
+    title: "Our Mission",
+    description: `We aim to swiftly bridge the gap between vision and execution by delivering
+design and innovative solutions that are visually compelling.
+Through every project we embark on, we treat every client as
+a partner while building something that works,
+communicates precisely, and lasts. `,
+    image: "/tageimg2.png",
+    imageAlt: "TageLabs design and engineering detail",
+  },
+  {
+    id: "vision",
+    title: "Our Vision",
+    description: `We envision a world where no ambitious business or individual is invisible
+online. We exist to make intentional, high-performance digital
+work the standard for growing businesses and individuals
+across Nigeria and beyond. `,
+    image: "/tageimg2.png",
+    imageAlt: "TageLabs design and engineering detail",
+  },
 ];
 
 const WHATSAPP_NUMBER = "2349041281560";
@@ -15,6 +63,26 @@ const WHATSAPP_MESSAGE =
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   WHATSAPP_MESSAGE,
 )}`;
+
+const MOBILE_QUERY = "(max-width: 767px)";
+const MOBILE_HOLD = 0.5;
+const DESKTOP_HOLD = 0;
+const MOBILE_SCROLL_PER_CARD = 130;
+const DESKTOP_SCROLL_PER_CARD = 100;
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia(MOBILE_QUERY);
+    const update = () => setIsMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return isMobile;
+}
 
 function Counter({
   target,
@@ -45,7 +113,7 @@ function Counter({
   return (
     <p
       ref={ref}
-      className="font-display text-4xl font-semibold tracking-tight text-neutral-950 sm:text-5xl"
+      className="font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl"
     >
       {count.toLocaleString()}
       {suffix}
@@ -53,46 +121,143 @@ function Counter({
   );
 }
 
+function AboutCardPanel({
+  card,
+  index,
+  total,
+  progress,
+  hold,
+}: {
+  card: AboutCardData;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  hold: number;
+}) {
+  const first = index === 0;
+  const last = index === total - 1;
+  const segment = 1 / total;
+
+  const inRange = first
+    ? [0, 0.001]
+    : [(index - 1) * segment + segment * hold, index * segment];
+  const inOut = first ? [1, 1] : [0, 1];
+  const outRange = last
+    ? [0.998, 1]
+    : [index * segment + segment * hold, (index + 1) * segment];
+  const outOut = last ? [1, 1] : [1, 0];
+
+  const enter = useTransform(progress, inRange, inOut);
+  const exit = useTransform(progress, outRange, outOut);
+
+  const clip = useTransform(enter, (v) => `inset(${(1 - v) * 100}% 0% 0% 0%)`);
+  const imgScale = useTransform(enter, [0, 1], [1.25, 1]);
+  const textY = useTransform(enter, [0, 1], [60, 0]);
+  const textOpacity = useTransform(enter, [0.35, 1], [0, 1]);
+  const panelScale = useTransform(exit, [0, 1], [0.9, 1]);
+  const dim = useTransform(exit, [0, 1], [0.55, 0]);
+
+  return (
+    <motion.div
+      className="relative col-start-1 row-start-1 flex items-stretch md:absolute md:inset-0 md:items-center"
+      style={{ zIndex: index + 1, scale: panelScale }}
+    >
+      <motion.div
+        className="relative grid w-full grid-cols-1 overflow-hidden bg-[#4486E0] p-3 text-white shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4"
+        style={{ clipPath: clip }}
+      >
+        {/* Card Text & Metrics Column */}
+        <motion.div
+          className="flex flex-col justify-between p-4 sm:p-6 md:col-span-6"
+          style={{ y: textY, opacity: textOpacity }}
+        >
+          <div>
+            <h3 className="font-display text-2xl font-medium tracking-tight text-white sm:text-3xl">
+              {card.title}
+            </h3>
+            <p className="mt-3.5 font-sans text-xs leading-relaxed text-neutral-100 md:text-sm">
+              {card.description}
+            </p>
+          </div>
+
+          <div className="mt-8 border-t border-white/20 pt-7">
+            {/* Two-Column Stats */}
+            <div className="mt-8 grid grid-cols-2 gap-6">
+              {card.stats?.map((stat, i) => (
+                <div key={stat.label} className="flex flex-col">
+                  <span className="font-sans text-[11px] font-semibold uppercase text-neutral-200">
+                    {stat.label}
+                  </span>
+                  <div className="mt-2">
+                    <Counter
+                      target={stat.value}
+                      suffix={stat.suffix}
+                      delay={0.15 + i * 0.12}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Card Right Image Column */}
+        <div className="relative min-h-[220px] overflow-hidden bg-neutral-100 sm:min-h-[340px] md:col-span-6 md:min-h-[430px]">
+          <motion.img
+            src={card.image}
+            alt={card.imageAlt}
+            className="h-full w-full object-cover"
+            style={{ scale: imgScale }}
+          />
+        </div>
+
+        {/* Retreat Overlay When Covered by Next Card */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[#1d4ed8]"
+          style={{ opacity: dim }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function About() {
+  const total = ABOUT_CARDS.length;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ["start start", "end end"],
+  });
+
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 28,
+    mass: 0.4,
+  });
+
+  const hold = isMobile ? MOBILE_HOLD : DESKTOP_HOLD;
+  const scrollPerCard = isMobile
+    ? MOBILE_SCROLL_PER_CARD
+    : DESKTOP_SCROLL_PER_CARD;
+
   return (
     <section
       id="about"
-      className="overflow-hidden bg-[#0037FF] px-6 py-20 text-white sm:px-10 sm:py-28 lg:py-32"
+      className="px-6 py-24 text-white sm:px-10 sm:py-28 lg:py-36"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-10">
         {/* Left Column */}
-        <div className="flex flex-col items-start lg:col-span-5">
-          {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.45 }}
-            className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/95"
-          >
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 12 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                d="M6 0L7.35 4.65L12 6L7.35 7.35L6 12L4.65 7.35L0 6L4.65 4.65L6 0Z"
-                fill="currentColor"
-              />
-            </svg>
-            <span>OUR STUDIO</span>
-          </motion.div>
-
+        <div className="flex flex-col items-start lg:sticky lg:top-32 lg:col-span-5">
           {/* Main Heading */}
           <motion.h2
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.06 }}
-            className="mt-4 font-display text-5xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.25rem]"
+            className="mt-4 font-display text-navy text-4xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl"
           >
             About Us
           </motion.h2>
@@ -103,10 +268,11 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.12 }}
-            className="mt-5 max-w-md font-sans text-base leading-relaxed text-white/85 sm:text-[17px]"
+            className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm"
           >
-            From strategy to execution, we bring the technical depth and design
-            clarity to build digital products that last.
+            From strategy to execution, we pair technical depth and design
+            clarity to build lasting digital products for ambitious teams and
+            creators in Nigeria and beyond.
           </motion.p>
 
           {/* Split Button */}
@@ -123,10 +289,8 @@ export default function About() {
               }
               className="group inline-flex items-stretch gap-[2px] text-sm font-medium text-neutral-950 focus:outline-none"
             >
-              <span className="flex items-center bg-white px-7 py-4 transition-colors duration-200 group-hover:bg-neutral-100">
-                Start a project
-              </span>
-              <span className="flex items-center justify-center bg-white px-4 py-4 text-neutral-600 transition-all duration-200 group-hover:bg-neutral-100 group-hover:text-neutral-950">
+              <span className="flex items-center gap-2 rounded-xl bg-navy px-7 py-4 text-white transition-colors duration-200 group-hover:bg-neutral-100">
+                Start a project{" "}
                 <ArrowRight
                   size={16}
                   className="transition-transform duration-200 group-hover:translate-x-0.5"
@@ -136,78 +300,27 @@ export default function About() {
           </motion.div>
         </div>
 
-        {/* Right Feature Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 24, rotate: 0 }}
-          whileInView={{ opacity: 1, y: 0, rotate: 0.6 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="lg:col-span-7"
+        {/* Right Feature Card Pinned Stack */}
+        <div
+          ref={trackRef}
+          style={{ height: `${total * scrollPerCard}svh` }}
+          className="relative lg:col-span-7"
         >
-          <div className="grid grid-cols-1 overflow-hidden bg-white p-3 text-neutral-950 shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4">
-            {/* Card Text & Metrics Column */}
-            <div className="flex flex-col justify-between p-4 sm:p-6 md:col-span-6">
-              <div>
-                <h3 className="font-display text-2xl font-medium tracking-tight text-neutral-950 sm:text-3xl">
-                  TageLabs Studio
-                </h3>
-                <p className="mt-3.5 font-sans text-sm leading-relaxed text-neutral-500 sm:text-[15px]">
-                  We work with startups launching their first digital product,
-                  creatives who need a portfolio that reflects the pure quality
-                  of their work, and businesses that want a web experience users
-                  remember.
-                </p>
-              </div>
-
-              <div className="mt-8 border-t border-neutral-200 pt-7">
-                {/* Octagon Action Icon */}
-                <button
-                  onClick={() =>
-                    window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
-                  }
-                  aria-label="Start a project with TageLabs"
-                  className="group flex h-11 w-11 items-center justify-center bg-[#0037FF] text-white transition-transform duration-200 hover:scale-105"
-                  style={{
-                    clipPath:
-                      "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
-                  }}
-                >
-                  <ArrowUpRight
-                    size={18}
-                    className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                </button>
-
-                {/* Two-Column Stats */}
-                <div className="mt-8 grid grid-cols-2 gap-6">
-                  {STATS.map((stat, i) => (
-                    <div key={stat.label} className="flex flex-col">
-                      <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
-                        {stat.label}
-                      </span>
-                      <div className="mt-2">
-                        <Counter
-                          target={stat.value}
-                          suffix={stat.suffix}
-                          delay={0.15 + i * 0.12}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Card Right Image Column */}
-            <div className="relative min-h-[300px] overflow-hidden bg-neutral-100 sm:min-h-[360px] md:col-span-6 md:min-h-[430px]">
-              <img
-                src="/type.png"
-                alt="TageLabs studio workspace"
-                className="h-full w-full object-cover"
-              />
+          <div className="sticky top-20 flex items-center md:min-h-[480px] lg:top-28">
+            <div className="relative grid w-full md:block md:min-h-[460px]">
+              {ABOUT_CARDS.map((card, i) => (
+                <AboutCardPanel
+                  key={`${card.id}-${hold}`}
+                  card={card}
+                  index={i}
+                  total={total}
+                  progress={progress}
+                  hold={hold}
+                />
+              ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
