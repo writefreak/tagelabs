@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import LayoutShell from "@/components/layout-shell";
-import { Lato } from "next/font/google";
+import { Inter, Lato } from "next/font/google";
 
 const paperlogy = localFont({
   src: [
@@ -36,6 +36,13 @@ const lato = Lato({
   subsets: ["latin"],
   weight: ["100", "300", "400", "700", "900"],
   variable: "--font-lato",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
   display: "swap",
 });
 export const metadata: Metadata = {
@@ -90,7 +97,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${paperlogy.variable}`}>
+    <html
+      lang="en"
+      className={`${paperlogy.variable} ${inter.variable} ${lato.variable}`}
+    >
       <body suppressHydrationWarning>
         <LayoutShell>{children}</LayoutShell>
       </body>
