@@ -1,127 +1,161 @@
 "use client";
-import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import type { Variants } from "framer-motion";
 import { useRef } from "react";
-import { Layout, FileUser, Palette, Code2, Globe } from "lucide-react";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import { Palette, Code2, Globe, FileUser } from "lucide-react";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.55,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+type Service = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
 };
 
-const services = [
+const services: Service[] = [
   {
     icon: Globe,
     title: "Professional Website Design",
     description:
-      "We build websites that are clean, intentional and designed so your visitors take action.",
+      "We build websites that are clean and intentional, and we shape every page so that the people visiting it understand what you offer and feel ready to take the next step.",
   },
   {
     icon: FileUser,
     title: "CV & Portfolio Optimization",
     description:
-      "Professional CVs and portfolio sites that position you for the best opportunities you desire.",
+      "A well made CV and portfolio site presents your experience clearly and positions you for the opportunities you actually want, rather than the ones that happen to come along.",
   },
   {
     icon: Palette,
     title: "Minimalist Graphics",
     description:
-      "Clean, intentional graphic design for brands that want to communicate clarity and confidence.",
+      "Graphic design for brands that want to communicate with clarity and confidence, using restrained layouts and considered detail instead of decoration for its own sake.",
   },
   {
     icon: Code2,
     title: "Frontend Development",
     description:
-      "Scalable, performant frontend code using modern frameworks. From component libraries to full product UIs.",
+      "Scalable and performant frontend code built on modern frameworks, covering everything from reusable component libraries to complete product interfaces.",
   },
 ];
 
+const easing = [0.22, 1, 0.36, 1] as const;
+
+function TimelineItem({
+  service,
+  isRight,
+}: {
+  service: Service;
+  isRight: boolean;
+}) {
+  const Icon = service.icon;
+
+  return (
+    <li className="relative pb-5 pl-12 last:pb-0 md:grid md:grid-cols-2 md:gap-x-20 md:pl-0">
+      <div className="absolute left-0 top-0 md:left-1/2 md:-translate-x-1/2">
+        <motion.div
+          className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md border-2 border-white/20 bg-blue text-white shadow-lg"
+          initial={{ opacity: 0, scale: 0.6 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{ duration: 0.45, ease: easing }}
+        >
+          <Icon className="h-5 w-5" strokeWidth={1.75} />
+        </motion.div>
+      </div>
+
+      <motion.div
+        className={`rounded-md border border-white/25 bg-white/10 p-6 shadow-lg backdrop-blur-md md:p-8 ${
+          isRight ? "md:col-start-2" : ""
+        }`}
+        initial={{ opacity: 0, x: isRight ? 32 : -32 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-120px" }}
+        transition={{ duration: 0.6, delay: 0.1, ease: easing }}
+      >
+        <h3 className="font-display text-base font-semibold text-white md:text-xl">
+          {service.title}
+        </h3>
+        <p className="mt-3 font-sans text-xs leading-relaxed text-white/70 md:text-sm">
+          {service.description}
+        </p>
+      </motion.div>
+    </li>
+  );
+}
+
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLOListElement>(null);
 
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: sectionProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+  const imageY = useTransform(sectionProgress, [0, 1], ["-15%", "15%"]);
+
+  const { scrollYProgress: timelineProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start 70%", "end 60%"],
+  });
+
+  const progress = useSpring(timelineProgress, {
+    stiffness: 120,
+    damping: 24,
+    restDelta: 0.001,
+  });
 
   return (
     <section
       ref={sectionRef}
       id="services"
-      className="relative overflow-hidden md:py-28 py-16 px-6 border-t border-t-gray-100"
+      className="relative isolate overflow-hidden border-t border-gray-100 px-4 py-24 md:px-14 md:py-28"
     >
-      <motion.div
+      <motion.img
+        src="/tagebg.png"
+        alt=""
         style={{ y: imageY }}
-        className="absolute hidden md:block inset-0 -z-10 h-[130%] -top-[15%]"
-      >
-        <img src="/tagebg.png" alt="" className="w-full h-full object-cover" />
-      </motion.div>
-      <motion.div
-        style={{ y: imageY }}
-        className="absolute md:hidden inset-0 -z-10 h-[130%] -top-[15%]"
-      >
-        <img src="/tagebg.png" alt="" className="w-full h-full object-cover" />
-      </motion.div>
-      <div className="absolute inset-0 -z-10 bg-navy/50" />
+        className="absolute -top-[15%] left-0 -z-20 h-[130%] w-full object-cover"
+      />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-navy/60" />
 
-      <div className="max-w-6xl md:max-w-6xl mx-auto">
-        {/* Header */}
+      <div className="mx-auto max-w-5xl">
         <motion.div
-          className="flex flex-col md:flex-row md:items-end justify-between pb-5 md:pb-16 gap-6"
+          className="mx-auto mb-14 max-w-2xl md:text-center md:mb-20"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: easing }}
         >
-          <div className="flex flex-col gap-2 pb-2">
-            <h2 className="font-display text-2xl md:text-5xl font-semibold text-white leading-tight">
-              Explore Our services
-            </h2>
+          <h2 className="font-display text-4xl font-semibold leading-tight text-white md:text-5xl">
+            Explore our services
+          </h2>
 
-            <p className="font-body text-white/70 max-w-sm text-xs md:text-sm leading-relaxed">
-              Every service is designed to move your business forward in a way
-              that's visible, measurable, and lasting.
-            </p>
-          </div>
+          <p className="mx-auto mt-5 max-w-xl text-xs font-sans leading-relaxed text-white/70 md:text-sm">
+            Whether the need is a single landing page, a portfolio or an entire
+            digital revamp, TageLabs meets you where you are, thinks with you,
+            and builds for the long game.
+          </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid md:grid-cols-4 gap-2 md:gap-4">
-          {services.map((s) => {
-            const Icon = s.icon;
-            return (
-              <motion.div
-                key={s.title}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                className="group border border-white/25 bg-white/10 backdrop-blur-md shadow-lg rounded-2xl p-8 2xl:p-10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
-              >
-                <div className="w-12 h-12 rounded-full bg-blue/70 flex items-center justify-center mb-6">
-                  <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
-                </div>
+        <ol ref={timelineRef} className="relative">
+          <div
+            aria-hidden
+            className="absolute bottom-0 left-6 top-6 w-0.5 -translate-x-1/2 bg-white/25 md:left-1/2"
+          >
+            <motion.div
+              style={{ scaleY: progress }}
+              className="h-full w-full origin-top bg-white"
+            />
+          </div>
 
-                <h3 className="font-jet text-sm md:text-base 2xl:text-xl font-semibold text-white mb-3">
-                  {s.title}
-                </h3>
-                <p className="font-body text-white/70 text-xs md:text-sm 2xl:text-base leading-relaxed">
-                  {s.description}
-                </p>
-              </motion.div>
-            );
-          })}
-        </div>
+          {services.map((service, index) => (
+            <TimelineItem
+              key={service.title}
+              service={service}
+              isRight={index % 2 === 1}
+            />
+          ))}
+        </ol>
       </div>
     </section>
   );
