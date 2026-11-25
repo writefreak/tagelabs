@@ -64,17 +64,13 @@ export default function Services() {
         style={{ y: imageY }}
         className="absolute hidden md:block inset-0 -z-10 h-[130%] -top-[15%]"
       >
-        <img src="/office.jpg" alt="" className="w-full h-full object-cover" />
+        <img src="/tagebg.png" alt="" className="w-full h-full object-cover" />
       </motion.div>
       <motion.div
         style={{ y: imageY }}
         className="absolute md:hidden inset-0 -z-10 h-[130%] -top-[15%]"
       >
-        <img
-          src="/mainoffice.png"
-          alt=""
-          className="w-full h-full object-cover"
-        />
+        <img src="/tagebg.png" alt="" className="w-full h-full object-cover" />
       </motion.div>
       <div className="absolute inset-0 -z-10 bg-navy/50" />
 

@@ -89,7 +89,7 @@ export default function TestHero() {
         className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pb-16 pt-32 md:grid-cols-2 md:gap-10 md:px-14 md:pt-24"
       >
         <div className="contents md:flex md:flex-col">
-          <div className="order-1 flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <motion.h1
               variants={item}
               className="font-jet text-left text-[38px] leading-[1.05] tracking-tight text-navy md:text-5xl font-semibold md:leading-[1.08] lg:text-6xl"
@@ -108,24 +108,17 @@ export default function TestHero() {
 
           <motion.div
             variants={item}
-            className="order-3 flex flex-col gap-3 sm:flex-row sm:items-center md:pt-5"
+            className="flex flex-col items-start gap-3 md:max-w-full md:flex-row md:items-center md:pt-5"
           >
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-2xl bg-navy px-8 py-4 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue"
+              className="flex items-center justify-center gap-1.5 rounded-md bg-navy px-5 py-3 text-xs font-medium text-white transition-colors duration-200 hover:bg-blue md:gap-2 md:px-8 md:py-4 md:text-sm"
             >
               Start a project
               <ArrowRight size={14} />
             </a>
-            {/* <button
-              type="button"
-              onClick={handleBrandStoryDownload}
-              className="flex items-center justify-center rounded-2xl border border-navy/20 bg-white px-8 py-4 text-sm font-medium text-navy transition-colors duration-200 hover:border-blue hover:text-blue"
-            >
-              Our Brand Story
-            </button> */}
           </motion.div>
         </div>
 
@@ -145,7 +138,7 @@ export default function TestHero() {
         </motion.div> */}
         <motion.div
           variants={imageReveal}
-          className="relative order-2 h-[340px] overflow-hidden rounded-3xl sm:h-[440px] md:order-none md:h-[520px]"
+          className="relative order-2 h-[340px] overflow-hidden rounded-xl sm:h-[440px] md:order-none md:h-[520px]"
         >
           <motion.video
             src="/typev.mp4"

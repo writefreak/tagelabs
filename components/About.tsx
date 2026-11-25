@@ -163,7 +163,7 @@ function AboutCardPanel({
       style={{ zIndex: index + 1, scale: panelScale }}
     >
       <motion.div
-        className="relative grid w-full grid-cols-1 overflow-hidden bg-[#4486E0] p-3 text-white shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4"
+        className="relative grid w-full grid-cols-1 rounded-md overflow-hidden bg-[#4486E0] p-3 text-white shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4"
         style={{ clipPath: clip }}
       >
         {/* Card Text & Metrics Column */}
@@ -250,39 +250,21 @@ export default function About() {
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-10">
         {/* Left Column */}
-        <div className="flex flex-col items-start lg:sticky lg:top-32 lg:col-span-5">
+        <div className="flex flex-col items-start lg:sticky lg:top-1/2 lg:col-span-5 lg:-translate-y-1/2">
           {/* Main Heading */}
-          <motion.h2
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.06 }}
-            className="mt-4 font-display text-navy text-4xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl"
-          >
+          <h2 className="mt-4 font-display text-navy text-4xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl">
             About Us
-          </motion.h2>
+          </h2>
 
           {/* Left Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.12 }}
-            className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm"
-          >
+          <p className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm">
             From strategy to execution, we pair technical depth and design
             clarity to build lasting digital products for ambitious teams and
             creators in Nigeria and beyond.
-          </motion.p>
+          </p>
 
           {/* Split Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.18 }}
-            className="mt-9"
-          >
+          <div className="mt-9 md:block hidden">
             <button
               onClick={() =>
                 window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
@@ -297,7 +279,7 @@ export default function About() {
                 />
               </span>
             </button>
-          </motion.div>
+          </div>
         </div>
 
         {/* Right Feature Card Pinned Stack */}
@@ -318,6 +300,18 @@ export default function About() {
                   hold={hold}
                 />
               ))}
+
+              <motion.div className="md:hidden pt-7 flex flex-col items-start gap-3 md:max-w-full md:flex-row md:items-center md:pt-5">
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 rounded-md bg-navy px-5 py-3 text-xs font-medium text-white transition-colors duration-200 hover:bg-blue md:gap-2 md:px-8 md:py-4 md:text-sm"
+                >
+                  Start a project
+                  <ArrowRight size={14} />
+                </a>
+              </motion.div>
             </div>
           </div>
         </div>

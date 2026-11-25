@@ -93,7 +93,7 @@ export default function Navbar() {
           onClick={() => setOpen(true)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="flex h-12 w-12 items-center justify-center rounded-xl border bg-offwhite text-navy transition-colors duration-200 hover:text-blue"
+          className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md border bg-white shadow-xs text-navy transition-colors duration-200 hover:text-blue"
         >
           <Menu size={20} />
         </motion.button>
