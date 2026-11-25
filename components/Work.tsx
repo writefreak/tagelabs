@@ -65,7 +65,7 @@ function ProjectCard({
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
       <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-        <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-3 flex flex-col gap-2">
+        <div className="bg-black/40 backdrop-blur-md border border-white/20 rounded-xl p-4 flex flex-col gap-2">
           <div className="flex items-end justify-between">
             <div className="min-w-0 flex-1 pr-2">
               {/* <span className="block text-[7px] font-medium uppercase tracking-widest text-white/50 mb-0.5">
@@ -79,9 +79,9 @@ function ProjectCard({
                 {project.description}
               </p> */}
             </div>
-            <div className="shrink-0 w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+            {/* <div className="shrink-0 w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
               <ArrowUpRight size={13} color="white" />
-            </div>
+            </div> */}
           </div>
 
           <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
@@ -92,9 +92,9 @@ function ProjectCard({
                 </span>
               ))}
             </div>
-            <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
+            {/* <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
               {project.live_url ? "View project" : "Delivered."}
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
@@ -174,12 +174,12 @@ export default function Work() {
   return (
     <section
       id="work"
-      className="py-16 md:pt-32 border-b border-b-gray-100 md:pb-17 px-6"
+      className="py-24 md:py-32 border-b border-b-gray-100 px-4 md:px-14"
       style={{ background: "#ffffff" }}
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="pb-7 md:pb-14 flex flex-col gap-2 md:gap-3"
+          className="pb-7 md:pb-14 flex flex-col gap-2 md:gap-3 md:items-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-80px" }}
@@ -190,7 +190,7 @@ export default function Work() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "" }}
             transition={{ duration: 0.55 }}
-            className="font-display  text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight"
+            className="font-display  text-4xl md:text-5xl font-semibold text-navy md:text-center leading-tight"
           >
             Higlighted Projects
           </motion.h2>
@@ -199,7 +199,7 @@ export default function Work() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "" }}
             transition={{ duration: 0.55 }}
-            className="max-w-sm font-body text-xs md:text-base leading-relaxed text-neutral-600"
+            className="max-w-sm font-sans text-xs md:text-center md:text-base leading-relaxed text-neutral-600"
           >
             Click each card to explore a thoughtful curation of our most recent
             projects

@@ -246,7 +246,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="px-6 py-24 text-white sm:px-10 sm:py-28 lg:py-36"
+      className="px-6 py-24 text-white md:px-14 sm:py-28 lg:py-36"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-10">
         {/* Left Column */}

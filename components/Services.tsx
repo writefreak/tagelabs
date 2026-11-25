@@ -38,6 +38,7 @@ const services: Service[] = [
 ];
 
 const easing = [0.22, 1, 0.36, 1] as const;
+const itemViewport = { once: true, margin: "0px 0px -120px 0px" };
 
 function TimelineItem({
   service,
@@ -52,10 +53,10 @@ function TimelineItem({
     <li className="relative pb-5 pl-12 last:pb-0 md:grid md:grid-cols-2 md:gap-x-20 md:pl-0">
       <div className="absolute left-0 top-0 md:left-1/2 md:-translate-x-1/2">
         <motion.div
-          className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md border-2 border-white/20 bg-blue text-white shadow-lg"
+          className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-white/20 bg-blue text-white shadow-lg md:h-12 md:w-12"
           initial={{ opacity: 0, scale: 0.6 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-120px" }}
+          viewport={itemViewport}
           transition={{ duration: 0.45, ease: easing }}
         >
           <Icon className="h-5 w-5" strokeWidth={1.75} />
@@ -68,7 +69,7 @@ function TimelineItem({
         }`}
         initial={{ opacity: 0, x: isRight ? 32 : -32 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: "-120px" }}
+        viewport={itemViewport}
         transition={{ duration: 0.6, delay: 0.1, ease: easing }}
       >
         <h3 className="font-display text-base font-semibold text-white md:text-xl">
@@ -120,17 +121,17 @@ export default function Services() {
 
       <div className="mx-auto max-w-5xl">
         <motion.div
-          className="mx-auto mb-14 max-w-2xl md:text-center md:mb-20"
+          className="mx-auto mb-14 max-w-2xl md:mb-20 md:text-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: "0px 0px -80px 0px" }}
           transition={{ duration: 0.6, ease: easing }}
         >
           <h2 className="font-display text-4xl font-semibold leading-tight text-white md:text-5xl">
             Explore our services
           </h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-xs font-sans leading-relaxed text-white/70 md:text-sm">
+          <p className="mx-auto mt-5 max-w-xl font-sans text-xs leading-relaxed text-white/70 md:text-sm">
             Whether the need is a single landing page, a portfolio or an entire
             digital revamp, TageLabs meets you where you are, thinks with you,
             and builds for the long game.
@@ -140,7 +141,7 @@ export default function Services() {
         <ol ref={timelineRef} className="relative">
           <div
             aria-hidden
-            className="absolute bottom-0 left-6 top-6 w-0.5 -translate-x-1/2 bg-white/25 md:left-1/2"
+            className="absolute bottom-0 left-5 top-5 w-0.5 -translate-x-1/2 bg-white/25 md:left-1/2 md:top-6"
           >
             <motion.div
               style={{ scaleY: progress }}
