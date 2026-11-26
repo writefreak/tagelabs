@@ -84,13 +84,11 @@ function ProjectCard({
             </div> */}
           </div>
 
-          <div className="bg-black/30 border border-white/10 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
+          <div className=" flex items-center justify-between gap-2">
             <div className="flex flex-wrap gap-1.5 min-w-0">
-              {project.tags.slice(0, 2).map((t) => (
-                <span key={t} className="text-[10px] text-white/55 font-medium">
-                  {t}
-                </span>
-              ))}
+              <span className="text-[10px] line-clamp-2 text-white/55 font-medium">
+                {project.description}
+              </span>
             </div>
             {/* <span className="shrink-0 text-[10px] text-white/40 whitespace-nowrap">
               {project.live_url ? "View project" : "Delivered."}
@@ -194,7 +192,7 @@ export default function Work() {
           >
             Higlighted Projects
           </motion.h2>
-          <motion.p
+          {/* <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "" }}
@@ -203,7 +201,7 @@ export default function Work() {
           >
             Click each card to explore a thoughtful curation of our most recent
             projects
-          </motion.p>
+          </motion.p> */}
         </motion.div>
 
         {/* Loading skeleton */}

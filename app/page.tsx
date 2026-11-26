@@ -21,8 +21,8 @@ export default function Home() {
       <About />
       <Services />
       <Work />
-      <TeamSection />
       <RecentBlogs />
+      {/* <TeamSection /> */}
       <Reviews />
       {/* <Contact /> */}
       {/* <Footer/> */}

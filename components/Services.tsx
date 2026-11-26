@@ -112,10 +112,10 @@ export default function Services() {
       className="relative isolate overflow-hidden border-t border-gray-100 px-4 py-24 md:px-14 md:py-28"
     >
       <motion.img
-        src="/tagebg.png"
+        src="/code.jpg"
         alt=""
         style={{ y: imageY }}
-        className="absolute -top-[15%] left-0 -z-20 h-[130%] w-full object-cover"
+        className="absolute -top-[15%]  left-0 -z-20 h-[130%] w-full object-cover"
       />
       <div aria-hidden className="absolute inset-0 -z-10 bg-navy/60" />
 

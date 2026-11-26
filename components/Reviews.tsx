@@ -1,8 +1,25 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
+import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import type { MotionValue } from "framer-motion";
+import {
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquarePlus,
+  Quote,
+  Star,
+  X,
+} from "lucide-react";
 import { supabase } from "@/app/lib/supabase";
-import { ArrowRight } from "lucide-react";
 
 type Review = {
   id: string;
@@ -52,46 +69,139 @@ const fallback: Review[] = [
     name: "Seun Adeyemi",
     role: "Creative Director",
     review:
-      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
-  },
-  {
-    id: "7",
-    name: "Seun Adeyemi",
-    role: "Creative Director",
-    review:
-      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
-  },
-  {
-    id: "8",
-    name: "Seun Adeyemi",
-    role: "Creative Director",
-    review:
-      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
-  },
-  {
-    id: "9",
-    name: "Seun Adeyemi",
-    role: "Creative Director",
-    review:
-      "They think before they build. The landing page didn't just look good — it converted. That's rare.",
+      "They think before they build. The landing page didn't just look good, it converted. That's rare.",
   },
 ];
 
-const PAGE_SIZE = 3;
+const SCROLL_PER_REVIEW_VH = 55;
+const HOLD_RATIO = 0.45;
 const emptyForm = { name: "", role: "", review: "" };
 
 const inputClass =
   "w-full bg-navy/[0.03] border border-navy/10 rounded-xl px-4 py-3 text-navy text-sm font-body placeholder:text-navy/30 focus:outline-none focus:border-blue transition-colors";
 
+function ReviewCardPanel({
+  item,
+  index,
+  total,
+  progress,
+  hold,
+}: {
+  item: Review;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  hold: number;
+}) {
+  const first = index === 0;
+  const last = index === total - 1;
+  const segment = 1 / total;
+
+  const inRange = first
+    ? [0, 0.001]
+    : [(index - 1) * segment + segment * hold, index * segment];
+  const inOut = first ? [1, 1] : [0, 1];
+
+  const outRange = last
+    ? [0.998, 1]
+    : [index * segment + segment * hold, (index + 1) * segment];
+  const outOut = last ? [1, 1] : [1, 0];
+
+  const enter = useTransform(progress, inRange, inOut);
+  const exit = useTransform(progress, outRange, outOut);
+
+  const clip = useTransform(enter, (v) => `inset(${(1 - v) * 100}% 0% 0% 0%)`);
+  const cardScale = useTransform(enter, [0, 1], [1.06, 1]);
+  const textY = useTransform(enter, [0, 1], [36, 0]);
+  const textOpacity = useTransform(enter, [0.3, 1], [0, 1]);
+  const panelScale = useTransform(exit, [0, 1], [0.94, 1]);
+  const dim = useTransform(exit, [0, 1], [0.5, 0]);
+
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center"
+      style={{ zIndex: index + 1, scale: panelScale }}
+    >
+      <motion.article
+        className="relative flex h-full w-full flex-col overflow-hidden rounded-xl bg-navy p-6 text-white shadow-[0_24px_60px_rgba(0,18,110,0.28)] md:p-9"
+        style={{ clipPath: clip, scale: cardScale }}
+      >
+        <Quote
+          aria-hidden
+          strokeWidth={1.5}
+          className="absolute right-5 top-5 h-14 w-14 text-white/[0.06] md:h-24 md:w-24"
+        />
+
+        <motion.div
+          className="relative flex h-full flex-col"
+          style={{ y: textY, opacity: textOpacity }}
+        >
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, j) => (
+              <Star
+                key={j}
+                className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500"
+                strokeWidth={0}
+              />
+            ))}
+          </div>
+
+          <blockquote className="mt-4 line-clamp-6 font-display text-sm font-medium leading-relaxed md:mt-5 md:line-clamp-5 md:text-lg md:leading-relaxed">
+            {item.review}
+          </blockquote>
+
+          <div className="mt-auto flex items-center gap-3 pt-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-sm font-semibold">
+              {item.name.charAt(0)}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate font-body text-sm font-semibold">
+                {item.name}
+              </p>
+              {item.role && (
+                <p className="mt-0.5 truncate font-body text-xs text-white/55">
+                  {item.role}
+                </p>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-3xl bg-navy"
+          style={{ opacity: dim }}
+        />
+      </motion.article>
+    </motion.div>
+  );
+}
+
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [page, setPage] = useState(0);
+  const [active, setActive] = useState(0);
+  const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const pinTrackRef = useRef<HTMLDivElement>(null);
+
+  const displayed = reviews.length > 0 ? reviews : fallback;
+  const total = displayed.length;
+  const safeActive = Math.min(active, total - 1);
+
+  const { scrollYProgress } = useScroll({
+    target: pinTrackRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const next = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
+    setActive((prev) => (next === prev ? prev : next));
+  });
 
   useEffect(() => {
     async function fetchReviews() {
@@ -106,15 +216,30 @@ export default function Reviews() {
   }, []);
 
   useEffect(() => {
-    if (selectedReview) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = formOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [selectedReview]);
+  }, [formOpen]);
+
+  function goTo(index: number) {
+    const track = pinTrackRef.current;
+    if (!track) return;
+    const normalized = ((index % total) + total) % total;
+    const targetProgress = (normalized + 0.5) / total;
+    const distance = Math.max(0, track.offsetHeight - window.innerHeight);
+    const top =
+      track.getBoundingClientRect().top +
+      window.scrollY +
+      distance * targetProgress;
+    window.scrollTo({ top, behavior: "smooth" });
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setSubmitted(false);
+    setError(null);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -128,416 +253,235 @@ export default function Reviews() {
       approved: false,
     });
     setSubmitting(false);
-    if (error) setError("Something went wrong. Please try again.");
-    else {
-      setSubmitted(true);
-      setForm(emptyForm);
+    if (error) {
+      setError("Something went wrong. Please try again.");
+      return;
     }
-  }
-
-  const displayed = reviews.length > 0 ? reviews : fallback;
-  const totalPages = Math.ceil(displayed.length / PAGE_SIZE);
-  const paginated = displayed.slice(
-    page * PAGE_SIZE,
-    page * PAGE_SIZE + PAGE_SIZE,
-  );
-  const showPagination = displayed.length > PAGE_SIZE;
-
-  function handlePageChange(next: number) {
-    setPage(next);
-    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setSubmitted(true);
+    setForm(emptyForm);
   }
 
   return (
-    <section id="reviews" className="py-14 md:py-17 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+    <section ref={sectionRef} id="reviews" className="relative bg-white">
+      {/* Section enters naturally first, then pinTrackRef drives the scroll-linked card deck */}
+      <div className="px-6 pt-20 pb-2 md:px-14 md:pt-28 md:pb-3">
         <motion.div
-          className="mb-16"
+          className="mx-auto flex max-w-xl flex-col gap-2 md:text-center md:items-center md:gap-3"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-80px" }}
+          viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex flex-col gap-4">
-            <h2 className="font-display text-2xl md:text-5xl font-semibold text-navy max-w-md leading-tight">
-              Words from people <br className="md:hidden" /> we've built for
-            </h2>
-            <p className="font-body text-neutral-700 text-xs md:text-sm max-w-xs leading-relaxed">
-              Real feedback from clients across design, development, and
-              everything in between.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Reviews */}
-        <div ref={scrollRef}>
-          {/* Mobile: horizontal scroll strip */}
-          <div
-            className="
-              md:hidden flex gap-4 overflow-x-auto -mx-2 px-6
-              [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-              snap-x snap-mandatory
-            "
-          >
-            {paginated.map((r, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, margin: "-30px" }}
-                transition={{
-                  delay: i * 0.06,
-                  duration: 0.45,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                onClick={() => setSelectedReview(r)}
-                className="
-                  flex-none w-[80vw] max-w-[320px] snap-start cursor-pointer
-                  bg-white rounded-2xl p-6 flex flex-col gap-4
-                  border border-navy/[0.07] transition-all duration-300
-                "
-              >
-                <ReviewCardInner r={r} />
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Desktop: grid */}
-          <div className="hidden md:grid md:grid-cols-3 gap-4">
-            {paginated.map((r, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, margin: "" }}
-                transition={{
-                  delay: i * 0.07,
-                  duration: 0.5,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                onClick={() => setSelectedReview(r)}
-                className="cursor-pointer bg-white rounded-2xl p-6 flex flex-col gap-4 border border-navy/[0.07] hover:border-navy/15 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300"
-              >
-                <ReviewCardInner r={r} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Pagination */}
-        {showPagination && (
-          <div className="flex items-center justify-center gap-2 mt-10">
-            <button
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page === 0}
-              aria-label="Previous page"
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => handlePageChange(i)}
-                aria-label={`Page ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  i === page
-                    ? "w-6 h-2 bg-navy"
-                    : "w-2 h-2 bg-navy/20 hover:bg-navy/40"
-                }`}
-              />
-            ))}
-
-            <button
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page === totalPages - 1}
-              aria-label="Next page"
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-navy/10 text-navy/40 hover:border-navy/30 hover:text-navy disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {/* Divider */}
-        <div className="h-px bg-navy/[0.07] my-10 md:mt-20 md:mb-20" />
-
-        {/* Submit form */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-60px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="grid md:grid-cols-2 gap-12 items-start"
-        >
-          <div>
-            <h3 className="font-display text-2xl md:text-3xl font-semibold text-navy leading-tight mb-3">
-              Worked with us?
-              <br />
-              Tell the world.
-            </h3>
-            <p className="font-lato text-xs md:text-sm text-neutral-700 leading-relaxed w-[290px] md:w-full max-w-sm">
-              Every project we accept is built on client trust and hearing from
-              the people we've built for means everything to us.
-            </p>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {submitted ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col gap-3 py-4"
-              >
-                <div className="w-11 h-11 rounded-full bg-navy/[0.06] flex items-center justify-center">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#112369"
-                    strokeWidth="2.5"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <h4 className="font-display font-semibold text-lg text-navy">
-                  Thanks for sharing.
-                </h4>
-                <p className="font-body text-sm text-navy/50">
-                  Your review is pending approval and will appear shortly.
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="text-sm text-blue flex items-center gap-2 font-medium font-body hover:underline w-fit mt-1"
-                >
-                  Leave another <ArrowRight size={12} />
-                </button>
-              </motion.div>
-            ) : (
-              <motion.form
-                key="form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-4"
-              >
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">
-                      Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="John Doe"
-                      value={form.name}
-                      onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
-                      }
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">
-                      Role
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Founder, Acme Co."
-                      value={form.role}
-                      onChange={(e) =>
-                        setForm({ ...form, role: e.target.value })
-                      }
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-body text-xs text-navy/50 mb-2 tracking-wide">
-                    Your review *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    placeholder="Share your experience working with TageLabs..."
-                    value={form.review}
-                    onChange={(e) =>
-                      setForm({ ...form, review: e.target.value })
-                    }
-                    className={`${inputClass} resize-none`}
-                  />
-                </div>
-
-                {error && (
-                  <p className="text-sm text-red-400 font-body">{error}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full bg-navy hover:bg-blue disabled:opacity-50 text-white font-medium py-3 rounded-2xl text-sm transition-colors duration-200 font-body"
-                >
-                  {submitting ? "Submitting..." : "Submit Review →"}
-                </button>
-              </motion.form>
-            )}
-          </AnimatePresence>
+          <h2 className="font-display text-3xl font-semibold leading-tight text-navy md:text-5xl">
+            Client Testimonials
+          </h2>
+          {/* <p className="font-sans text-xs leading-relaxed text-neutral-600 md:text-sm">
+            Hearing from the people we have worked with helps us know if we're
+            doing our job well
+          </p> */}
         </motion.div>
       </div>
 
-      {/* Review Dialog */}
+      <div
+        ref={pinTrackRef}
+        className="relative"
+        style={{ height: `${100 + total * SCROLL_PER_REVIEW_VH}vh` }}
+      >
+        <div className="sticky top-0 flex flex-col justify-start px-6 pt-4 pb-16 md:items-center md:px-14 md:pt-6 md:pb-20">
+          <div className="w-full max-w-3xl">
+            <div className="relative min-h-72 w-full md:min-h-80 rounded-xl">
+              {displayed.map((item, idx) => (
+                <ReviewCardPanel
+                  key={item.id}
+                  item={item}
+                  index={idx}
+                  total={total}
+                  progress={scrollYProgress}
+                  hold={HOLD_RATIO}
+                />
+              ))}
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3 md:gap-4">
+                <button
+                  type="button"
+                  onClick={() => goTo(safeActive - 1)}
+                  aria-label="Previous review"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-navy/15 text-navy/60 transition-colors duration-300 hover:bg-navy hover:text-white"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => goTo(safeActive + 1)}
+                  aria-label="Next review"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-navy/15 text-navy/60 transition-colors duration-300 hover:bg-navy hover:text-white"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setFormOpen(true)}
+                className="inline-flex items-center gap-2 rounded-2xl border border-navy/15 px-4 py-2.5 font-body text-sm font-medium text-navy transition-colors duration-300 hover:bg-navy hover:text-white md:px-5"
+              >
+                <MessageSquarePlus size={15} />
+                Leave a review
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <AnimatePresence>
-        {selectedReview && (
+        {formOpen && (
           <>
             <motion.div
-              key="backdrop"
+              key="form-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setSelectedReview(null)}
-              className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-50"
+              onClick={closeForm}
+              className="fixed inset-0 z-50 bg-navy/40 backdrop-blur-sm"
             />
 
             <motion.div
-              key="dialog"
+              key="form-dialog"
               initial={{ opacity: 0, scale: 0.95, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 16 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-0 z-50 flex items-center justify-center px-6 pointer-events-none"
+              className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center px-6"
             >
-              <div className="bg-white rounded-2xl p-8 w-full max-w-md flex flex-col gap-5 pointer-events-auto shadow-xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-1">
-                    {[...Array(5)].map((_, j) => (
-                      <svg
-                        key={j}
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="#4a8fe2"
-                        stroke="none"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => setSelectedReview(null)}
-                    className="w-8 h-8 flex items-center justify-center rounded-2xl border border-navy/10 text-navy/40 hover:border-navy/25 hover:text-navy transition-all duration-200"
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
+              <div className="pointer-events-auto relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl md:p-8">
+                <button
+                  type="button"
+                  onClick={closeForm}
+                  aria-label="Close"
+                  className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-2xl border border-navy/10 text-navy/40 transition-all duration-200 hover:border-navy/25 hover:text-navy"
+                >
+                  <X size={14} />
+                </button>
+
+                <AnimatePresence mode="wait">
+                  {submitted ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center gap-3 py-2"
                     >
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-                </div>
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-navy/[0.06]">
+                        <Check size={20} className="text-navy" />
+                      </div>
+                      <h4 className="font-display text-lg font-semibold text-navy">
+                        Thanks for sharing.
+                      </h4>
+                      <p className="font-body text-sm text-navy/50">
+                        Your review is pending approval and will appear shortly.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setSubmitted(false)}
+                        className="mt-1 flex w-fit items-center gap-2 font-body text-sm font-medium text-blue hover:underline"
+                      >
+                        Leave another <ArrowRight size={12} />
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <motion.form
+                      key="form"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onSubmit={handleSubmit}
+                      className="flex flex-col gap-4"
+                    >
+                      <div className="pr-8">
+                        <h3 className="font-display text-2xl font-semibold leading-tight text-navy">
+                          Worked with us? Tell the world.
+                        </h3>
+                        <p className="mt-2 font-body text-xs leading-relaxed text-neutral-600 md:text-sm">
+                          Every project we accept is built on client trust, and
+                          hearing from the people we have built for means
+                          everything to us.
+                        </p>
+                      </div>
 
-                <p className="font-body text-sm text-navy/70 leading-relaxed">
-                  {selectedReview.review}
-                </p>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-2 block font-body text-xs tracking-wide text-navy/50">
+                            Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="John Doe"
+                            value={form.name}
+                            onChange={(e) =>
+                              setForm({ ...form, name: e.target.value })
+                            }
+                            className={inputClass}
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block font-body text-xs tracking-wide text-navy/50">
+                            Role
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Founder, Acme Co."
+                            value={form.role}
+                            onChange={(e) =>
+                              setForm({ ...form, role: e.target.value })
+                            }
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
 
-                <div className="h-px bg-navy/[0.06]" />
+                      <div>
+                        <label className="mb-2 block font-body text-xs tracking-wide text-navy/50">
+                          Your review *
+                        </label>
+                        <textarea
+                          required
+                          rows={4}
+                          placeholder="Share your experience working with TageLabs..."
+                          value={form.review}
+                          onChange={(e) =>
+                            setForm({ ...form, review: e.target.value })
+                          }
+                          className={`${inputClass} resize-none`}
+                        />
+                      </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-navy flex items-center justify-center shrink-0">
-                    <span className="text-white text-sm font-semibold font-display">
-                      {selectedReview.name.charAt(0)}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-navy font-body">
-                      {selectedReview.name}
-                    </p>
-                    <p className="text-xs text-navy/40 font-body mt-0.5">
-                      {selectedReview.role}
-                    </p>
-                  </div>
-                </div>
+                      {error && (
+                        <p className="font-body text-sm text-red-400">
+                          {error}
+                        </p>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full rounded-2xl bg-navy py-3 font-body text-sm font-medium text-white transition-colors duration-200 hover:bg-blue disabled:opacity-50"
+                      >
+                        {submitting ? "Submitting..." : "Submit Review"}
+                      </button>
+                    </motion.form>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
     </section>
-  );
-}
-
-function ReviewCardInner({ r }: { r: Review }) {
-  return (
-    <>
-      <div className="flex gap-1">
-        {[...Array(5)].map((_, j) => (
-          <svg
-            key={j}
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="#4a8fe2"
-            stroke="none"
-          >
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        ))}
-      </div>
-
-      <p className="font-body text-sm text-navy/65 leading-relaxed flex-1 line-clamp-4">
-        {r.review}
-      </p>
-
-      <div className="h-px bg-navy/[0.06]" />
-
-      <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center shrink-0">
-          <span className="text-white text-xs font-semibold font-display">
-            {r.name.charAt(0)}
-          </span>
-        </div>
-        <div>
-          <p className="text-[13px] font-semibold text-navy font-body">
-            {r.name}
-          </p>
-          <p className="text-[11px] text-navy/40 font-body mt-0.5">{r.role}</p>
-        </div>
-      </div>
-    </>
   );
 }

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Ghost } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
 
@@ -44,21 +44,23 @@ const PAGE_SIZE = 4;
 // ── Blog card (same structure as Work's ProjectCard) ────────────────────────
 function BlogCard({ post, imageSrc }: { post: BlogPost; imageSrc: string }) {
   return (
-    <Link href={`/blogs/${post.slug}`}>
-      <article className="group relative h-80 w-full overflow-hidden rounded-2xl shadow-md">
+    <Link href={`/blogs/${post.slug}`} className="block">
+      <article className="group relative aspect-[2/3] w-full overflow-hidden rounded-2xl">
         <img
           src={imageSrc}
           alt={post.title}
           draggable={false}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-        <div className="absolute inset-0 flex flex-col justify-end">
-          <div className="bg-black/60 p-6 flex flex-col gap-2 md:gap-3 text-white backdrop-blur-sm">
-            <h3 className="font-display text-[17px] md:text-sm line-clamp-1 font-bold text-white leading-snug">
+        <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+          <div className="flex flex-col gap-2 rounded-xl border border-white/20 bg-black/40 p-4 backdrop-blur-md">
+            <h3 className="truncate font-display text-sm font-semibold leading-snug text-white">
               {post.title}
             </h3>
-            <p className="text-xs font-sans text-white/80 line-clamp-2">
+
+            <p className="line-clamp-2 text-[10px] font-medium text-white/55">
               {post.excerpt || "Read the post"}
             </p>
           </div>
@@ -114,7 +116,10 @@ export default function RecentBlogs() {
   }
 
   const totalPages = Math.ceil(posts.length / PAGE_SIZE);
-  const paginated = posts.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  // const paginated = posts.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const pages = Array.from({ length: totalPages }, (_, p) =>
+    posts.slice(p * PAGE_SIZE, p * PAGE_SIZE + PAGE_SIZE),
+  );
   const showPagination = posts.length > PAGE_SIZE;
 
   function handlePageChange(next: number) {
@@ -148,7 +153,7 @@ export default function RecentBlogs() {
             >
               Our Timeless Thoughts
             </motion.h2>
-            <motion.p
+            {/* <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "" }}
@@ -157,7 +162,7 @@ export default function RecentBlogs() {
             >
               Click each card to explore a thoughtful curation of topics and
               interesting updates from us
-            </motion.p>
+            </motion.p> */}
           </div>
           <Link
             href="/blogs"
@@ -189,14 +194,16 @@ export default function RecentBlogs() {
             className="flex flex-col items-center justify-center py-24 text-center"
           >
             <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue/10">
-              <span className="text-3xl">✦</span>
+              <span className="text-3xl">
+                <Ghost />
+              </span>
             </div>
             <h3 className="mb-3 font-display text-2xl font-semibold text-navy">
               Something's brewing.
             </h3>
             <p className="max-w-xs font-body text-sm leading-relaxed text-navy/50">
-              Posts are being prepared with care. Check back soon — good writing
-              takes time.
+              Posts are being prepared with care. Check back soon because good
+              writing takes time.
             </p>
           </motion.div>
         )}
@@ -254,29 +261,48 @@ export default function RecentBlogs() {
             </div>
 
             {/* ── DESKTOP: 4-column portrait grid ── */}
+            {/* ── DESKTOP: sliding 4-column portrait grid ── */}
             <div
               ref={desktopScrollRef}
-              className="hidden grid-cols-2 gap-4 sm:grid md:grid-cols-4"
+              className="-my-3 hidden overflow-hidden py-3 sm:block"
             >
-              {paginated.map((post, i) => {
-                const globalIndex = page * PAGE_SIZE + i;
-                const imageSrc =
-                  post.cover_image_url ||
-                  FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
-
-                return (
-                  <motion.div
-                    key={post.id}
-                    custom={i}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: false, margin: "-60px" }}
+              <motion.div
+                className="flex"
+                initial={false}
+                animate={{ x: `-${page * 100}%` }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {pages.map((pagePosts, pageIndex) => (
+                  <div
+                    key={pageIndex}
+                    className="grid w-full shrink-0 grid-cols-2 gap-4 md:grid-cols-4"
                   >
-                    <BlogCard post={post} imageSrc={imageSrc} />
-                  </motion.div>
-                );
-              })}
+                    {pagePosts.map((post, i) => {
+                      const globalIndex = pageIndex * PAGE_SIZE + i;
+                      const imageSrc =
+                        post.cover_image_url ||
+                        FALLBACK_IMAGES[globalIndex % FALLBACK_IMAGES.length];
+
+                      const entrance =
+                        pageIndex === 0
+                          ? {
+                              custom: i,
+                              variants: fadeUp,
+                              initial: "hidden",
+                              whileInView: "visible",
+                              viewport: { once: true, margin: "-60px" },
+                            }
+                          : {};
+
+                      return (
+                        <motion.div key={post.id} {...entrance}>
+                          <BlogCard post={post} imageSrc={imageSrc} />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </motion.div>
             </div>
 
             {/* Pagination (desktop only) */}

@@ -24,11 +24,11 @@ export default function TeamCard({ member, className }: TeamCardProps) {
         <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/20 to-transparent" />
 
         <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
-          <div className="flex flex-col gap-1 rounded-xl bg-offwhite p-3">
-            <h3 className="font-display text-sm font-semibold leading-snug text-ink md:text-base">
+          <div className="flex flex-col gap-1 rounded-xl border border-white/15 bg-black/55 p-3 backdrop-blur-md">
+            <h3 className="font-display text-sm font-semibold leading-snug text-white md:text-base">
               {member.name}
             </h3>
-            <span className="font-body text-xs md:text-sm text-neutral-600">
+            <span className="font-sans text-xs md:text-sm text-neutral-300">
               {member.title}
             </span>
           </div>

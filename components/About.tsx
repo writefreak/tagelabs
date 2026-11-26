@@ -271,7 +271,7 @@ export default function About() {
               }
               className="group inline-flex items-stretch gap-[2px] text-sm font-medium text-neutral-950 focus:outline-none"
             >
-              <span className="flex items-center gap-2 rounded-xl bg-navy px-7 py-4 text-white transition-colors duration-200 group-hover:bg-neutral-100">
+              <span className="flex items-center gap-2 rounded-md bg-navy px-7 py-4 text-white transition-colors duration-200 group-hover:bg-neutral-100">
                 Start a project{" "}
                 <ArrowRight
                   size={16}
