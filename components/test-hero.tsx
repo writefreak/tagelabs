@@ -92,14 +92,14 @@ export default function TestHero() {
           <div className="flex flex-col gap-4">
             <motion.h1
               variants={item}
-              className="font-jet text-left text-[38px] leading-[1.05] tracking-tight text-navy md:text-5xl font-semibold md:leading-[1.08] lg:text-6xl"
+              className="font-jet text-left text-[38px] leading-[1.05] tracking-tight text-navy md:text-6xl font-semibold md:leading-[1.08]"
             >
               Transforming Brands With Scalable Digital Solutions
             </motion.h1>
 
             <motion.p
               variants={item}
-              className="max-w-sm text-left font-sans text-sm leading-relaxed text-navy/70"
+              className="max-w-sm text-left font-sans text-sm leading-relaxed text-neutral-600"
             >
               At Tagelabs, we design, build, and scale digital experiences that
               turn ambitious ideas into measurable business growth.
