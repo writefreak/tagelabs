@@ -78,7 +78,10 @@ export default function Navbar() {
     <>
       {/* <div className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pt-5 md:px-14 md:pt-7 2xl:px-24"> */}
       <div className="absolute top-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pt-5 md:px-14 md:pt-7 2xl:px-24">
-        <Link href="/" className="h-12 w-32 md:h-14 md:w-36">
+        <Link
+          href="/"
+          className={`h-12 w-32 md:h-14 md:w-36 ${pathname === "/blogs" ? "hidden" : "block"}`}
+        >
           <img
             src="/tagelabslogo.png"
             alt="TageLabs"
@@ -86,17 +89,21 @@ export default function Navbar() {
           />
         </Link>
 
-        <motion.button
-          type="button"
-          aria-label="Open menu"
-          aria-expanded={open}
-          onClick={() => setOpen(true)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md border bg-white shadow-xs text-navy transition-colors duration-200 hover:text-blue"
+        <div
+          className={`flex items-start ${pathname === "/blogs" ? "ml-auto" : ""}`}
         >
-          <Menu size={20} />
-        </motion.button>
+          <motion.button
+            type="button"
+            aria-label="Open menu"
+            aria-expanded={open}
+            onClick={() => setOpen(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md border bg-white shadow-xs text-navy transition-colors duration-200 hover:text-blue"
+          >
+            <Menu size={20} />
+          </motion.button>
+        </div>
       </div>
 
       <AnimatePresence onExitComplete={runPendingAction}>

@@ -149,7 +149,7 @@ export default function RecentBlogs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.55 }}
-              className="font-display text-4xl font-semibold leading-tight text-navy md:text-5xl"
+              className="font-display text-3xl font-semibold leading-tight text-navy md:text-5xl"
             >
               Our Timeless Thoughts
             </motion.h2>

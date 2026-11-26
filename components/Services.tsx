@@ -127,7 +127,7 @@ export default function Services() {
           viewport={{ once: true, margin: "0px 0px -80px 0px" }}
           transition={{ duration: 0.6, ease: easing }}
         >
-          <h2 className="font-display text-4xl font-semibold leading-tight text-white md:text-5xl">
+          <h2 className="font-display text-3xl font-semibold leading-tight text-white md:text-5xl">
             Explore our services
           </h2>
 

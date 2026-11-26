@@ -188,7 +188,7 @@ export default function Work() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "" }}
             transition={{ duration: 0.55 }}
-            className="font-display  text-4xl md:text-5xl font-semibold text-navy md:text-center leading-tight"
+            className="font-display  text-3xl md:text-5xl font-semibold text-navy md:text-center leading-tight"
           >
             Higlighted Projects
           </motion.h2>

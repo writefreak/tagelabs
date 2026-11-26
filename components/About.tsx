@@ -252,7 +252,7 @@ export default function About() {
         {/* Left Column */}
         <div className="flex flex-col items-start lg:sticky lg:top-1/2 lg:col-span-5 lg:-translate-y-1/2">
           {/* Main Heading */}
-          <h2 className="mt-4 font-display text-navy text-4xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl">
+          <h2 className="mt-4 font-display text-navy text-3xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl">
             About Us
           </h2>
 

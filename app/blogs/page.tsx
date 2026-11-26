@@ -48,6 +48,8 @@ const fadeUp: Variants = {
 
 const INITIAL_VISIBLE_COUNT = 6;
 const BATCH_SIZE = 6;
+const HERO_HEIGHT =
+  "h-[60svh] min-h-[28rem] md:h-[67svh] md:min-h-[34rem] md:max-h-[44rem]";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -101,7 +103,10 @@ function FeaturedPostBanner({
   };
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] flex flex-col justify-between overflow-hidden bg-black text-white pb-12 md:pt-20 px-4 sm:px-8 md:px-16">
+    // <div className="relative w-full h-[500px] md:h-[600px] flex flex-col justify-between overflow-hidden bg-black text-white pb-12 md:pt-20 px-4 sm:px-8 md:px-16">
+    <div
+      className={`relative flex w-full flex-col justify-between overflow-hidden bg-black px-4 pb-12 text-white md:px-14 md:pt-20 ${HERO_HEIGHT}`}
+    >
       {/* Background Image */}
       <AnimatePresence mode="wait">
         {activePost && (
@@ -125,7 +130,7 @@ function FeaturedPostBanner({
       <div className="relative pt-10 md:pt-4 z-10 w-full max-w-7xl mx-auto flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/80 hover:text-white bg-black/40 backdrop-blur-md px-4 py-2 transition-all"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/80"
         >
           <ArrowLeft size={14} />
           Back to home
@@ -174,7 +179,10 @@ function FeaturedPostBanner({
               </div>
               <div className="pt-4">
                 <Link href={`/blogs/${activePost.slug}`}>
-                  <button className="flex w-30 px-4 py-2.5 md:w-44 items-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium md:px-8 md:py-4 rounded-2xl hover:border-blue hover:text-blue transition-colors duration-200 text-sm">
+                  <button
+                    // className="flex w-30 px-4 py-2.5 md:w-44 items-center border bg-white/10 backdrop-blur-md border-white/40 text-white font-medium md:px-8 md:py-3 rounded-md hover:border-blue hover:text-blue transition-colors duration-200 text-sm">
+                    className="flex items-center justify-center gap-1.5 rounded-md bg-navy px-5 py-3 text-xs font-medium text-white transition-colors duration-200 hover:bg-blue md:gap-2 md:px-8 md:py-4 md:text-sm"
+                  >
                     Read Article
                     <ChevronRight size={16} className="ml-2" />
                   </button>
@@ -223,30 +231,33 @@ function ModernBlogCard({
   imageSrc: string;
 }) {
   return (
-    <Link href={`/blogs/${post.slug}`} className="block h-full group">
-      <article className="h-full flex flex-col justify-between rounded-2xl border border-navy/10 bg-white p-3.5 shadow-sm hover:shadow-xl hover:border-navy/20 transition-all duration-300">
-        <div className="space-y-4">
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-navy/5">
-            <img
-              src={imageSrc}
-              alt={post.title}
-              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-            />
-          </div>
+    <Link href={`/blogs/${post.slug}`} className="block">
+      <article className="group relative h-[23rem] w-full overflow-hidden rounded-2xl">
+        <img
+          src={imageSrc}
+          alt={post.title}
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-          <div className="px-1 space-y-2">
-            <h3 className="font-display text-base sm:text-lg font-semibold text-navy leading-snug line-clamp-2 group-hover:text-navy/80 transition-colors">
+        <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+          <div className="flex flex-col gap-2 rounded-xl border border-white/20 bg-black/40 p-4 backdrop-blur-md">
+            <h3 className="truncate font-display text-sm font-semibold leading-snug text-white">
               {post.title}
             </h3>
 
-            <p className="text-xs sm:text-sm text-navy/60 font-body line-clamp-2 leading-relaxed">
+            <p className="line-clamp-2 font-body text-[10px] font-medium text-white/55">
               {post.excerpt || "Read the full post to learn more."}
             </p>
-          </div>
-        </div>
 
-        <div className="mt-4 pt-3 px-1 border-t border-navy/5 flex items-center justify-between text-[11px] text-navy/40 font-medium">
-          <span>{formatDate(post.created_at)}</span>
+            <time
+              dateTime={post.created_at}
+              className="text-[10px] text-white/40"
+            >
+              {formatDate(post.created_at)}
+            </time>
+          </div>
         </div>
       </article>
     </Link>
@@ -308,7 +319,10 @@ export default function BlogArchivePage() {
         /* Full Page Skeleton Loader */
         <div>
           {/* Skeleton Hero Banner */}
-          <div className="w-full h-[500px] md:h-[600px] bg-white animate-pulse flex flex-col justify-between p-8 md:p-16">
+          {/* <div className="w-full h-[500px] md:h-[600px] bg-white animate-pulse flex flex-col justify-between p-8 md:p-16"> */}
+          <div
+            className={`flex w-full animate-pulse flex-col justify-between bg-white p-8 md:p-16 ${HERO_HEIGHT}`}
+          >
             <div className="w-32 h-8 bg-navy/20 rounded-full" />
             <div className="max-w-xl space-y-4 my-auto">
               <div className="h-10 bg-navy/20 rounded-lg w-3/4" />
@@ -345,13 +359,13 @@ export default function BlogArchivePage() {
           )}
 
           {/* Main Grid Container */}
-          <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <section className="py-12 sm:py-16 md:py-20 px-4 md:px-14 max-w-7xl mx-auto">
             {/* Search Bar Fallback when no featured posts exist */}
             {featuredPosts.length === 0 && (
               <div className="mb-8 pt-12">
                 <Link
                   href="/"
-                  className="inline-flex pb-6 items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
+                  className="inline-flex rounded-md pb-6 items-center gap-1.5 text-sm font-medium text-navy/60 hover:text-navy transition-colors"
                 >
                   <ArrowLeft size={14} />
                   Back to home
@@ -389,7 +403,7 @@ export default function BlogArchivePage() {
               viewport={{ once: false, margin: "-80px" }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              <h2 className="font-jet text-2xl sm:text-3xl md:text-5xl font-semibold text-navy leading-tight">
+              <h2 className="font-jet text-2xl pt-10 sm:text-3xl md:text-5xl font-semibold text-navy leading-tight">
                 Our Thoughts, Worth Sharing
               </h2>
             </motion.div>
