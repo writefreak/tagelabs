@@ -70,6 +70,44 @@ const DESKTOP_HOLD = 0;
 const MOBILE_SCROLL_PER_CARD = 130;
 const DESKTOP_SCROLL_PER_CARD = 100;
 
+const desktopEase = [0.22, 1, 0.36, 1] as const;
+
+const desktopLeftGroup = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.11,
+      delayChildren: 0.04,
+    },
+  },
+};
+
+const desktopLeftItem = {
+  hidden: { opacity: 0, y: 32 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.75,
+      ease: desktopEase,
+    },
+  },
+};
+
+const desktopRhsIntro = {
+  hidden: { opacity: 0, y: 54, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.9,
+      delay: 0.1,
+      ease: desktopEase,
+    },
+  },
+};
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -225,7 +263,12 @@ function AboutCardPanel({
 export default function About() {
   const total = ABOUT_CARDS.length;
   const trackRef = useRef<HTMLDivElement>(null);
+  const desktopTriggerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const isDesktopInView = useInView(desktopTriggerRef, {
+    once: true,
+    margin: "-80px 0px",
+  });
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
@@ -248,23 +291,42 @@ export default function About() {
       id="about"
       className="px-6 py-24 text-white md:px-14 sm:py-28 lg:py-36"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-10">
+      <div
+        ref={desktopTriggerRef}
+        className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-10"
+      >
         {/* Left Column */}
-        <div className="flex flex-col items-start lg:sticky lg:top-1/2 lg:col-span-5 lg:-translate-y-1/2">
+        <motion.div
+          variants={desktopLeftGroup}
+          initial={isMobile ? false : "hidden"}
+          animate={
+            isMobile ? undefined : isDesktopInView ? "visible" : "hidden"
+          }
+          className="flex flex-col items-start lg:sticky lg:top-28 lg:col-span-5"
+        >
           {/* Main Heading */}
-          <h2 className="mt-4 font-display text-navy text-3xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl">
+          <motion.h2
+            variants={isMobile ? undefined : desktopLeftItem}
+            className="mt-4 font-display text-navy text-3xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl"
+          >
             About Us
-          </h2>
+          </motion.h2>
 
           {/* Left Description */}
-          <p className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm">
+          <motion.p
+            variants={isMobile ? undefined : desktopLeftItem}
+            className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm"
+          >
             From strategy to execution, we pair technical depth and design
             clarity to build lasting digital products for ambitious teams and
             creators in Nigeria and beyond.
-          </p>
+          </motion.p>
 
           {/* Split Button */}
-          <div className="mt-9 md:block hidden">
+          <motion.div
+            variants={isMobile ? undefined : desktopLeftItem}
+            className="mt-9 md:block hidden"
+          >
             <button
               onClick={() =>
                 window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
@@ -279,8 +341,8 @@ export default function About() {
                 />
               </span>
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Right Feature Card Pinned Stack */}
         <div
@@ -289,7 +351,14 @@ export default function About() {
           className="relative lg:col-span-7"
         >
           <div className="sticky top-20 flex items-center md:min-h-[480px] lg:top-28">
-            <div className="relative grid w-full md:block md:min-h-[460px]">
+            <motion.div
+              variants={desktopRhsIntro}
+              initial={isMobile ? false : "hidden"}
+              animate={
+                isMobile ? undefined : isDesktopInView ? "visible" : "hidden"
+              }
+              className="relative grid w-full md:block md:min-h-[460px]"
+            >
               {ABOUT_CARDS.map((card, i) => (
                 <AboutCardPanel
                   key={`${card.id}-${hold}`}
@@ -312,7 +381,7 @@ export default function About() {
                   <ArrowRight size={14} />
                 </a>
               </motion.div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

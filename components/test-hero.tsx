@@ -4,31 +4,98 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
+const luxuryEase = [0.16, 1, 0.3, 1] as const;
+
+const HEADLINE_WORDS = [
+  "Transforming",
+  "Brands",
+  "With",
+  "Scalable",
+  "Digital",
+  "Solutions",
+];
+
 const container = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1,
+      staggerChildren: 0.14,
+      delayChildren: 0.12,
+    },
+  },
+};
+
+const headlineGroup = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.065,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const wordReveal = {
+  hidden: {
+    opacity: 0,
+    y: "115%",
+  },
+  visible: {
+    opacity: 1,
+    y: "0%",
+    transition: {
+      duration: 0.85,
+      ease: luxuryEase,
     },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: {
+    opacity: 0,
+    y: 28,
+  },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+    transition: {
+      duration: 0.9,
+      ease: luxuryEase,
+    },
   },
 };
 
 const imageReveal = {
-  hidden: { opacity: 0, x: 40 },
+  hidden: {
+    opacity: 0,
+    x: 80,
+    scale: 1.08,
+    rotate: 1.5,
+    clipPath: "inset(14% 0% 14% 18% round 0.75rem)",
+    filter: "blur(14px)",
+  },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
+    scale: 1,
+    rotate: 0,
+    clipPath: "inset(0% 0% 0% 0% round 0.75rem)",
+    filter: "blur(0px)",
+    transition: {
+      duration: 1.35,
+      ease: luxuryEase,
+    },
+  },
+};
+
+const videoInnerZoom = {
+  hidden: { scale: 1.24 },
+  visible: {
+    scale: 1,
+    transition: {
+      duration: 1.75,
+      ease: luxuryEase,
+    },
   },
 };
 
@@ -91,10 +158,20 @@ export default function TestHero() {
         <div className="contents md:flex md:flex-col">
           <div className="flex flex-col gap-4">
             <motion.h1
-              variants={item}
+              variants={headlineGroup}
+              aria-label="Transforming Brands With Scalable Digital Solutions"
               className="font-jet text-left text-[38px] leading-[1.05] tracking-tight text-navy md:text-6xl font-semibold md:leading-[1.08]"
             >
-              Transforming Brands With Scalable Digital Solutions
+              {HEADLINE_WORDS.map((word, idx) => (
+                <span key={word}>
+                  <span className="inline-block overflow-hidden align-bottom">
+                    <motion.span variants={wordReveal} className="inline-block">
+                      {word}
+                    </motion.span>
+                  </span>
+                  {idx < HEADLINE_WORDS.length - 1 ? " " : null}
+                </span>
+              ))}
             </motion.h1>
 
             <motion.p
@@ -141,6 +218,7 @@ export default function TestHero() {
           className="relative order-2 h-[340px] overflow-hidden rounded-xl sm:h-[440px] md:order-none md:h-[520px]"
         >
           <motion.video
+            variants={videoInnerZoom}
             src="/typev.mp4"
             poster="/typev.mp4"
             autoPlay
