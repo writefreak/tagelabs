@@ -197,7 +197,7 @@ function AboutCardPanel({
 
   return (
     <motion.div
-      className="relative col-start-1 row-start-1 flex w-full items-stretch md:absolute md:inset-0 md:items-center"
+      className="relative col-start-1 row-start-1 rounded-md flex w-full items-stretch md:absolute md:inset-0 md:items-center"
       style={{ zIndex: index + 1, scale: panelScale }}
     >
       <motion.div
@@ -240,11 +240,11 @@ function AboutCardPanel({
         </motion.div>
 
         {/* Card Right Image Column */}
-        <div className="relative min-h-[220px] overflow-hidden bg-neutral-100 sm:min-h-[340px] md:col-span-6 md:min-h-[430px]">
+        <div className="relative min-h-[220px] overflow-hidden rounded-md bg-neutral-100 sm:min-h-[340px] md:col-span-6 md:min-h-[430px]">
           <motion.img
             src={card.image}
             alt={card.imageAlt}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover rounded-md"
             style={{ scale: imgScale }}
           />
         </div>

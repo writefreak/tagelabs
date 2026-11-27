@@ -423,7 +423,7 @@ export default function Reviews() {
               <button
                 type="button"
                 onClick={() => setFormOpen(true)}
-                className="inline-flex items-center gap-2 rounded-2xl border border-navy/15 px-4 py-2.5 font-body text-sm font-medium text-navy transition-colors duration-300 hover:bg-navy hover:text-white md:px-5"
+                className="inline-flex items-center gap-2 rounded-md border border-navy/15 px-4 py-2.5 font-body text-sm font-medium text-navy transition-colors duration-300 hover:bg-navy hover:text-white md:px-5"
               >
                 <MessageSquarePlus size={15} />
                 Leave a review
@@ -485,7 +485,9 @@ export default function Reviews() {
                       <button
                         type="button"
                         onClick={() => setSubmitted(false)}
-                        className="mt-1 flex w-fit items-center gap-2 font-body text-sm font-medium text-blue hover:underline"
+                        className="inline-flex items-center gap-2 rounded-md border border-navy/15 px-4 py-2.5 font-body text-sm font-medium text-navy transition-colors duration-300 hover:bg-navy hover:text-white md:px-5"
+
+                        // className="mt-1 flex w-fit items-center gap-2 font-body text-sm font-medium text-blue hover:underline"
                       >
                         Leave another <ArrowRight size={12} />
                       </button>

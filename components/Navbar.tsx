@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { X } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 
 const links = ["About", "Services", "Work", "Reviews", "Blogs", "Contact"];
 
@@ -16,6 +16,12 @@ const listVariants: Variants = {
     transition: { staggerChildren: 0.08, delayChildren: 0.2 },
   },
 };
+const WHATSAPP_NUMBER = "2349041281560";
+const WHATSAPP_MESSAGE =
+  "Hi TageLabs, I'd like to start a project with you. Can we talk?";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  WHATSAPP_MESSAGE,
+)}`;
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, x: 24 },
@@ -182,15 +188,17 @@ export default function Navbar() {
                 <motion.div
                   variants={itemVariants}
                   transition={{ duration: 0.3 }}
-                  className="pt-4"
+                  className="pt-4 md:hidden"
                 >
-                  <button
-                    type="button"
-                    onClick={goToCvOrder}
-                    className="rounded-2xl bg-navy px-6 py-3 text-sm font-medium text-white transition-all duration-500 hover:-translate-y-1 hover:bg-blue"
+                  <a
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 rounded-md bg-navy px-5 py-3 text-xs font-medium text-white transition-colors duration-200 hover:bg-blue md:gap-2 md:px-8 md:py-4 md:text-sm"
                   >
-                    Preorder a Modern CV
-                  </button>
+                    Start a project
+                    <ArrowRight size={14} />
+                  </a>
                 </motion.div>
               </motion.nav>
             </motion.aside>
