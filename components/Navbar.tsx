@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 
 const links = ["About", "Services", "Work", "Reviews", "Blogs", "Contact"];
 
@@ -97,11 +97,13 @@ export default function Navbar() {
             aria-label="Open menu"
             aria-expanded={open}
             onClick={() => setOpen(true)}
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-md border bg-white shadow-xs text-navy transition-colors duration-200 hover:text-blue"
+            className="group flex h-10 w-10 md:h-12 md:w-12 items-center justify-center text-navy transition-colors duration-200 hover:text-blue"
           >
-            <Menu size={20} />
+            <span className="flex w-6 flex-col items-end gap-[7px]">
+              <span className="h-[2px] w-full rounded-full bg-current" />
+              <span className="h-[2px] w-3/5 rounded-full bg-current transition-all duration-300 ease-out group-hover:w-full" />
+            </span>
           </motion.button>
         </div>
       </div>

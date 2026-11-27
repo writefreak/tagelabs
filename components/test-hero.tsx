@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
@@ -15,52 +15,23 @@ const HEADLINE_WORDS = [
   "Solutions",
 ];
 
+const HEADLINE_LETTERS = HEADLINE_WORDS.reduce<
+  { word: string; start: number }[]
+>((acc, word) => {
+  const prev = acc[acc.length - 1];
+  const start = prev ? prev.start + prev.word.length + 1 : 0;
+  return [...acc, { word, start }];
+}, []);
+
+const PARAGRAPH_DELAY = 1.8;
+const BUTTON_DELAY = 2.1;
+
 const container = {
   hidden: {},
   visible: {
     transition: {
       staggerChildren: 0.14,
       delayChildren: 0.12,
-    },
-  },
-};
-
-const headlineGroup = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.065,
-      delayChildren: 0.05,
-    },
-  },
-};
-
-const wordReveal = {
-  hidden: {
-    opacity: 0,
-    y: "115%",
-  },
-  visible: {
-    opacity: 1,
-    y: "0%",
-    transition: {
-      duration: 0.85,
-      ease: luxuryEase,
-    },
-  },
-};
-
-const item = {
-  hidden: {
-    opacity: 0,
-    y: 28,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.9,
-      ease: luxuryEase,
     },
   },
 };
@@ -157,25 +128,50 @@ export default function TestHero() {
       >
         <div className="contents md:flex md:flex-col">
           <div className="flex flex-col gap-4">
-            <motion.h1
-              variants={headlineGroup}
+            <h1
               aria-label="Transforming Brands With Scalable Digital Solutions"
               className="font-jet text-left text-[38px] leading-[1.05] tracking-tight text-navy md:text-6xl font-semibold md:leading-[1.08]"
             >
-              {HEADLINE_WORDS.map((word, idx) => (
-                <span key={word}>
-                  <span className="inline-block overflow-hidden align-bottom">
-                    <motion.span variants={wordReveal} className="inline-block">
-                      {word}
-                    </motion.span>
+              {HEADLINE_LETTERS.map(({ word, start }, idx) => (
+                <Fragment key={word}>
+                  <span aria-hidden className="inline-block whitespace-nowrap">
+                    {word.split("").map((char, i) => (
+                      <motion.span
+                        key={i}
+                        className="inline-block"
+                        initial={{ opacity: 0, filter: "blur(6px)" }}
+                        animate={{
+                          opacity: [0, 1, 0.3, 1],
+                          filter: [
+                            "blur(6px)",
+                            "blur(0px)",
+                            "blur(2px)",
+                            "blur(0px)",
+                          ],
+                        }}
+                        transition={{
+                          duration: 0.5,
+                          delay: 0.3 + (start + i) * 0.035,
+                          times: [0, 0.5, 0.7, 1],
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
                   </span>
-                  {idx < HEADLINE_WORDS.length - 1 ? " " : null}
-                </span>
+                  {idx < HEADLINE_LETTERS.length - 1 ? " " : null}
+                </Fragment>
               ))}
-            </motion.h1>
+            </h1>
 
             <motion.p
-              variants={item}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.7,
+                delay: PARAGRAPH_DELAY,
+                ease: luxuryEase,
+              }}
               className="max-w-sm text-left font-sans text-sm leading-relaxed text-neutral-600"
             >
               At Tagelabs, we design, build, and scale digital experiences that
@@ -184,7 +180,13 @@ export default function TestHero() {
           </div>
 
           <motion.div
-            variants={item}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.7,
+              delay: BUTTON_DELAY,
+              ease: luxuryEase,
+            }}
             className="flex flex-col items-start gap-3 md:max-w-full md:flex-row md:items-center md:pt-5"
           >
             <a
@@ -199,20 +201,6 @@ export default function TestHero() {
           </motion.div>
         </div>
 
-        {/* <motion.div
-          variants={imageReveal}
-          className="relative h-[340px] overflow-hidden rounded-3xl sm:h-[440px] md:h-[560px]"
-        >
-          <motion.img
-            src="/type.png"
-            alt="TageLabs Digital Solutions"
-            loading="eager"
-            decoding="sync"
-            fetchPriority="high"
-            style={{ y: imageY }}
-            className="absolute inset-x-0 -top-[10%] h-[120%] w-full object-cover"
-          />
-        </motion.div> */}
         <motion.div
           variants={imageReveal}
           className="relative order-2 h-[340px] overflow-hidden rounded-xl sm:h-[440px] md:order-none md:h-[520px]"

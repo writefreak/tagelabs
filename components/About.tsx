@@ -197,11 +197,11 @@ function AboutCardPanel({
 
   return (
     <motion.div
-      className="relative col-start-1 row-start-1 flex items-stretch md:absolute md:inset-0 md:items-center"
+      className="relative col-start-1 row-start-1 flex w-full items-stretch md:absolute md:inset-0 md:items-center"
       style={{ zIndex: index + 1, scale: panelScale }}
     >
       <motion.div
-        className="relative grid w-full grid-cols-1 rounded-md overflow-hidden bg-[#4486E0] p-3 text-white shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4"
+        className="relative grid w-full grid-cols-1 overflow-hidden rounded-md bg-[#4486E0] p-3 text-white shadow-[0_24px_60px_rgba(0,18,110,0.32)] sm:p-4 md:grid-cols-12 md:gap-4"
         style={{ clipPath: clip }}
       >
         {/* Card Text & Metrics Column */}
@@ -262,7 +262,8 @@ function AboutCardPanel({
 
 export default function About() {
   const total = ABOUT_CARDS.length;
-  const trackRef = useRef<HTMLDivElement>(null);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
+  const desktopTrackRef = useRef<HTMLDivElement>(null);
   const desktopTriggerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const isDesktopInView = useInView(desktopTriggerRef, {
@@ -271,8 +272,8 @@ export default function About() {
   });
 
   const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ["start start", "end end"],
+    target: isMobile ? mobileTrackRef : desktopTrackRef,
+    offset: isMobile ? ["start end", "end end"] : ["start start", "end end"],
   });
 
   const progress = useSpring(scrollYProgress, {
@@ -289,99 +290,137 @@ export default function About() {
   return (
     <section
       id="about"
-      className="px-6 py-24 text-white md:px-14 sm:py-28 lg:py-36"
+      className="relative z-10 scroll-mt-24 px-4 py-24 text-white sm:py-28 md:px-14 lg:py-36"
     >
       <div
-        ref={desktopTriggerRef}
-        className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-10"
+        ref={desktopTrackRef}
+        style={isMobile ? undefined : { height: `${total * scrollPerCard}svh` }}
       >
-        {/* Left Column */}
-        <motion.div
-          variants={desktopLeftGroup}
-          initial={isMobile ? false : "hidden"}
-          animate={
-            isMobile ? undefined : isDesktopInView ? "visible" : "hidden"
-          }
-          className="flex flex-col items-start lg:sticky lg:top-28 lg:col-span-5"
-        >
-          {/* Main Heading */}
-          <motion.h2
-            variants={isMobile ? undefined : desktopLeftItem}
-            className="mt-4 font-display text-navy text-3xl font-semibold leading-[1.05] tracking-tight text-blue-950 md:text-5xl"
+        <div className={isMobile ? "" : "sticky top-28"}>
+          <div
+            ref={desktopTriggerRef}
+            className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 md:items-center lg:grid-cols-12 lg:gap-10"
           >
-            About Us
-          </motion.h2>
+            {/* Left Column */}
+            <div className="relative z-20 flex flex-col items-start opacity-100 lg:col-span-5">
+              {isMobile ? (
+                <>
+                  <h2 className="font-display block w-full pt-2 text-3xl leading-tight font-semibold tracking-tight text-navy opacity-100 md:text-5xl">
+                    About Us
+                  </h2>
+                  <p className="mt-4 max-w-md font-sans text-xs leading-relaxed text-neutral-700 opacity-100 md:text-sm">
+                    From strategy to execution, we pair technical depth and
+                    design clarity to build lasting digital products for
+                    ambitious teams and creators in Nigeria and beyond.
+                  </p>
+                </>
+              ) : (
+                <motion.div
+                  variants={desktopLeftGroup}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  className="flex flex-col items-start"
+                >
+                  <motion.h2
+                    variants={desktopLeftItem}
+                    className="font-display text-3xl leading-tight font-semibold tracking-tight text-navy md:text-5xl"
+                  >
+                    About Us
+                  </motion.h2>
 
-          {/* Left Description */}
-          <motion.p
-            variants={isMobile ? undefined : desktopLeftItem}
-            className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm"
-          >
-            From strategy to execution, we pair technical depth and design
-            clarity to build lasting digital products for ambitious teams and
-            creators in Nigeria and beyond.
-          </motion.p>
+                  <motion.p
+                    variants={desktopLeftItem}
+                    className="mt-5 max-w-md font-sans text-xs leading-relaxed text-neutral-700 md:text-sm"
+                  >
+                    From strategy to execution, we pair technical depth and
+                    design clarity to build lasting digital products for
+                    ambitious teams and creators in Nigeria and beyond.
+                  </motion.p>
 
-          {/* Split Button */}
-          <motion.div
-            variants={isMobile ? undefined : desktopLeftItem}
-            className="mt-9 md:block hidden"
-          >
-            <button
-              onClick={() =>
-                window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer")
-              }
-              className="group inline-flex items-stretch gap-[2px] text-sm font-medium text-neutral-950 focus:outline-none"
-            >
-              <span className="flex items-center gap-2 rounded-md bg-navy px-7 py-4 text-white transition-colors duration-200 group-hover:bg-neutral-100">
-                Start a project{" "}
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-200 group-hover:translate-x-0.5"
-                />
-              </span>
-            </button>
-          </motion.div>
-        </motion.div>
+                  <motion.div
+                    variants={desktopLeftItem}
+                    className="mt-9 hidden md:block"
+                  >
+                    <button
+                      onClick={() =>
+                        window.open(
+                          WHATSAPP_URL,
+                          "_blank",
+                          "noopener,noreferrer",
+                        )
+                      }
+                      className="group inline-flex items-stretch gap-[2px] text-sm font-medium text-neutral-950 focus:outline-none"
+                    >
+                      <span className="bg-navy flex items-center gap-2 rounded-md px-7 py-4 text-white transition-colors duration-200 group-hover:bg-neutral-100">
+                        Start a project{" "}
+                        <ArrowRight
+                          size={16}
+                          className="transition-transform duration-200 group-hover:translate-x-0.5"
+                        />
+                      </span>
+                    </button>
+                  </motion.div>
+                </motion.div>
+              )}
+            </div>
 
-        {/* Right Feature Card Pinned Stack */}
-        <div
-          ref={trackRef}
-          style={{ height: `${total * scrollPerCard}svh` }}
-          className="relative lg:col-span-7"
-        >
-          <div className="sticky top-20 flex items-center md:min-h-[480px] lg:top-28">
-            <motion.div
-              variants={desktopRhsIntro}
-              initial={isMobile ? false : "hidden"}
-              animate={
-                isMobile ? undefined : isDesktopInView ? "visible" : "hidden"
-              }
-              className="relative grid w-full md:block md:min-h-[460px]"
-            >
-              {ABOUT_CARDS.map((card, i) => (
-                <AboutCardPanel
-                  key={`${card.id}-${hold}`}
-                  card={card}
-                  index={i}
-                  total={total}
-                  progress={progress}
-                  hold={hold}
-                />
-              ))}
+            {/* Right Feature Card Stack */}
+            <div className="flex flex-col lg:col-span-7">
+              <div
+                ref={mobileTrackRef}
+                style={
+                  isMobile
+                    ? { height: `${total * scrollPerCard}svh` }
+                    : undefined
+                }
+                className="relative"
+              >
+                <div
+                  className={
+                    isMobile
+                      ? "sticky top-20 flex items-center"
+                      : "flex items-center md:min-h-[480px]"
+                  }
+                >
+                  <motion.div
+                    variants={desktopRhsIntro}
+                    initial={isMobile ? false : "hidden"}
+                    animate={
+                      isMobile
+                        ? "visible"
+                        : isDesktopInView
+                          ? "visible"
+                          : "hidden"
+                    }
+                    className="relative grid w-full grid-cols-1 md:block md:min-h-[460px]"
+                  >
+                    {ABOUT_CARDS.map((card, i) => (
+                      <AboutCardPanel
+                        key={`${card.id}-${hold}`}
+                        card={card}
+                        index={i}
+                        total={total}
+                        progress={progress}
+                        hold={hold}
+                      />
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
 
-              <motion.div className="md:hidden pt-7 flex flex-col items-start gap-3 md:max-w-full md:flex-row md:items-center md:pt-5">
+              <div className="flex flex-col items-start gap-3 pt-7 md:hidden">
                 <a
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 rounded-md bg-navy px-5 py-3 text-xs font-medium text-white transition-colors duration-200 hover:bg-blue md:gap-2 md:px-8 md:py-4 md:text-sm"
+                  className="bg-navy hover:bg-blue flex items-center justify-center gap-1.5 rounded-md px-5 py-3 text-xs font-medium text-white transition-colors duration-200"
                 >
                   Start a project
                   <ArrowRight size={14} />
                 </a>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

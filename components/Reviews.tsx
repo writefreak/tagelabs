@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   AnimatePresence,
   motion,
@@ -75,10 +75,66 @@ const fallback: Review[] = [
 
 const SCROLL_PER_REVIEW_VH = 55;
 const HOLD_RATIO = 0.45;
+const SWIPE_THRESHOLD_PX = 50;
+const DESKTOP_QUERY = "(min-width: 768px)";
 const emptyForm = { name: "", role: "", review: "" };
 
 const inputClass =
   "w-full bg-navy/[0.03] border border-navy/10 rounded-xl px-4 py-3 text-navy text-sm font-body placeholder:text-navy/30 focus:outline-none focus:border-blue transition-colors";
+
+const stackVariants = {
+  past: { x: "0%", scale: 0.94 },
+  current: { x: "0%", scale: 1 },
+  upcoming: { x: "110%", scale: 1 },
+};
+
+function useIsDesktop() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(DESKTOP_QUERY);
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(DESKTOP_QUERY).matches,
+    () => true,
+  );
+}
+
+function ReviewCardContent({ item }: { item: Review }) {
+  return (
+    <>
+      <div className="flex gap-1">
+        {[...Array(5)].map((_, j) => (
+          <Star
+            key={j}
+            className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500"
+            strokeWidth={0}
+          />
+        ))}
+      </div>
+
+      <blockquote className="mt-4 line-clamp-6 font-display text-sm font-medium leading-relaxed md:mt-5 md:line-clamp-5 md:text-lg md:leading-relaxed">
+        {item.review}
+      </blockquote>
+
+      <div className="mt-auto flex items-center gap-3 pt-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-sm font-semibold">
+          {item.name.charAt(0)}
+        </div>
+        <div className="min-w-0">
+          <p className="truncate font-body text-sm font-semibold">
+            {item.name}
+          </p>
+          {item.role && (
+            <p className="mt-0.5 truncate font-body text-xs text-white/55">
+              {item.role}
+            </p>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
 
 function ReviewCardPanel({
   item,
@@ -123,7 +179,7 @@ function ReviewCardPanel({
       style={{ zIndex: index + 1, scale: panelScale }}
     >
       <motion.article
-        className="relative flex h-full w-full flex-col overflow-hidden rounded-xl bg-navy p-6 text-white shadow-[0_24px_60px_rgba(0,18,110,0.28)] md:p-9"
+        className="relative flex h-full w-full flex-col overflow-hidden rounded-md bg-navy p-6 text-white shadow-[0_24px_60px_rgba(0,18,110,0.28)] md:p-9"
         style={{ clipPath: clip, scale: cardScale }}
       >
         <Quote
@@ -136,35 +192,7 @@ function ReviewCardPanel({
           className="relative flex h-full flex-col"
           style={{ y: textY, opacity: textOpacity }}
         >
-          <div className="flex gap-1">
-            {[...Array(5)].map((_, j) => (
-              <Star
-                key={j}
-                className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500"
-                strokeWidth={0}
-              />
-            ))}
-          </div>
-
-          <blockquote className="mt-4 line-clamp-6 font-display text-sm font-medium leading-relaxed md:mt-5 md:line-clamp-5 md:text-lg md:leading-relaxed">
-            {item.review}
-          </blockquote>
-
-          <div className="mt-auto flex items-center gap-3 pt-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-sm font-semibold">
-              {item.name.charAt(0)}
-            </div>
-            <div className="min-w-0">
-              <p className="truncate font-body text-sm font-semibold">
-                {item.name}
-              </p>
-              {item.role && (
-                <p className="mt-0.5 truncate font-body text-xs text-white/55">
-                  {item.role}
-                </p>
-              )}
-            </div>
-          </div>
+          <ReviewCardContent item={item} />
         </motion.div>
 
         <motion.div
@@ -174,6 +202,40 @@ function ReviewCardPanel({
         />
       </motion.article>
     </motion.div>
+  );
+}
+
+function ReviewCardStackItem({
+  item,
+  index,
+  active,
+}: {
+  item: Review;
+  index: number;
+  active: number;
+}) {
+  const state =
+    index < active ? "past" : index === active ? "current" : "upcoming";
+
+  return (
+    <motion.article
+      aria-hidden={index !== active}
+      variants={stackVariants}
+      initial={false}
+      animate={state}
+      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+      style={{ zIndex: index + 1 }}
+      className="absolute inset-0 flex flex-col overflow-hidden rounded-md bg-navy p-6 text-white"
+    >
+      <Quote
+        aria-hidden
+        strokeWidth={1.5}
+        className="absolute right-5 top-5 h-14 w-14 text-white/[0.06]"
+      />
+      <div className="relative flex h-full flex-col">
+        <ReviewCardContent item={item} />
+      </div>
+    </motion.article>
   );
 }
 
@@ -189,6 +251,8 @@ export default function Reviews() {
   const sectionRef = useRef<HTMLElement>(null);
   const pinTrackRef = useRef<HTMLDivElement>(null);
 
+  const isDesktop = useIsDesktop();
+
   const displayed = reviews.length > 0 ? reviews : fallback;
   const total = displayed.length;
   const safeActive = Math.min(active, total - 1);
@@ -199,6 +263,7 @@ export default function Reviews() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    if (!isDesktop || !Number.isFinite(progress)) return;
     const next = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
     setActive((prev) => (next === prev ? prev : next));
   });
@@ -223,9 +288,15 @@ export default function Reviews() {
   }, [formOpen]);
 
   function goTo(index: number) {
+    const normalized = ((index % total) + total) % total;
+
+    if (!isDesktop) {
+      setActive(normalized);
+      return;
+    }
+
     const track = pinTrackRef.current;
     if (!track) return;
-    const normalized = ((index % total) + total) % total;
     const targetProgress = (normalized + 0.5) / total;
     const distance = Math.max(0, track.offsetHeight - window.innerHeight);
     const top =
@@ -233,6 +304,12 @@ export default function Reviews() {
       window.scrollY +
       distance * targetProgress;
     window.scrollTo({ top, behavior: "smooth" });
+  }
+
+  function handleSwipe(offsetX: number) {
+    if (isDesktop) return;
+    if (offsetX <= -SWIPE_THRESHOLD_PX) goTo(safeActive + 1);
+    if (offsetX >= SWIPE_THRESHOLD_PX) goTo(safeActive - 1);
   }
 
   function closeForm() {
@@ -262,9 +339,13 @@ export default function Reviews() {
   }
 
   return (
-    <section ref={sectionRef} id="reviews" className="relative bg-white">
+    <section
+      ref={sectionRef}
+      id="reviews"
+      className="relative overflow-x-clip bg-white"
+    >
       {/* Section enters naturally first, then pinTrackRef drives the scroll-linked card deck */}
-      <div className="px-6 pt-20 pb-2 md:px-14 md:pt-28 md:pb-3">
+      <div className="px-6 pt-24 md:pt-28 pb-4 md:px-14 md:py-44 md:pb-3">
         <motion.div
           className="mx-auto flex max-w-xl flex-col gap-2 md:text-center md:items-center md:gap-3"
           initial={{ opacity: 0, y: 24 }}
@@ -284,23 +365,39 @@ export default function Reviews() {
 
       <div
         ref={pinTrackRef}
-        className="relative"
-        style={{ height: `${100 + total * SCROLL_PER_REVIEW_VH}vh` }}
+        className="relative md:h-[var(--track-height)]"
+        style={
+          {
+            "--track-height": `${100 + total * SCROLL_PER_REVIEW_VH}vh`,
+          } as React.CSSProperties
+        }
       >
-        <div className="sticky top-0 flex flex-col justify-start px-6 pt-4 pb-16 md:items-center md:px-14 md:pt-6 md:pb-20">
+        <div className="flex flex-col justify-start px-6 pt-4 pb-32 md:sticky md:top-0 md:items-center md:px-14 md:pt-6 md:pb-44">
           <div className="w-full max-w-3xl">
-            <div className="relative min-h-72 w-full md:min-h-80 rounded-xl">
-              {displayed.map((item, idx) => (
-                <ReviewCardPanel
-                  key={item.id}
-                  item={item}
-                  index={idx}
-                  total={total}
-                  progress={scrollYProgress}
-                  hold={HOLD_RATIO}
-                />
-              ))}
-            </div>
+            <motion.div
+              className="relative min-h-72 w-full md:min-h-80 rounded-xl touch-pan-y"
+              onPanEnd={(_, info) => handleSwipe(info.offset.x)}
+            >
+              {isDesktop
+                ? displayed.map((item, idx) => (
+                    <ReviewCardPanel
+                      key={item.id}
+                      item={item}
+                      index={idx}
+                      total={total}
+                      progress={scrollYProgress}
+                      hold={HOLD_RATIO}
+                    />
+                  ))
+                : displayed.map((item, idx) => (
+                    <ReviewCardStackItem
+                      key={item.id}
+                      item={item}
+                      index={idx}
+                      active={safeActive}
+                    />
+                  ))}
+            </motion.div>
 
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3 md:gap-4">
